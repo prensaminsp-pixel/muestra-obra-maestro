@@ -290,6 +290,13 @@ body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
 .cano i{width:26px;height:14px;border-radius:7px;display:block}
 .cano.sel{border-color:var(--celeste);box-shadow:0 0 0 3px rgba(0,154,218,.25)}
 .cano.usado{opacity:.35;pointer-events:none}
+.como-pie{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.como-dots{display:flex;gap:6px}
+.como-dots i{width:9px;height:9px;border-radius:50%;background:var(--linea);display:block}
+.como-dots i.on{background:var(--azul)}
+#oComo .burbuja{font-size:15px;min-height:5.2em}
+.voz{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;flex:none}
+.voz[aria-pressed="true"]{background:var(--amarillo);color:var(--tinta);border-color:var(--amarillo)}
 footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:420px){.dato b{font-size:46px}.tarjeta-prev{grid-template-columns:110px 1fr}.marca small{display:none}}
@@ -301,6 +308,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       <b>Armá <span>Córdoba</span></b>
       <small>Ministerio de Infraestructura y Servicios Públicos · Gobierno de Córdoba</small>
     </button>
+    <button class="voz" id="vozBtn" type="button" aria-pressed="false" aria-label="Voz de Rita" title="Voz de Rita"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="vozOnda" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
     <button class="chip-user" id="goRanking" aria-label="Ver ranking de ingenieros">
       <div class="dots" id="dots"></div>
       <span id="chipName">Ranking</span>
@@ -373,6 +381,16 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       </div>
     </div>
     <div class="wrap bloques">
+      <article class="bloque" id="oComo">
+        <div class="eyebrow">Rita te explica</div>
+        <h2>¿Cómo funciona?</h2>
+        <div class="masc tranquila sobre-claro" id="comoMasc"></div>
+        <div class="como-pie">
+          <div class="como-dots" id="comoDots" aria-hidden="true"></div>
+          <div class="fila"><button class="btn blanco" id="comoAnt" type="button">Anterior</button><button class="btn" id="comoSig" type="button">Siguiente</button></div>
+        </div>
+      </article>
+
       <article class="bloque">
         <div class="eyebrow">Antes y después</div>
         <h2>Deslizá para comparar</h2>
@@ -422,17 +440,17 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       </article>
 
       <article class="bloque">
-        <div class="eyebrow">Realidad aumentada</div>
+        <div class="eyebrow">Ponela en tu mesa</div>
         <div class="ar-box">
           <div class="ar-ico" aria-hidden="true">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#004582" stroke-width="2.2" stroke-linejoin="round"><path d="M18 5 30 11.5v13L18 31 6 24.5v-13z"/><path d="M6 11.5 18 18l12-6.5M18 18v13"/></svg>
           </div>
           <div>
-            <h2 style="font-size:20px">Ver la maqueta en tu mesa</h2>
+            <h2 style="font-size:20px">La maqueta, sobre tu mesa</h2>
             <p class="nota" style="margin-top:4px">Abre la cámara del celular y apoya la maqueta en 3D sobre una mesa o el piso. Funciona en iPhone y Android, sin instalar nada.</p>
           </div>
         </div>
-        <div class="fila"><button class="btn blanco" id="arBtn">Ver en tu espacio</button></div>
+        <div class="fila"><button class="btn blanco" id="arBtn">Ponela en tu mesa</button></div>
       </article>
 
       <article class="bloque">
@@ -572,7 +590,7 @@ const OBRAS = [
     {n:"2", t:"niveles de tránsito: arriba el pasante, abajo el del barrio", s:"Dos carriles por sentido en cada nivel"},
     {n:"300", t:"puestos de trabajo directos e indirectos", s:"Estimación oficial al licitar la obra"}
   ],
-  ficha:[["Largo del altonivel","600 m"],["Tramo","De calle Posadas a Av. Circunvalación"],["Viaducto","2 carriles por sentido, separador New Jersey y banquinas"],["Nivel calle","2 carriles por sentido y cantero central de 3 m"],["Inversión","$ 48.642 millones"],["Avance","35% (enero de 2026)"],["Ejecuta","Caminos de las Sierras"]],
+  ficha:[["Largo del altonivel","600 m"],["Tramo","De calle Posadas a Av. Circunvalación"],["Viaducto","2 carriles por sentido, separador New Jersey y banquinas"],["Nivel calle","2 carriles por sentido y cantero central de 3 m"],["Inversión","$ 48.642 millones"],["Avance","35% (enero de 2026)"]],
   fuente:"Fuentes: InfoNegocios y El Cronista."
 },
 {
@@ -594,7 +612,7 @@ const OBRAS = [
     {n:"1/4", t:"del volumen total del lago llegó en un solo día de lluvias intensas", s:"Por eso hay que regular: una tormenta en las sierras llena el lago muy rápido"},
     {n:"135", t:"años desde que se levantó el primer paredón, en 1891", s:"El dique actual se inauguró en 1945"}
   ],
-  ficha:[["Ubicación","Valle de Punilla, a unos 29 km de Córdoba"],["Inauguración","1945 (el primer dique es de 1891)"],["Superficie del lago","1.600 ha"],["Funciones","Regular crecidas del Suquía, agua potable, energía y turismo"],["Vertedero","Tipo embudo"],["Central hidroeléctrica","4 turbinas, opera EPEC"]],
+  ficha:[["Ubicación","Valle de Punilla, a unos 29 km de Córdoba"],["Inauguración","1945 (el primer dique es de 1891)"],["Superficie del lago","1.600 ha"],["Funciones","Regular crecidas del Suquía, agua potable, energía y turismo"],["Vertedero","Tipo embudo"],["Central hidroeléctrica","4 turbinas"]],
   fuente:"Fuentes: La Voz, Editores (revista técnica), Los Andes y Vía País. La simulación del juego es didáctica y no usa caudales reales."
 },
 {
@@ -652,7 +670,7 @@ const OBRAS = [
     {n:"144", t:"km de conducto troncal: como ir de Córdoba a Villa María", s:"Distancia aproximada por ruta"},
     {n:"489", t:"km de caños en total, más que ir y volver de Córdoba a Río Cuarto", s:"144 km de troncal + 345 km de ramales"}
   ],
-  ficha:[["Etapa I","Coronda – San Francisco"],["Conducto troncal","144 km"],["Ramales","345 km"],["Localidades","54, en Santa Fe y Córdoba"],["Habitantes","410.000 en la Etapa I"],["Ejecución","Unidad Ejecutora Biprovincial Santa Fe – Córdoba"],["Estado","En ejecución, por bloques"]],
+  ficha:[["Etapa I","Coronda – San Francisco"],["Conducto troncal","144 km"],["Ramales","345 km"],["Localidades","54, en Santa Fe y Córdoba"],["Habitantes","410.000 en la Etapa I"],["Estado","En ejecución, por bloques"]],
   fuente:"Fuentes: Gobierno de Santa Fe, Cadena 3 y La Voz de San Justo."
 },
 {
@@ -727,7 +745,7 @@ const Store = {
     try{
       if(!(await this.connect())) { this.emit(); return; }
       this.mode="shared";
-      const db=this.db, id=this.uid;
+      const db=this.db, id=this.uid; this.flush();
       // temporada
       const cfg = await db.doc("config/actual").get().catch(()=>null);
       const temporada = cfg && cfg.exists ? ((cfg.data()||{}).temporada||1) : 1;
@@ -769,6 +787,9 @@ const Store = {
     rows.sort((a,b)=> P(b)-P(a) || (b.count||0)-(a.count||0) || (a.updatedAt||0)-(b.updatedAt||0));
     return {rows, meId};
   },
+  queue:[],
+  track(e,o,v){ const d=new Date(); const doc={e,o:o||"",v:v==null?null:v,d:d.toISOString().slice(0,10),t:d.getTime()}; if(this.mode!=="shared"){ this.queue.push(doc); return; } try{ this.db.collection("metricas").add(doc).catch(()=>{}); }catch(e){} },
+  flush(){ const q=this.queue.splice(0); q.forEach(d=>{ try{ this.db.collection("metricas").add(d).catch(()=>{}); }catch(e){} }); },
   on(fn){ this.listeners.push(fn); }, emit(){ this.listeners.forEach(f=>f()); }
 };
 const NIVELES = n => n>=OBRAS.length ? "Ingeniero/a maestro/a" : n>=5 ? "Director/a de obra" : n>=3 ? "Ingeniero/a de obra" : n>=1 ? "Ayudante técnico" : "Aprendiz";
@@ -858,11 +879,18 @@ const RITA=(()=>{
   return { add(box){ const cv=document.createElement("canvas"); cv.className="rita"; cv.width=168; cv.height=168; box.prepend(cv); const I={box,cv,ctx:cv.getContext("2d"),mood:"tranquila",since:0,seed:Math.random()*10}; insts.push(I); box.classList.add("r3d"); return I; },
     snap(mood){ pose(mood,0.3,5); r.render(scene,cam); const c=document.createElement("canvas"); c.width=168; c.height=168; c.getContext("2d").drawImage(r.domElement,0,0); return c; } };
 })();
+/* Voz de Rita (síntesis de voz del navegador) */
+const VOZ={on:LS.get("arma.voz",false), voice:null};
+function elegirVoz(){ try{ const vs=speechSynthesis.getVoices(); VOZ.voice=vs.find(v=>/es[-_]AR/i.test(v.lang))||vs.find(v=>/es[-_](419|MX|US|CL|UY)/i.test(v.lang))||vs.find(v=>/^es/i.test(v.lang))||null; }catch(e){} }
+if("speechSynthesis" in window){ elegirVoz(); speechSynthesis.onvoiceschanged=elegirVoz; }
+function hablar(t){ if(!VOZ.on || !("speechSynthesis" in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang=VOZ.voice?VOZ.voice.lang:"es-AR"; if(VOZ.voice) u.voice=VOZ.voice; u.rate=1.02; u.pitch=1.35; speechSynthesis.speak(u); }catch(e){} }
+function vozUI(){ const b=$("#vozBtn"); b.setAttribute("aria-pressed",VOZ.on?"true":"false"); b.title=VOZ.on?"Silenciar a Rita":"Activar la voz de Rita"; $("#vozOnda").style.display=VOZ.on?"":"none"; }
+function enPantalla(box){ if(!box.isConnected||!box.offsetParent) return false; const r=box.getBoundingClientRect(); return r.bottom>0 && r.top<window.innerHeight && !box.closest(".modal[hidden]"); }
 function Mascota(box){
   box.innerHTML=MASC_SVG+'<div class="burbuja"><b class="quien">Rita, la retro</b><span class="txt"></span></div>';
   const I=RITA?RITA.add(box):null;
   const txt=box.querySelector(".txt"); let last="";
-  return { say(t,mood="tranquila"){ if(t===last && box.classList.contains(mood)) return; last=t; txt.textContent=t; box.classList.remove("tranquila","feliz","preocupada","triste"); void box.offsetWidth; box.classList.add(mood); if(I){ I.mood=mood; I.since=performance.now()/1000; } } };
+  return { say(t,mood="tranquila",voz=true){ if(t===last && box.classList.contains(mood)) return; last=t; txt.textContent=t; box.classList.remove("tranquila","feliz","preocupada","triste"); void box.offsetWidth; box.classList.add(mood); if(I){ I.mood=mood; I.since=performance.now()/1000; } if(voz && enPantalla(box)) hablar(t); } };
 }
 const JM=Mascota($("#jMasc")), REGM=Mascota($("#regMasc")), FINM=Mascota($("#finMasc"));
 REGM.say("¡Hola! Soy Rita, la retro. Te voy a acompañar en cada obra. ¿Cómo querés que te llame?","feliz");
@@ -1473,7 +1501,7 @@ function consigna(t,cls=""){ JM.say(t, cls==="ok"?"feliz":cls==="err"?"preocupad
 function setProg(f){ $("#jProg").style.width=Math.round(f*100)+"%"; }
 
 function openObra(id){
-  const o=OB[id], ctx=getCtx(id);
+  const o=OB[id], ctx=getCtx(id); Store.track("obra_abierta",id);
   cur={o,ctx,n:0,moves:0,solved:false,order:[]};
   // encabezado
   const tags=$("#oTags"); tags.replaceChildren(el("span",{class:"tag",style:"background:"+o.color,text:o.eje}), el("span",{class:"tag claro",text:o.estado}));
@@ -1488,7 +1516,7 @@ function openObra(id){
   resetJuego(Player.obras[id]?"ya":"nuevo");
   // antes y después
   requestAnimationFrame(()=>{ $("#adAntes").src=snapshot(ctx,false); $("#adDespues").src=ctx._after||(ctx._after=snapshot(ctx,true)); setAD(50); });
-  renderShare(); renderTrivia(o); renderExtra(o);
+  renderShare(); renderTrivia(o); renderExtra(o); renderComo(o);
   window.scrollTo({top:0});
 }
 function resetJuego(modo){
@@ -1651,9 +1679,26 @@ async function openAR(o){
 $("#arCerrar").addEventListener("click",()=>{ $("#mAR").hidden=true; $("#arVisor").replaceChildren(); });
 
 /* ============ ADMINISTRACIÓN (reinicio del ranking en GitHub) ============ */
+function tablaMetricas(rows){
+  const cnt=(e,o)=>rows.filter(r=>r.e===e&&(o==null||r.o===o)).length;
+  const hoy=new Date(), dias=[...Array(7)].map((_,k)=>{ const d=new Date(hoy.getTime()-k*864e5); return d.toISOString().slice(0,10); }).reverse();
+  const wrap=el("div",{style:"display:grid;gap:14px"});
+  wrap.append(el("h3",{text:"Métricas internas",style:"font-size:20px;text-transform:uppercase"}));
+  wrap.append(el("p",{class:"nota",text:"Visitas: "+cnt("visita")+" · Obras abiertas: "+cnt("obra_abierta")+" · Obras armadas: "+cnt("obra_armada")+" · Trivias jugadas: "+cnt("trivia")+" · Partidas de juegos extra: "+(cnt("juego_bacheo")+cnt("juego_canos"))}));
+  const t=el("dl",{class:"ficha"});
+  OBRAS.forEach(o=>{ const a=cnt("obra_abierta",o.id), h=cnt("obra_armada",o.id); t.append(el("div",{},[el("dt",{text:o.nombre}),el("dd",{text:a+" abiertas · "+h+" armadas"+(a?" ("+Math.round(h/a*100)+"%)":"")})])); });
+  wrap.append(t);
+  const d=el("dl",{class:"ficha"}); dias.forEach(x=>d.append(el("div",{},[el("dt",{text:x}),el("dd",{text:rows.filter(r=>r.e==="visita"&&r.d===x).length+" visitas"})]))); 
+  wrap.append(el("div",{class:"eyebrow",text:"Últimos 7 días"}),d);
+  return wrap;
+}
 async function renderAdmin(){
   const box=$("#admBox"); const p=t=>el("p",{text:t,style:"margin:0"});
-  if(EN_CLAUDE){ box.replaceChildren(p("En esta versión el ranking lo reinicia Claude desde el chat.")); return; }
+  if(EN_CLAUDE){
+    const user=await window.claude.use("user"); const own=user?await user.isOwner():false;
+    if(!own){ box.replaceChildren(p("Esta sección es interna.")); return; }
+    await new Promise(r=>{ const w=()=>Store.mode==="shared"?r():setTimeout(w,300); w(); });
+    const snap=await Store.db.collection("metricas").get(); box.replaceChildren(tablaMetricas(snap.docs.map(d=>d.data())), p("El ranking lo reinicia Claude desde el chat.")); return; }
   if(!FIREBASE_CONFIG){ box.replaceChildren(p("El ranking compartido todavía no está configurado.")); return; }
   try{ const v="10.12.2", b="https://www.gstatic.com/firebasejs/"+v+"/"; if(!window.firebase){ await loadScript(b+"firebase-app-compat.js"); await loadScript(b+"firebase-auth-compat.js"); await loadScript(b+"firebase-firestore-compat.js"); } if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); }catch(e){ box.replaceChildren(p("No se pudo conectar con la base de datos.")); return; }
   const auth=firebase.auth(), db=firebase.firestore(), u=auth.currentUser;
@@ -1675,12 +1720,13 @@ async function renderAdmin(){
         await db.doc("config/actual").set({temporada:temp+1}); toast("Listo: el ranking quedó en 0."); renderAdmin(); }
       catch(e){ toast("No se pudo borrar: revisá los permisos."); si.disabled=false; } });
   });
-  box.replaceChildren(p("Sesión iniciada como "+u.email+"."), info, fila);
+  const met=await db.collection("metricas").get().catch(()=>null);
+  box.replaceChildren(p("Sesión iniciada como "+u.email+"."), info, fila, met?tablaMetricas(met.docs.map(d=>d.data())):p("Sin métricas todavía."));
 }
 
 /* ============ COMPLETAR, TARJETA, FESTEJO ============ */
 function completar(){
-  const o=cur.o, nueva=!Player.obras[o.id];
+  const o=cur.o, nueva=!Player.obras[o.id]; Store.track("obra_armada",o.id);
   if(nueva) Player.obras[o.id]=Date.now();
   Store.save(); refreshChrome();
   const n=Object.keys(Player.obras).length;
@@ -1737,7 +1783,7 @@ $("#shareSave").addEventListener("click",async()=>{
     msg.textContent = e&&e.code==="declined" ? "Cancelaste la descarga." : "Mantené presionada la tarjeta para guardarla en tu galería.";
   }
 });
-$("#arBtn").addEventListener("click",()=>{ if(EN_CLAUDE) toast("La realidad aumentada funciona en la versión publicada en GitHub."); else openAR(cur.o); });
+$("#arBtn").addEventListener("click",()=>{ if(EN_CLAUDE) toast("«Ponela en tu mesa» funciona en la versión publicada en GitHub."); else openAR(cur.o); });
 
 /* Antes / después */
 function setAD(v){ $("#adDespues").style.clipPath=`inset(0 0 0 ${v}%)`; $("#adMango").style.left=v+"%"; $("#adRange").value=v; }
@@ -1775,6 +1821,61 @@ function renderRanking(){
 Store.on(()=>{ if(!$("#v-ranking").hidden) renderRanking(); });
 
 
+
+/* ============ RITA TE EXPLICA ============ */
+const COMO={
+  punilla:["Una autovía es una ruta con dos calzadas separadas: los autos que van y los que vienen nunca se cruzan de frente. Por eso es mucho más segura.",
+    "Antes de asfaltar se prepara el suelo: se nivela y se compacta la subrasante, para que el piso no se hunda con el peso.",
+    "Arriba van capas de ripio y material firme, la sub-base y la base. Reparten el peso de los camiones y dejan escurrir el agua de lluvia.",
+    "La carpeta asfáltica es la capa de arriba de todo: lisa e impermeable, para que los autos rueden bien y el agua no se meta.",
+    "Donde hay agua, la ruta cruza con puentes. El de esta autovía pasa 480 metros sobre el lago San Roque, apoyado en pilas que bajan hasta el fondo.",
+    "Al final se pintan las líneas y se ponen carteles y luces. Así la autovía saca el tránsito pasante de adentro de los pueblos del valle."],
+  altonivel:["Por la avenida Vélez Sarsfield pasan juntos los autos del barrio y los que van rápido hacia la autovía a Río Cuarto. Eso arma embotellamientos.",
+    "La solución es un altonivel: un puente largo que lleva por arriba el tránsito rápido, mientras abajo sigue la avenida del barrio.",
+    "Primero se hacen los pilotes: columnas de hormigón enterradas bien profundo, hasta llegar a suelo firme.",
+    "Sobre los pilotes se levantan columnas, y encima van vigas de una columna a otra, como un puente de muchos tramos.",
+    "Sobre las vigas va el tablero, que es el piso del viaducto. En cada punta, una rampa sube y baja los autos.",
+    "Arriba, un separador New Jersey divide los dos sentidos. Abajo, semáforos y rotondas ordenan el barrio sin frenar a los que pasan por arriba."],
+  "san-roque":["Un dique es un muro que cierra un valle y frena un río. El agua se junta detrás y forma un lago, que funciona como una gran reserva.",
+    "El paredón se apoya sobre roca firme, porque tiene que aguantar el empuje de muchísima agua.",
+    "El lago guarda agua en la época de lluvias para usarla en la época seca. De acá sale agua potable para la ciudad de Córdoba.",
+    "Para generar electricidad, el agua baja por caños hasta las turbinas. La caída las hace girar, y un generador convierte ese giro en energía.",
+    "Si llueve mucho y el lago se llena, el agua que sobra cae por un vertedero en forma de embudo y sale por un túnel, sin pasar por encima del paredón.",
+    "Manejar un dique es buscar el equilibrio: guardar agua para cuando falte y dejar lugar para recibir una crecida sin inundar río abajo."],
+  "los-molinos":["El dique Los Molinos cierra el valle del río Los Molinos con un paredón de 60 metros: alto como un edificio de 20 pisos.",
+    "Detrás del paredón se forma un lago enorme, que guarda 399 millones de metros cúbicos de agua.",
+    "Esa reserva sirve para regular el río, evitar crecidas y llevar agua potable hacia la ciudad de Córdoba.",
+    "Su central tiene cuatro turbinas de 13 MW cada una: el agua cae, las hace girar y así se genera electricidad.",
+    "Cuando el lago se llena, el agua sale por el vertedero de ventanas, unas aberturas en lo alto del paredón, y cae al río.",
+    "Igual que en todo dique, hay que guardar agua para la época seca y dejar lugar para las tormentas."],
+  "rio-grande":["Río Grande es una central de bombeo. Tiene dos lagos: uno arriba, Cerro Pelado, y otro abajo, Arroyo Corto, con 185 metros de diferencia de altura.",
+    "En las horas en que más electricidad se usa, el agua baja del lago de arriba por túneles y mueve cuatro turbinas enormes, a unos 180 metros bajo tierra.",
+    "De noche la gente usa menos electricidad y sobra energía en la red. La central la aprovecha para bombear agua de vuelta al lago de arriba.",
+    "Las mismas máquinas hacen las dos cosas: giran para un lado para generar y para el otro para bombear. Por eso se llaman turbinas reversibles.",
+    "Funciona como una batería gigante: guarda energía en forma de agua en altura y la devuelve cuando más se necesita."],
+  acueducto:["Un acueducto es un caño gigante que lleva agua desde un lugar donde sobra hasta otro donde falta.",
+    "Este acueducto toma agua del río Paraná, en Coronda, provincia de Santa Fe, y la lleva hasta San Francisco, en Córdoba.",
+    "Antes de viajar, el agua se potabiliza: se limpia y se desinfecta para que se pueda tomar sin riesgo.",
+    "Como el camino es muy largo, estaciones de bombeo empujan el agua para que siga avanzando por el caño principal, que se llama troncal.",
+    "Del troncal salen ramales hacia cada localidad. Allí el agua llega a tanques y de los tanques va a las casas.",
+    "La primera etapa tiene 144 kilómetros de troncal y 345 de ramales, y va a llevar agua a 410.000 personas."],
+  "bajo-grande":["Todo lo que se va por la pileta, la ducha y el inodoro viaja por las cloacas: caños que bajan en pendiente hasta una planta de tratamiento.",
+    "En Bajo Grande, primero unas rejas y desarenadores retienen la basura, la arena y los sólidos grandes.",
+    "Después el agua pasa por los sedimentadores: piletas redondas enormes donde lo pesado se va al fondo y se separa.",
+    "En los tanques de aireación se le mete aire al agua, y unas bacterias buenas se comen la suciedad que todavía queda.",
+    "Al final, el agua tratada vuelve al río Suquía, que sigue hasta la laguna Mar de Ansenuza. Así se cuida el río y la salud de todos."]
+};
+const COMOM=Mascota($("#comoMasc")); const CM={i:0,o:null};
+function renderComo(o){ CM.o=o; CM.i=0; comoPaso(false); }
+function comoPaso(hablar=true){
+  const ps=COMO[CM.o.id]; if(!ps){ $("#oComo").hidden=true; return; } $("#oComo").hidden=false;
+  $("#comoDots").replaceChildren(...ps.map((_,k)=>el("i",{class:k===CM.i?"on":""})));
+  COMOM.say(ps[CM.i], CM.i===ps.length-1?"feliz":"tranquila", hablar);
+  $("#comoAnt").disabled=CM.i===0; $("#comoSig").textContent=CM.i===ps.length-1?"Volver a empezar":"Siguiente";
+}
+$("#comoSig").addEventListener("click",()=>{ const n=COMO[CM.o.id].length; CM.i=(CM.i+1)%n; comoPaso(); });
+$("#comoAnt").addEventListener("click",()=>{ if(CM.i>0){ CM.i--; comoPaso(); } });
+
 /* ============ TRIVIA RELÁMPAGO ============ */
 const TRIVIA={
   punilla:[["¿Cuántos kilómetros tiene la Autovía de Punilla?",["21,8 km","5 km","120 km"]],["¿Sobre qué lago pasa su puente más largo?",["San Roque","Los Molinos","Mar de Ansenuza"]],["¿Qué capa va arriba de todo en una ruta?",["Carpeta asfáltica","Subrasante","Sub-base de ripio"]]],
@@ -1805,6 +1906,7 @@ function renderTrivia(o){
   };
   const fin=()=>{
     ops.replaceChildren(); q.textContent="Acertaste "+ok+" de 3.";
+    Store.track("trivia",o.id,ok);
     if(ok>prev){ Player.trivia[o.id]=ok; Store.save(); refreshChrome(); }
     M.say(ok===3?"¡Perfecto! Sabés un montón de esta obra.":ok>0?"¡Bien! Podés volver a intentarlo para sacar 3 de 3.":"No pasa nada: mirá la ficha técnica y probá de nuevo.", ok===3?"feliz":ok>0?"tranquila":"triste");
     const again=el("button",{class:"btn blanco",type:"button",text:"Jugar otra vez"}); again.addEventListener("click",()=>renderTrivia(o)); pie.replaceChildren(again);
@@ -1874,7 +1976,7 @@ function bchDraw(){
   if(BCH.flash>0){ x.fillStyle="rgba(226,70,76,"+(BCH.flash*1.4)+")"; x.fillRect(0,0,W,H); }
 }
 function bchEnd(){
-  BCH.on=false; const rec=Player.juegos.bacheo||0;
+  BCH.on=false; Store.track("juego_bacheo",cur?cur.o.id:"",BCH.pts); const rec=Player.juegos.bacheo||0;
   if(BCH.pts>rec){ Player.juegos.bacheo=BCH.pts; Store.save(); refreshChrome(); }
   BM_M.say((BCH.vidas<=0?"Se terminaron las vidas. ":"¡Tiempo! ")+"Tapaste "+BCH.pts+" baches"+(BCH.pts>rec&&rec>0?": ¡nuevo récord!":".")+(BCH.pts>=15?" ¡Sos un experto en bacheo!":" ¿Lo intentamos otra vez?"), BCH.pts>=15?"feliz":BCH.vidas<=0?"triste":"tranquila");
   $("#bchStart").hidden=false; $("#bchStart").textContent="Jugar otra vez";
@@ -1911,7 +2013,7 @@ function cnPoner(sl){
   if(!CN.sel){ CN_M.say("Primero elegí un caño de la lista de abajo.","preocupada"); return; }
   const cn=CANOS.find(c=>c.id===CN.sel);
   if(sl.dataset.id===cn.id){ sl.classList.add("lleno"); sl.style.background=cn.c; sl.style.borderColor=cn.c; sl.textContent=cn.n; document.querySelector('.cano[data-id="'+cn.id+'"]').classList.add("usado"); CN.sel=null; CN.puestos++; CN_M.say(cn.ok,"feliz");
-    if(CN.puestos===4){ const p=CN.err===0?100:CN.err===1?80:CN.err===2?60:40; const rec=Player.juegos.canos||0; if(p>rec){ Player.juegos.canos=p; Store.save(); refreshChrome(); }
+    if(CN.puestos===4){ Store.track("juego_canos",cur?cur.o.id:"",CN.err); const p=CN.err===0?100:CN.err===1?80:CN.err===2?60:40; const rec=Player.juegos.canos||0; if(p>rec){ Player.juegos.canos=p; Store.save(); refreshChrome(); }
       setTimeout(()=>CN_M.say("¡Calle lista! Ubicaste todo "+(CN.err?"con "+CN.err+(CN.err===1?" error":" errores"):"sin errores")+" y sumaste "+p+" puntos. Así se ordenan los servicios en general, para que cada uno funcione seguro.","feliz"),1400); }
   } else { CN.err++; sl.animate([{transform:"translate(-50%,-50%)"},{transform:"translate(-46%,-50%)"},{transform:"translate(-54%,-50%)"},{transform:"translate(-50%,-50%)"}],{duration:300}); CN_M.say(cn.mal,"preocupada"); }
 }
@@ -1952,7 +2054,11 @@ $("#regForm").addEventListener("submit",e=>{
   if(cur && Player.obras[cur.o.id]) renderShare();
 });
 
+$("#vozBtn").addEventListener("click",()=>{ VOZ.on=!VOZ.on; LS.set("arma.voz",VOZ.on); vozUI(); if(VOZ.on) hablar("¡Hola! Soy Rita. Ahora te voy a hablar mientras jugás."); else try{ speechSynthesis.cancel(); }catch(e){} });
+vozUI(); if(!("speechSynthesis" in window)) $("#vozBtn").hidden=true;
+
 /* ============ ARRANQUE ============ */
+Store.track("visita",location.hash.replace("#","")||"inicio");
 refreshChrome();
 route();
 loop();
