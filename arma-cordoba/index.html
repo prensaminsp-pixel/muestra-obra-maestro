@@ -53,7 +53,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .dots{display:flex;gap:4px}
 .dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.3);display:block}
 .dots i.on{background:var(--amarillo)}
-.chip-user span{font-weight:600;font-size:13px;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.chip-user span{font-weight:600;font-size:13px;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 .barra{display:flex;height:4px}
 .barra i{flex:1}
 
@@ -234,6 +234,54 @@ body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
 
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:40;background:var(--tinta);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
 
+/* Mascota */
+.masc{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;align-items:end}
+.masc svg{width:72px;height:60px;display:block;overflow:visible}
+.burbuja{position:relative;background:#fff;color:var(--tinta);border-radius:14px 14px 14px 4px;padding:10px 13px;font-size:14px;line-height:1.4;min-height:2.6em;border:2px solid transparent}
+.burbuja b.quien{display:block;font-family:var(--f-display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--tenue);margin-bottom:1px}
+.masc.preocupada .burbuja{border-color:#E2464C;background:#FFF1F0}
+.masc.triste .burbuja{border-color:#9AA6B2;background:#F2F4F6}
+.masc.feliz .burbuja{border-color:#32A430;background:#F0FAEE}
+.masc .cara{display:none}
+.masc.tranquila .c-tranquila,.masc.feliz .c-feliz,.masc.preocupada .c-preocupada,.masc.triste .c-triste{display:inline}
+.masc.feliz svg{animation:salto .6s ease-in-out 2}
+.masc.preocupada svg{animation:tiembla .35s ease-in-out 3}
+.masc.triste svg{transform:translateY(3px)}
+.masc .brazo{transform-origin:30px 60px;animation:pala 3s ease-in-out infinite}
+@keyframes salto{50%{transform:translateY(-8px)}}
+@keyframes tiembla{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+@keyframes pala{50%{transform:rotate(-8deg)}}
+.masc.sobre-claro .burbuja{box-shadow:0 2px 0 var(--linea)}
+/* Trivia y minijuegos */
+.trivia{display:grid;gap:10px}
+.opciones{display:grid;gap:8px}
+.opcion{border:2px solid var(--linea);background:var(--papel);border-radius:12px;padding:12px 14px;text-align:left;font-weight:600;font-size:14.5px;cursor:pointer;color:var(--tinta)}
+.opcion.bien{border-color:var(--verde);background:#E9F7E7}
+.opcion.mal{border-color:var(--rojo);background:#FDECEA}
+.opcion[disabled]{cursor:default}
+.puntos{font-family:var(--f-display);font-weight:800;color:var(--azul)}
+.juegos-home{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;padding-block:4px 18px}
+.juego-card{display:grid;gap:4px;background:var(--azul);color:#fff;border:0;border-radius:var(--r);padding:16px;text-align:left;cursor:pointer}
+.juego-card b{font-family:var(--f-display);font-size:22px;text-transform:uppercase;line-height:1}
+.juego-card span{font-size:13px;opacity:.85}
+.juego-card small{font-size:12px;color:var(--amarillo);font-weight:700}
+.mini-head{padding-block:18px 10px;display:grid;gap:6px}
+.mini-head h1{font-size:clamp(30px,8vw,44px);font-weight:800;text-transform:uppercase;line-height:.95}
+.mini-stage{position:relative;width:100%;height:min(62vh,560px);min-height:360px;background:#5B6068;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.mini-stage canvas{display:block;width:100%;height:100%}
+.mini-hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;padding:10px 12px;color:#fff;font-family:var(--f-display);font-weight:800;font-size:20px;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.corte{position:relative;width:100%;height:min(58vh,520px);min-height:380px;overflow:hidden;background:linear-gradient(#BFE3F5 0 12%,#9AA0A6 12% 15%,#B98E62 15% 100%)}
+.corte .vereda{position:absolute;left:0;top:12%;width:38%;height:3%;background:#D9D6CF}
+.corte .calle{position:absolute;left:38%;right:0;top:12%;height:3%;background:#3B3F46}
+.corte .capa{position:absolute;left:0;right:0;height:1px;background:rgba(0,0,0,.08)}
+.corte .slot{position:absolute;left:50%;transform:translate(-50%,-50%);width:min(56%,300px);height:44px;border:3px dashed rgba(255,255,255,.8);border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;background:rgba(0,0,0,.08);cursor:pointer}
+.corte .slot.lleno{border-style:solid;color:#fff}
+.corte .prof{position:absolute;left:50%;transform:translate(-50%,-50%);font-size:11px;color:#fff;font-weight:700;opacity:.95;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.canos{display:flex;flex-wrap:wrap;gap:8px}
+.cano{display:flex;align-items:center;gap:8px;border:2px solid var(--linea);background:var(--papel);border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px;cursor:pointer;color:var(--tinta)}
+.cano i{width:26px;height:14px;border-radius:7px;display:block}
+.cano.sel{border-color:var(--celeste);box-shadow:0 0 0 3px rgba(0,154,218,.25)}
+.cano.usado{opacity:.35;pointer-events:none}
 footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:420px){.dato b{font-size:46px}.tarjeta-prev{grid-template-columns:110px 1fr}.marca small{display:none}}
@@ -263,6 +311,13 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
     </div>
     <div class="stage" id="mapStage"><div class="hint3d" id="mapHint">Arrastrá para girar · Tocá un número</div></div>
     <div class="wrap lista" id="lista"></div>
+    <div class="wrap">
+      <div class="eyebrow" style="padding-top:8px">Juegos rápidos</div>
+      <div class="juegos-home">
+        <button class="juego-card" type="button" id="goBacheo"><b>Bacheo exprés</b><span>Tapá los pozos antes de que pasen los autos.</span><small id="recBacheo"></small></button>
+        <button class="juego-card" type="button" id="goCanos" style="background:#AF4178"><b>¿Dónde va cada caño?</b><span>Ubicá los servicios debajo de la calle.</span><small id="recCanos"></small></button>
+      </div>
+    </div>
     <footer class="wrap">Datos tomados de comunicaciones oficiales y medios. Las simulaciones de los juegos son didácticas.</footer>
   </section>
 
@@ -282,7 +337,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
           <div class="fila"><span class="paso" id="jPaso"></span><button class="btn-sec" id="jReset">Empezar de nuevo</button></div>
         </div>
         <div class="barra-prog"><i id="jProg"></i></div>
-        <p class="consigna" id="jConsigna" aria-live="polite"></p>
+        <div class="masc tranquila" id="jMasc" aria-live="polite"></div>
         <div class="bandeja" id="jBandeja"></div>
         <div class="regula" id="jRegula" hidden>
           <div class="reg-top"><b id="rMes">Verano</b><span id="rClima"></span><em id="rTiempo"></em></div>
@@ -337,6 +392,12 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       </article>
 
       <article class="bloque">
+        <div class="eyebrow">Trivia relámpago</div>
+        <h2>¿Cuánto aprendiste?</h2>
+        <div class="trivia" id="oTrivia"></div>
+      </article>
+
+      <article class="bloque">
         <div class="eyebrow">Ficha técnica</div>
         <h2>Los números de la obra</h2>
         <dl class="ficha" id="oFicha"></dl>
@@ -378,6 +439,20 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
     </div>
   </section>
 
+  <!-- BACHEO -->
+  <section class="view" id="v-bacheo" hidden>
+    <div class="wrap mini-head"><div class="eyebrow">Juego rápido · Vialidad</div><h1>Bacheo exprés</h1></div>
+    <div class="mini-stage" id="bchStage"><canvas id="bchCanvas"></canvas><div class="mini-hud"><span id="bchVidas"></span><span id="bchPts">0</span><span id="bchT">45</span></div></div>
+    <div class="juego"><div class="wrap"><div class="masc tranquila" id="bchMasc"></div><div class="fila"><button class="btn amar" id="bchStart" type="button">Empezar</button><button class="btn-sec" id="bchVolver" type="button">Volver al mapa</button></div></div></div>
+  </section>
+
+  <!-- CAÑOS -->
+  <section class="view" id="v-canos" hidden>
+    <div class="wrap mini-head"><div class="eyebrow">Juego rápido · Servicios públicos</div><h1>¿Dónde va cada caño?</h1></div>
+    <div class="corte" id="cnCorte"><div class="vereda"></div><div class="calle"></div></div>
+    <div class="juego"><div class="wrap"><div class="masc tranquila" id="cnMasc"></div><div class="canos" id="cnCanos"></div><div class="fila"><button class="btn-sec" id="cnReset" type="button">Empezar de nuevo</button><button class="btn-sec" id="cnVolver" type="button">Volver al mapa</button></div></div></div>
+  </section>
+
   <!-- ADMIN -->
   <section class="view" id="v-admin" hidden>
     <div class="wrap adm">
@@ -396,7 +471,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       </div>
       <div class="rk-stats">
         <div class="stat"><b id="sJug">0</b><span>ingenieros</span></div>
-        <div class="stat"><b id="sObras">0</b><span>obras armadas</span></div>
+        <div class="stat"><b id="sObras">0</b><span>obras armadas entre todos</span></div>
         <div class="stat"><b id="sYo">–</b><span>tu puesto</span></div>
       </div>
       <div class="podio" id="podio"></div>
@@ -409,9 +484,8 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
 <!-- Registro -->
 <div class="modal" id="mReg" hidden>
   <form class="caja" id="regForm" autocomplete="off">
-    <svg class="casco" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44h48v6H8z" fill="#004582"/><path d="M12 44a20 20 0 0 1 40 0z" fill="#F7BE2B"/><path d="M28 18h8v26h-8z" fill="#EB7F27"/></svg>
+    <div class="masc feliz sobre-claro" id="regMasc"></div>
     <h2>Bienvenido/a, ingeniero/a</h2>
-    <p>Elegí un nombre para aparecer en el ranking.</p>
     <div style="display:grid;gap:6px">
       <label for="alias">Tu nombre de ingeniero/a</label>
       <input id="alias" name="alias" maxlength="18" placeholder="Ej: Caro de Cosquín" required>
@@ -426,7 +500,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
   <div class="caja festejo">
     <div class="eyebrow" id="finEje"></div>
     <h2 id="finTitulo">¡Obra terminada!</h2>
-    <p id="finTexto"></p>
+    <div class="masc feliz sobre-claro" id="finMasc"></div>
     <div class="fila">
       <button class="btn amar" id="finShare">Ver mi tarjeta</button>
       <button class="btn blanco" id="finRank">Ver ranking</button>
@@ -613,7 +687,9 @@ function toast(msg,ms=2600){ const t=$("#toast"); t.textContent=msg; t.hidden=fa
 const LS = { get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
 
 /* ============ JUGADOR Y RANKING ============ */
-const Player = LS.get("arma.player", {alias:"", obras:{}});
+const Player = Object.assign({alias:"", obras:{}, trivia:{}, juegos:{}}, LS.get("arma.player", {}));
+Player.trivia=Player.trivia||{}; Player.juegos=Player.juegos||{};
+const puntos=()=> Object.keys(Player.obras).length*100 + Object.values(Player.trivia).reduce((a,b)=>a+b,0)*20 + Math.min(40,Player.juegos.bacheo||0)*5 + (Player.juegos.canos||0);
 /* Ranking compartido.
    - Dentro de Claude: base de datos del artifact.
    - En GitHub: Firebase (pegar la configuración web en FIREBASE_CONFIG).
@@ -652,7 +728,7 @@ const Store = {
       // temporada
       const cfg = await db.doc("config/actual").get().catch(()=>null);
       const temporada = cfg && cfg.exists ? ((cfg.data()||{}).temporada||1) : 1;
-      if(Player.temporada!==temporada){ Player.obras={}; Player.temporada=temporada; LS.set("arma.player",Player); refreshChrome(); }
+      if(Player.temporada!==temporada){ Player.obras={}; Player.trivia={}; Player.juegos={}; Player.temporada=temporada; LS.set("arma.player",Player); refreshChrome(); }
       db.collection("ingenieros").onSnapshot(snap=>{
         this.rows = snap.docs.map(d=>({id:d.id, ...d.data()})).filter(r=>r && r.alias && (r.temporada||1)===temporada);
         this.emit();
@@ -667,7 +743,7 @@ const Store = {
           if(Player.alias) $("#mReg").hidden=true;
         }
       }
-      if(Player.alias && Object.keys(Player.obras).length) this.save();
+      if(Player.alias && puntos()>0) this.save();
     }catch(e){ console.warn(e); this.mode="local"; }
     this.emit();
   },
@@ -676,7 +752,7 @@ const Store = {
     if(this.mode!=="shared") { this.emit(); return; }
     const obras=Object.keys(Player.obras);
     try{
-      await this.db.doc("ingenieros/"+this.uid).set({alias:Player.alias, obras, count:obras.length, temporada:Player.temporada||1, updatedAt: Math.max(0,...Object.values(Player.obras)) || Date.now()});
+      await this.db.doc("ingenieros/"+this.uid).set({alias:Player.alias, obras, count:obras.length, puntos:puntos(), temporada:Player.temporada||1, updatedAt: Math.max(0,...Object.values(Player.obras)) || Date.now()});
     }catch(e){ toast("No se pudo guardar en el ranking compartido. Tu avance queda en este celular."); }
   },
   list(){
@@ -684,9 +760,10 @@ const Store = {
     const meId = this.mode==="shared" ? this.uid : "yo";
     if(Player.alias && !rows.some(r=>r.id===meId)){
       const obras=Object.keys(Player.obras);
-      rows.push({id:meId, alias:Player.alias, obras, count:obras.length, updatedAt:Math.max(0,...Object.values(Player.obras))});
+      rows.push({id:meId, alias:Player.alias, obras, count:obras.length, puntos:puntos(), updatedAt:Math.max(0,...Object.values(Player.obras))});
     }
-    rows.sort((a,b)=> (b.count||0)-(a.count||0) || (a.updatedAt||0)-(b.updatedAt||0));
+    const P=r=>r.puntos!=null?r.puntos:(r.count||0)*100;
+    rows.sort((a,b)=> P(b)-P(a) || (b.count||0)-(a.count||0) || (a.updatedAt||0)-(b.updatedAt||0));
     return {rows, meId};
   },
   on(fn){ this.listeners.push(fn); }, emit(){ this.listeners.forEach(f=>f()); }
@@ -699,6 +776,30 @@ function aliasOk(a){
   if(PROHIBIDAS.some(p=>n.includes(p))) return "Elegí otro nombre: lo van a ver todos en el ranking.";
   return "";
 }
+
+
+/* ============ MASCOTA: Rita, la retro ============ */
+const MASC_SVG=`<svg viewBox="0 0 130 104" aria-hidden="true">
+<g class="brazo"><path d="M40 60 L22 26 L8 50" stroke="#EB7F27" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M0 47 h17 l-4 14 h-10 z" fill="#5A6B7A"/></g>
+<rect x="30" y="56" width="90" height="24" rx="7" fill="#F7BE2B"/>
+<rect x="62" y="14" width="52" height="46" rx="11" fill="#F7BE2B"/>
+<rect x="68" y="20" width="40" height="32" rx="8" fill="#EAF6FF"/>
+<rect x="114" y="62" width="14" height="12" rx="3" fill="#5A6B7A"/>
+<rect x="34" y="62" width="22" height="4" rx="2" fill="#E0A81E"/>
+<circle cx="50" cy="86" r="14" fill="#2B2F36"/><circle cx="50" cy="86" r="5" fill="#9AA4AD"/>
+<circle cx="102" cy="86" r="14" fill="#2B2F36"/><circle cx="102" cy="86" r="5" fill="#9AA4AD"/>
+<g class="cara c-tranquila"><circle cx="81" cy="34" r="3" fill="#0B2440"/><circle cx="95" cy="34" r="3" fill="#0B2440"/><path d="M82 43 Q88 47.5 94 43" stroke="#0B2440" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>
+<g class="cara c-feliz"><path d="M77.5 35 Q81 30 84.5 35" stroke="#0B2440" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M91.5 35 Q95 30 98.5 35" stroke="#0B2440" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M80 41 Q88 51 96 41 Z" fill="#C2593F"/><circle cx="75" cy="41" r="2.6" fill="#F4A6A0"/><circle cx="101" cy="41" r="2.6" fill="#F4A6A0"/></g>
+<g class="cara c-preocupada"><path d="M77 30 L84 27.5" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><path d="M92 27.5 L99 30" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><circle cx="81" cy="35" r="3" fill="#0B2440"/><circle cx="95" cy="35" r="3" fill="#0B2440"/><path d="M82 45 q3 -3 6 0 t6 0" stroke="#0B2440" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M106 18 q5 7 0 9 q-5 -2 0 -9z" fill="#7FD3F5"/></g>
+<g class="cara c-triste"><path d="M77 31 L84 29" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><path d="M92 29 L99 31" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><path d="M78 36 h6" stroke="#0B2440" stroke-width="2.6" stroke-linecap="round"/><path d="M92 36 h6" stroke="#0B2440" stroke-width="2.6" stroke-linecap="round"/><path d="M82 47 Q88 42 94 47" stroke="#0B2440" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M80 39 q3 5 0 6 q-3 -1 0 -6z" fill="#7FD3F5"/></g>
+</svg>`;
+function Mascota(box){
+  box.innerHTML=MASC_SVG+'<div class="burbuja"><b class="quien">Rita, la retro</b><span class="txt"></span></div>';
+  const txt=box.querySelector(".txt"); let last="";
+  return { say(t,mood="tranquila"){ if(t===last && box.classList.contains(mood)) return; last=t; txt.textContent=t; box.classList.remove("tranquila","feliz","preocupada","triste"); void box.offsetWidth; box.classList.add(mood); } };
+}
+const JM=Mascota($("#jMasc")), REGM=Mascota($("#regMasc")), FINM=Mascota($("#finMasc"));
+REGM.say("¡Hola! Soy Rita, la retro. Te voy a acompañar en cada obra. ¿Cómo querés que te llame?","feliz");
 
 /* ============ THREE: RENDERER ÚNICO ============ */
 const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
@@ -1302,7 +1403,7 @@ function snapshot(ctx, builtState){
   return url;
 }
 
-function consigna(t,cls=""){ const c=$("#jConsigna"); c.textContent=t; c.className="consigna "+cls; }
+function consigna(t,cls=""){ JM.say(t, cls==="ok"?"feliz":cls==="err"?"preocupada":cls==="triste"?"triste":"tranquila"); }
 function setProg(f){ $("#jProg").style.width=Math.round(f*100)+"%"; }
 
 function openObra(id){
@@ -1321,7 +1422,7 @@ function openObra(id){
   resetJuego(Player.obras[id]?"ya":"nuevo");
   // antes y después
   requestAnimationFrame(()=>{ $("#adAntes").src=snapshot(ctx,false); $("#adDespues").src=ctx._after||(ctx._after=snapshot(ctx,true)); setAD(50); });
-  renderShare();
+  renderShare(); renderTrivia(o);
   window.scrollTo({top:0});
 }
 function resetJuego(modo){
@@ -1408,7 +1509,7 @@ function regTick(dt){
 function regEnd(cls,t,d){
   Reg.on=false; Reg.ended=true;
   const r=$("#rRes"); r.className="resultado "+cls; r.hidden=false; $("#rResT").textContent=t; $("#rResD").textContent=d;
-  $("#rStart").hidden=true; consigna(cls==="ok"?"Manejaste el dique durante un año entero.":"Probá de nuevo: podés lograrlo.",cls==="ok"?"ok":"err");
+  $("#rStart").hidden=true; consigna(cls==="ok"?"¡Lo hiciste genial! Manejaste el dique durante un año entero.":t+". "+d+" ¡Probá de nuevo, vos podés!",cls==="ok"?"ok":"triste");
   if(cls==="ok"){ setProg(1); const o=cur.o; setTimeout(()=>{ if(cur&&cur.o===o) completar(); },700); }
 }
 $("#rStart").addEventListener("click",()=>{ if(Reg.ended) regReset(); Reg.on=true; $("#rStart").hidden=true; });
@@ -1461,7 +1562,7 @@ function bmTick(dt){
   if(BM.t>=2*DIA){ const cob=BM.picoOk/BM.pico; return cob>=0.75 ? bmEnd("ok","¡Dos días sin cortes!","Cubriste el "+Math.round(cob*100)+"% de las horas pico.") : bmEnd("mal","Faltó cubrir los picos","Cubriste el "+Math.round(cob*100)+"% de las horas pico y la meta es 75%."); }
 }
 function bmEnd(cls,t,d){
-  BM.on=false; BM.ended=true; const r=$("#bRes"); r.className="resultado "+cls; r.hidden=false; $("#bResT").textContent=t; $("#bResD").textContent=d; $("#bStart").hidden=true;
+  BM.on=false; BM.ended=true; const r=$("#bRes"); r.className="resultado "+cls; r.hidden=false; $("#bResT").textContent=t; $("#bResD").textContent=d; $("#bStart").hidden=true; consigna(cls==="ok"?"¡Excelente! La red no tuvo cortes en dos días.":t+". "+d+" ¡Probá otra vez!",cls==="ok"?"ok":"triste");
   if(cls==="ok"){ setProg(1); const o=cur.o; setTimeout(()=>{ if(cur&&cur.o===o) completar(); },700); }
 }
 $("#bStart").addEventListener("click",()=>{ if(BM.ended) bmReset(); BM.on=true; $("#bStart").hidden=true; });
@@ -1474,7 +1575,7 @@ async function openAR(o){
   try{ if(!customElements.get("model-viewer")) await loadScript("https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js",true); await customElements.whenDefined("model-viewer"); }
   catch(e){ box.replaceChildren(el("p",{class:"nota",text:"No se pudo cargar el visor 3D. Revisá la conexión a internet.",style:"padding:16px"})); return; }
   const mv=document.createElement("model-viewer");
-  [["src","models/"+o.id+".glb"],["ar",""],["ar-modes","webxr scene-viewer quick-look"],["ar-placement","floor"],["ar-scale","auto"],["camera-controls",""],["touch-action","pan-y"],["auto-rotate",""],["shadow-intensity","1"],["exposure","1.1"],["autoplay",""],["alt","Maqueta 3D de "+o.nombre]].forEach(([k,v])=>mv.setAttribute(k,v));
+  [["src","models/"+o.id+".glb"],["ios-src","models/"+o.id+".usdz"],["ar",""],["ar-modes","webxr scene-viewer quick-look"],["ar-placement","floor"],["ar-scale","auto"],["camera-controls",""],["touch-action","pan-y"],["auto-rotate",""],["shadow-intensity","1"],["exposure","1.1"],["autoplay",""],["alt","Maqueta 3D de "+o.nombre]].forEach(([k,v])=>mv.setAttribute(k,v));
   const b=el("button",{class:"btn amar ar-go",slot:"ar-button",type:"button",text:"Ponerla en mi mesa"}); mv.append(b);
   box.replaceChildren(mv);
   mv.addEventListener("load",()=>{ $("#arNota").textContent = mv.canActivateAR ? "Tocá «Ponerla en mi mesa», apuntá el celular a una mesa o al piso y movela con el dedo." : "Para verla sobre tu mesa, abrí esta página desde un celular. Acá podés girarla con el mouse."; });
@@ -1519,7 +1620,7 @@ function completar(){
   const n=Object.keys(Player.obras).length;
   $("#finEje").textContent=o.eje; $("#finEje").style.color=o.color;
   $("#finTitulo").textContent=nueva?"¡Obra terminada!":"¡La armaste otra vez!";
-  $("#finTexto").textContent=(nueva?"Sumaste: "+o.nombre+". ":"")+"Llevás "+n+" de "+OBRAS.length+" obras: tu rango es "+NIVELES(n)+".";
+  FINM.say((nueva?"¡Sumaste "+o.nombre+"! ":"¡Muy bien! ")+"Llevás "+n+" de "+OBRAS.length+" obras y tu rango es "+NIVELES(n)+". Abajo tenés una trivia para sumar más puntos.","feliz");
   $("#mFin").hidden=false;
   renderShare();
 }
@@ -1578,7 +1679,8 @@ $("#adRange").addEventListener("input",e=>setAD(+e.target.value));
 /* ============ HOME: LISTA Y CHROME ============ */
 function refreshChrome(){
   $("#dots").replaceChildren(...OBRAS.map(o=>el("i",{class:Player.obras[o.id]?"on":""})));
-  $("#chipName").textContent=Player.alias?("Ing. "+Player.alias):"Ranking";
+  $("#chipName").textContent=Player.alias?(Player.alias+" · "+puntos()+" pts"):"Ranking";
+  if($("#recBacheo")) { $("#recBacheo").textContent=Player.juegos.bacheo?"Tu récord: "+Player.juegos.bacheo+" baches":""; $("#recCanos").textContent=Player.juegos.canos?"Tu mejor: "+Player.juegos.canos+" pts":""; }
   $("#lista").replaceChildren(...OBRAS.map(o=>{
     const ok=!!Player.obras[o.id];
     const b=el("button",{class:"obra-card",type:"button"},[el("span",{class:"cinta",style:"background:"+o.color}), el("div",{},[el("div",{class:"eyebrow",style:"color:"+o.color},[el("span",{class:"num",style:"background:"+o.color,text:String(OBRAS.indexOf(o)+1)}),document.createTextNode(o.eje)]),el("h3",{text:o.nombre}),el("p",{text:o.lugar})]), el("span",{class:"estado"+(ok?" ok":""),text:ok?"Armada":"Para armar"})]);
@@ -1596,14 +1698,146 @@ function renderRanking(){
   const pod=$("#podio"); pod.replaceChildren();
   const top=rows.slice(0,3);
   if(top.length){
-    [1,0,2].forEach(i=>{ const r=top[i]; if(!r){ pod.append(el("div")); return; } pod.append(el("div",{class:"pod p"+(i+1)},[el("div",{class:"pos",text:(i+1)+"º"}),el("div",{class:"nom",text:r.alias}),el("div",{class:"cnt",text:(r.count||0)+((r.count||0)===1?" obra · ":" obras · ")+NIVELES(r.count||0)})])); });
+    [1,0,2].forEach(i=>{ const r=top[i]; if(!r){ pod.append(el("div")); return; } pod.append(el("div",{class:"pod p"+(i+1)},[el("div",{class:"pos",text:(i+1)+"º"}),el("div",{class:"nom",text:r.alias}),el("div",{class:"cnt",text:(r.puntos!=null?r.puntos:(r.count||0)*100)+" pts · "+(r.count||0)+((r.count||0)===1?" obra":" obras")})])); });
   }
   const ol=$("#rkList");
   if(!rows.length){ ol.replaceChildren(el("li",{class:"vacio",style:"display:block",text:"Todavía no hay ingenieros. Armá la primera obra y estrená el ranking."})); }
-  else ol.replaceChildren(...rows.map((r,i)=>el("li",{class:r.id===meId?"yo":""},[el("span",{class:"n",text:i+1}),el("div",{class:"who"},[el("b",{text:r.alias+(r.id===meId?" (vos)":"")}),el("small",{text:NIVELES(r.count||0)})]),el("span",{class:"c",text:r.count||0})])));
-  $("#rkModo").textContent = Store.mode==="shared" ? "Ranking en vivo: se actualiza solo cada vez que alguien termina una obra." : "Ranking guardado en este dispositivo.";
+  else ol.replaceChildren(...rows.map((r,i)=>el("li",{class:r.id===meId?"yo":""},[el("span",{class:"n",text:i+1}),el("div",{class:"who"},[el("b",{text:r.alias+(r.id===meId?" (vos)":"")}),el("small",{text:NIVELES(r.count||0)+" · "+(r.count||0)+((r.count||0)===1?" obra":" obras")})]),el("span",{class:"c",text:(r.puntos!=null?r.puntos:(r.count||0)*100)})])));
+  $("#rkModo").textContent = Store.mode==="shared" ? "Ranking en vivo. Puntos: 100 por obra armada, 20 por respuesta correcta en las trivias y extra en los juegos rápidos." : "Ranking guardado en este dispositivo. Puntos: 100 por obra armada, 20 por respuesta correcta en las trivias y extra en los juegos rápidos.";
 }
 Store.on(()=>{ if(!$("#v-ranking").hidden) renderRanking(); });
+
+
+/* ============ TRIVIA RELÁMPAGO ============ */
+const TRIVIA={
+  punilla:[["¿Cuántos kilómetros tiene la Autovía de Punilla?",["21,8 km","5 km","120 km"]],["¿Sobre qué lago pasa su puente más largo?",["San Roque","Los Molinos","Mar de Ansenuza"]],["¿Qué capa va arriba de todo en una ruta?",["Carpeta asfáltica","Subrasante","Sub-base de ripio"]]],
+  altonivel:[["¿Para qué sirve el altonivel?",["Para separar el tránsito rápido del tránsito del barrio","Para cruzar un río","Para estacionar camiones"]],["¿Cuánto mide el viaducto?",["600 metros","60 metros","6 kilómetros"]],["¿Qué se pone primero, enterrado en el suelo?",["Los pilotes","Las vigas","El asfalto"]]],
+  "san-roque":[["¿Cómo es el vertedero del dique San Roque?",["Tiene forma de embudo","Tiene ventanas","Es una escalera"]],["¿Qué río regula el dique San Roque?",["El Suquía","El Paraná","El Uruguay"]],["¿Qué pasa si el lago se llena demasiado y no sale agua?",["Puede desbordar","Se congela","Se evapora en un día"]]],
+  "los-molinos":[["¿Cuánto mide de alto el paredón?",["60 metros, como un edificio de 20 pisos","6 metros","600 metros"]],["¿Cuántas turbinas tiene su central?",["4","1","40"]],["¿Por dónde sale el agua cuando el lago se llena?",["Por el vertedero de ventanas","Por arriba del paredón","Por un túnel hasta el mar"]]],
+  "rio-grande":[["¿Qué hace la central de noche, cuando sobra energía?",["Bombea agua al lago de arriba","Se apaga para siempre","Genera más que nunca"]],["¿Dónde está la sala de máquinas?",["Unos 180 metros bajo tierra","En la cima de un cerro","En la ciudad de Córdoba"]],["¿Qué potencia tiene la central?",["750 MW","7 MW","75.000 MW"]]],
+  acueducto:[["¿De qué río toma el agua el acueducto?",["Del Paraná","Del Suquía","Del río Cuarto"]],["¿Cuántas personas van a recibir agua en la primera etapa?",["410.000","4.100","41 millones"]],["¿Qué ciudades une la primera etapa?",["Coronda y San Francisco","Córdoba y Mendoza","Carlos Paz y Cosquín"]]],
+  "bajo-grande":[["¿Qué hace la planta Bajo Grande?",["Limpia los líquidos cloacales antes de volver al río","Fabrica agua mineral","Genera electricidad"]],["¿A qué río vuelve el agua tratada?",["Al Suquía","Al Paraná","Al Uruguay"]],["¿Qué hacen las bacterias en los tanques de aireación?",["Se comen la materia orgánica","Pintan el agua","Calientan el agua"]]]
+};
+function renderTrivia(o){
+  const box=$("#oTrivia"); const qs=TRIVIA[o.id]; if(!qs){ box.closest(".bloque").hidden=true; return; } box.closest(".bloque").hidden=false;
+  const mBox=el("div",{class:"masc tranquila sobre-claro"}), M=Mascota(mBox), q=el("p",{style:"margin:0;font-weight:700;font-size:16px"}), ops=el("div",{class:"opciones"}), pie=el("div",{class:"fila"});
+  box.replaceChildren(mBox,q,ops,pie);
+  let i=0, ok=0;
+  const prev=Player.trivia[o.id]||0;
+  M.say(prev? "Ya hiciste esta trivia y acertaste "+prev+" de 3. ¡Podés mejorar tu marca!" : "¡Tres preguntas rápidas! Cada respuesta correcta suma 20 puntos.","tranquila");
+  const show=()=>{
+    const [preg,opts]=qs[i]; q.textContent=(i+1)+" de 3 · "+preg;
+    const orden=opts.map((t,k)=>({t,k})).sort(()=>Math.random()-0.5);
+    ops.replaceChildren(...orden.map(x=>{ const b=el("button",{class:"opcion",type:"button",text:x.t}); b.addEventListener("click",()=>{
+      ops.querySelectorAll("button").forEach(z=>z.disabled=true);
+      if(x.k===0){ b.classList.add("bien"); ok++; M.say(["¡Correcto!","¡Muy bien!","¡Exacto!"][i%3],"feliz"); }
+      else { b.classList.add("mal"); ops.querySelectorAll("button").forEach(z=>{ if(z.textContent===opts[0]) z.classList.add("bien"); }); M.say("Casi. La respuesta era: "+opts[0]+".","preocupada"); }
+      const nx=el("button",{class:"btn",type:"button",text:i<2?"Siguiente":"Ver resultado"}); pie.replaceChildren(nx);
+      nx.addEventListener("click",()=>{ i++; pie.replaceChildren(); if(i<3) show(); else fin(); });
+    }); return b; }));
+  };
+  const fin=()=>{
+    ops.replaceChildren(); q.textContent="Acertaste "+ok+" de 3.";
+    if(ok>prev){ Player.trivia[o.id]=ok; Store.save(); refreshChrome(); }
+    M.say(ok===3?"¡Perfecto! Sabés un montón de esta obra.":ok>0?"¡Bien! Podés volver a intentarlo para sacar 3 de 3.":"No pasa nada: mirá la ficha técnica y probá de nuevo.", ok===3?"feliz":ok>0?"tranquila":"triste");
+    const again=el("button",{class:"btn blanco",type:"button",text:"Jugar otra vez"}); again.addEventListener("click",()=>renderTrivia(o)); pie.replaceChildren(again);
+  };
+  const start=el("button",{class:"btn",type:"button",text:"Empezar trivia"}); pie.replaceChildren(start);
+  start.addEventListener("click",()=>{ pie.replaceChildren(); show(); });
+}
+
+/* ============ JUEGO: BACHEO EXPRÉS ============ */
+const BCH={on:false};
+const BM_M=Mascota($("#bchMasc"));
+function bchSize(){ const c=$("#bchCanvas"), st=$("#bchStage"), dpr=Math.min(2,window.devicePixelRatio||1); c.width=st.clientWidth*dpr; c.height=st.clientHeight*dpr; BCH.w=st.clientWidth; BCH.h=st.clientHeight; BCH.dpr=dpr; }
+function bchReset(){ bchSize(); Object.assign(BCH,{on:false,t:0,pts:0,vidas:3,cars:[],pozos:[],nextCar:0.5,nextPozo:0.6,flash:0,last:performance.now(),lastWarn:0}); bchHud(); bchDraw(); }
+function bchLane(l){ const x0=BCH.w*0.14, w=BCH.w*0.72; return x0+w*(l+0.5)/3; }
+function bchHud(){ $("#bchVidas").textContent="♥".repeat(BCH.vidas)+"♡".repeat(3-BCH.vidas); $("#bchPts").textContent=BCH.pts+" baches"; $("#bchT").textContent=Math.max(0,Math.ceil(45-BCH.t))+" s"; }
+function bchOpen(){ bchReset(); $("#bchStart").hidden=false; BM_M.say("¡Hola! En esta calle aparecen pozos. Tocalos para taparlos antes de que pase un auto. Tenés 3 vidas y 45 segundos.","tranquila"); }
+function bchStart(){ bchReset(); BCH.on=true; $("#bchStart").hidden=true; BM_M.say("¡Arrancamos! Mirá bien la calle.","feliz"); requestAnimationFrame(bchLoop); }
+function bchLoop(now){
+  if(!BCH.on) return;
+  const dt=Math.min(0.05,(now-BCH.last)/1000); BCH.last=now; BCH.t+=dt;
+  const dif=Math.min(1,BCH.t/40);
+  BCH.nextCar-=dt; if(BCH.nextCar<=0){ BCH.cars.push({l:Math.floor(Math.random()*3),y:-60,v:BCH.h*(0.28+0.22*dif)*(0.9+Math.random()*0.25),c:["#E2464C","#009ADA","#FFFFFF","#F7BE2B","#32A430","#AF4178"][Math.floor(Math.random()*6)],hit:0}); BCH.nextCar=1.5-0.6*dif+Math.random()*0.5; }
+  BCH.nextPozo-=dt; if(BCH.nextPozo<=0){ const l=Math.floor(Math.random()*3), y=BCH.h*(0.25+Math.random()*0.55); if(!BCH.pozos.some(p=>!p.done&&p.l===l&&Math.abs(p.y-y)<70)) BCH.pozos.push({l,y,r:0,born:BCH.t,done:false,tap:0}); BCH.nextPozo=1.25-0.55*dif+Math.random()*0.4; }
+  BCH.pozos.forEach(p=>{ p.r=Math.min(1,p.r+dt*3); if(p.done) p.tap+=dt; });
+  BCH.pozos=BCH.pozos.filter(p=>!(p.done&&p.tap>1.2));
+  BCH.cars.forEach(c=>{ c.y+=c.v*dt; c.hit=Math.max(0,c.hit-dt);
+    BCH.pozos.forEach(p=>{ if(!p.done && p.l===c.l && Math.abs(c.y-p.y)<20){ p.done=true; p.bad=true; c.hit=0.5; BCH.vidas--; BCH.flash=0.3; bchHud(); BM_M.say(BCH.vidas>0?"¡Uy! Ese auto cayó en un pozo. ¡Te quedan "+BCH.vidas+(BCH.vidas===1?" vida!":" vidas!"):"¡Ay, no!","triste"); } });
+    if(BCH.t-BCH.lastWarn>2.5) BCH.pozos.forEach(p=>{ if(!p.done && p.l===c.l && p.y-c.y>0 && p.y-c.y<BCH.h*0.22){ BCH.lastWarn=BCH.t; BM_M.say("¡Cuidado! Viene un auto hacia un pozo.","preocupada"); } });
+  });
+  BCH.cars=BCH.cars.filter(c=>c.y<BCH.h+80);
+  BCH.flash=Math.max(0,BCH.flash-dt);
+  bchHud(); bchDraw();
+  if(BCH.vidas<=0 || BCH.t>=45) return bchEnd();
+  requestAnimationFrame(bchLoop);
+}
+function bchDraw(){
+  const c=$("#bchCanvas"), x=c.getContext("2d"), W=BCH.w, H=BCH.h; x.setTransform(BCH.dpr,0,0,BCH.dpr,0,0);
+  x.fillStyle="#9DBF7A"; x.fillRect(0,0,W,H);
+  x.fillStyle="#D9D6CF"; x.fillRect(W*0.08,0,W*0.06,H); x.fillRect(W*0.86,0,W*0.06,H);
+  x.fillStyle="#4A4F57"; x.fillRect(W*0.14,0,W*0.72,H);
+  x.strokeStyle="rgba(255,255,255,.75)"; x.lineWidth=3; x.setLineDash([22,18]); x.lineDashOffset=-(BCH.t||0)*60;
+  [1,2].forEach(k=>{ const lx=W*0.14+W*0.72*k/3; x.beginPath(); x.moveTo(lx,0); x.lineTo(lx,H); x.stroke(); }); x.setLineDash([]);
+  BCH.pozos.forEach(p=>{ const px=bchLane(p.l), r=26*p.r;
+    if(p.done && !p.bad){ x.globalAlpha=Math.max(0,1-p.tap/1.2); x.fillStyle="#2E3238"; x.fillRect(px-r*1.2,p.y-r*0.9,r*2.4,r*1.8); x.fillStyle="#F7BE2B"; x.font="700 14px sans-serif"; x.textAlign="center"; x.fillText("¡+1!",px,p.y-r-6); x.globalAlpha=1; return; }
+    if(p.done && p.bad){ x.globalAlpha=Math.max(0,1-p.tap/1.2); }
+    x.fillStyle="#26282C"; x.beginPath(); x.ellipse(px,p.y,r*1.15,r*0.8,0,0,Math.PI*2); x.fill();
+    x.strokeStyle="#6E5A44"; x.lineWidth=3; x.stroke();
+    x.strokeStyle="#26282C"; x.lineWidth=2; x.beginPath(); x.moveTo(px+r,p.y); x.lineTo(px+r*1.6,p.y-r*0.4); x.moveTo(px-r,p.y+2); x.lineTo(px-r*1.5,p.y+r*0.5); x.stroke(); x.globalAlpha=1; });
+  BCH.cars.forEach(c=>{ const cx=bchLane(c.l)+(c.hit>0?Math.sin(c.hit*60)*4:0), w=34, h=58;
+    x.fillStyle="rgba(0,0,0,.25)"; x.fillRect(cx-w/2+3,c.y-h/2+4,w,h);
+    x.fillStyle=c.c; x.beginPath(); x.roundRect?x.roundRect(cx-w/2,c.y-h/2,w,h,8):x.rect(cx-w/2,c.y-h/2,w,h); x.fill();
+    x.fillStyle="#BFD9E8"; x.fillRect(cx-w/2+5,c.y+h/2-20,w-10,10); x.fillRect(cx-w/2+5,c.y-h/2+8,w-10,8); });
+  if(BCH.flash>0){ x.fillStyle="rgba(226,70,76,"+(BCH.flash*1.5)+")"; x.fillRect(0,0,W,H); }
+}
+function bchEnd(){
+  BCH.on=false; const rec=Player.juegos.bacheo||0;
+  if(BCH.pts>rec){ Player.juegos.bacheo=BCH.pts; Store.save(); refreshChrome(); }
+  BM_M.say((BCH.vidas<=0?"Se terminaron las vidas. ":"¡Tiempo! ")+"Tapaste "+BCH.pts+" baches"+(BCH.pts>rec&&rec>0?": ¡nuevo récord!":".")+(BCH.pts>=15?" ¡Sos un experto en bacheo!":" ¿Lo intentamos otra vez?"), BCH.pts>=15?"feliz":BCH.vidas<=0?"triste":"tranquila");
+  $("#bchStart").hidden=false; $("#bchStart").textContent="Jugar otra vez";
+}
+$("#bchStage").addEventListener("pointerdown",e=>{
+  if(!BCH.on) return; const r=$("#bchStage").getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+  let best=null, bd=1e9; BCH.pozos.forEach(p=>{ if(p.done) return; const d=Math.hypot(bchLane(p.l)-px,p.y-py); if(d<bd){ bd=d; best=p; } });
+  if(best && bd<55){ best.done=true; best.bad=false; BCH.pts++; bchHud(); if(BCH.pts%5===0) BM_M.say("¡"+BCH.pts+" baches tapados! ¡Seguí así!","feliz"); }
+});
+$("#bchStart").addEventListener("click",bchStart);
+$("#bchVolver").addEventListener("click",()=>go(""));
+$("#goBacheo").addEventListener("click",()=>go("bacheo"));
+window.addEventListener("resize",()=>{ if(!$("#v-bacheo").hidden){ bchSize(); bchDraw(); } });
+
+/* ============ JUEGO: ¿DÓNDE VA CADA CAÑO? ============ */
+const CANOS=[
+  {id:"luz",n:"Cables eléctricos",c:"#E2464C",y:28,ok:"¡Bien! Los cables van cerca de la superficie y protegidos, para poder revisarlos y repararlos rápido.",mal:"Los cables eléctricos van más arriba: así se pueden revisar y reparar rápido."},
+  {id:"gas",n:"Gas",c:"#F7BE2B",y:44,ok:"¡Muy bien! El caño de gas es amarillo para reconocerlo fácil cuando alguien excava.",mal:"Mmm, el gas no va ahí. Probá en otra profundidad."},
+  {id:"agua",n:"Agua potable",c:"#009ADA",y:62,ok:"¡Exacto! El agua potable va arriba de la cloaca, así nunca se puede contaminar.",mal:"El agua potable siempre tiene que ir más arriba que la cloaca, para no contaminarse."},
+  {id:"cloaca",n:"Cloaca",c:"#8A6A4A",y:82,ok:"¡Perfecto! La cloaca va lo más profundo: el líquido baja solo por la pendiente.",mal:"La cloaca va más abajo: el agua usada baja sola por la pendiente, hasta la planta."}
+];
+const CN_M=Mascota($("#cnMasc"));
+const CN={sel:null,err:0,puestos:0};
+function cnOpen(){
+  CN.sel=null; CN.err=0; CN.puestos=0;
+  const corte=$("#cnCorte"); corte.querySelectorAll(".slot,.capa,.prof").forEach(n=>n.remove());
+  [["Cerca de la superficie",28],["",44],["",62],["Lo más profundo",82]].forEach(([t,y])=>{ if(t) corte.append(el("span",{class:"prof",style:"top:"+(y-7.5)+"%",text:"↓ "+t})); });
+  CANOS.forEach(cn=>{ const sl=el("div",{class:"slot",style:"top:"+cn.y+"%",role:"button",tabindex:"0","aria-label":"Lugar a "+cn.y+"% de profundidad",text:"?"}); sl.dataset.id=cn.id; sl.addEventListener("click",()=>cnPoner(sl)); sl.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); cnPoner(sl);} }); corte.append(sl); });
+  const lista=[...CANOS].sort(()=>Math.random()-0.5);
+  $("#cnCanos").replaceChildren(...lista.map(cn=>{ const b=el("button",{class:"cano",type:"button"},[el("i",{style:"background:"+cn.c}),document.createTextNode(cn.n)]); b.dataset.id=cn.id; b.addEventListener("click",()=>{ document.querySelectorAll(".cano").forEach(z=>z.classList.remove("sel")); b.classList.add("sel"); CN.sel=cn.id; CN_M.say("Ahora tocá el lugar debajo de la calle donde va: "+cn.n.toLowerCase()+".","tranquila"); }); return b; }));
+  CN_M.say("Debajo de cada calle hay caños y cables. Tocá un servicio y después el lugar donde va. ¡Ojo con la profundidad!","tranquila");
+}
+function cnPoner(sl){
+  if(sl.classList.contains("lleno")) return;
+  if(!CN.sel){ CN_M.say("Primero elegí un caño de la lista de abajo.","preocupada"); return; }
+  const cn=CANOS.find(c=>c.id===CN.sel);
+  if(sl.dataset.id===cn.id){ sl.classList.add("lleno"); sl.style.background=cn.c; sl.style.borderColor=cn.c; sl.textContent=cn.n; document.querySelector('.cano[data-id="'+cn.id+'"]').classList.add("usado"); CN.sel=null; CN.puestos++; CN_M.say(cn.ok,"feliz");
+    if(CN.puestos===4){ const p=CN.err===0?100:CN.err===1?80:CN.err===2?60:40; const rec=Player.juegos.canos||0; if(p>rec){ Player.juegos.canos=p; Store.save(); refreshChrome(); }
+      setTimeout(()=>CN_M.say("¡Calle lista! Ubicaste todo "+(CN.err?"con "+CN.err+(CN.err===1?" error":" errores"):"sin errores")+" y sumaste "+p+" puntos. Así se ordenan los servicios en general, para que cada uno funcione seguro.","feliz"),1400); }
+  } else { CN.err++; sl.animate([{transform:"translate(-50%,-50%)"},{transform:"translate(-46%,-50%)"},{transform:"translate(-54%,-50%)"},{transform:"translate(-50%,-50%)"}],{duration:300}); CN_M.say(cn.mal,"preocupada"); }
+}
+$("#cnReset").addEventListener("click",cnOpen);
+$("#cnVolver").addEventListener("click",()=>go(""));
+$("#goCanos").addEventListener("click",()=>go("canos"));
 
 /* ============ RUTEO ============ */
 let mapCtx=null;
@@ -1611,8 +1845,9 @@ function go(id){ if(location.hash!=="#"+id) location.hash=id; else route(); }
 function route(){
   const h=location.hash.replace("#","");
   regStop(); bmStop();
-  ["v-home","v-obra","v-ranking","v-admin"].forEach(v=>$("#"+v).hidden=true);
+  ["v-home","v-obra","v-ranking","v-admin","v-bacheo","v-canos"].forEach(v=>$("#"+v).hidden=true); BCH.on=false;
   if(OB[h]){ $("#v-obra").hidden=false; openObra(h); }
+  else if(h==="bacheo"||h==="canos"){ $("#v-"+h).hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; window.scrollTo({top:0}); if(h==="bacheo") bchOpen(); else cnOpen(); }
   else if(h==="admin"){ $("#v-admin").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderAdmin(); }
   else if(h==="ranking"){ $("#v-ranking").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderRanking(); window.scrollTo({top:0}); }
   else { $("#v-home").hidden=false; if(!mapCtx) mapCtx=buildMap(); mount(mapCtx); refreshChrome(); }
