@@ -119,8 +119,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .med span{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 .med b{font-family:var(--f-display);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
 .track{position:relative;height:12px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden}
-.track .zmin{position:absolute;left:0;top:0;bottom:0;width:20%;background:rgba(247,190,43,.45)}
-.track .zmax{position:absolute;left:88%;top:0;bottom:0;right:0;background:rgba(226,70,76,.6)}
+.track .zmin{position:absolute;left:0;top:0;bottom:0;width:15%;background:rgba(160,170,180,.45)}
+.track .zok{position:absolute;left:35%;width:50%;top:0;bottom:0;background:rgba(50,164,48,.55)}
+.track .zmax{position:absolute;left:90%;top:0;bottom:0;right:0;background:rgba(226,70,76,.7)}
+.track .fill#rNivel{background:transparent;border-right:4px solid #fff}
 .track .fill{position:absolute;left:0;top:0;bottom:0;background:#4FB8E8;transition:width .1s}
 .track .fill.e{background:var(--amarillo)}
 .track .meta{position:absolute;top:-2px;bottom:-2px;width:2px;background:#fff}
@@ -255,13 +257,13 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
   <!-- INICIO: mapa 3D -->
   <section class="view" id="v-home">
     <div class="wrap intro">
-      <div class="eyebrow">Muestra de obras · Prototipo</div>
+      <div class="eyebrow">Ministerio de Infraestructura y Servicios Públicos</div>
       <h1>Las obras de Córdoba, <em>armadas por vos</em></h1>
-      <p>Girá el mapa, elegí una obra y construila pieza por pieza. Cada obra que terminás suma en el ranking de ingenieros de la muestra.</p>
+      <p>Girá el mapa, elegí una obra y construila pieza por pieza. Cada obra que terminás suma en el ranking de ingenieros.</p>
     </div>
     <div class="stage" id="mapStage"><div class="hint3d" id="mapHint">Arrastrá para girar · Tocá un número</div></div>
     <div class="wrap lista" id="lista"></div>
-    <footer class="wrap">Prototipo para la muestra del Ministerio. Datos tomados de comunicaciones oficiales y medios; a validar por cada área antes de la versión final.</footer>
+    <footer class="wrap">Datos tomados de comunicaciones oficiales y medios. Las simulaciones de los juegos son didácticas.</footer>
   </section>
 
   <!-- OBRA -->
@@ -283,20 +285,17 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
         <p class="consigna" id="jConsigna" aria-live="polite"></p>
         <div class="bandeja" id="jBandeja"></div>
         <div class="regula" id="jRegula" hidden>
-          <div class="reg-top"><b id="rMes">Enero</b><span id="rClima"></span><em id="rTiempo"></em></div>
+          <div class="reg-top"><b id="rMes">Verano</b><span id="rClima"></span><em id="rTiempo"></em></div>
           <div class="meds">
-            <div class="med"><span>Nivel del lago</span><div class="track"><i class="zmin"></i><i class="zmax"></i><i class="fill" id="rNivel"></i></div><small id="rNivelTxt"></small></div>
-            <div class="med"><span>Energía</span><b id="rEnergia">0</b><div class="track"><i class="fill e" id="rEnergiaBar"></i></div><small>MWh · meta <span id="rMeta"></span></small></div>
-            <div class="med"><span>Río abajo</span><b id="rRio">Normal</b><div class="track"><i class="fill" id="rRioBar" style="background:#E2464C"></i></div><small>riesgo de inundación</small></div>
+            <div class="med"><span>Nivel del lago</span><div class="track"><i class="zmin"></i><i class="zok"></i><i class="zmax"></i><i class="fill" id="rNivel"></i></div><small id="rNivelTxt"></small></div>
+            <div class="med"><span>En zona verde</span><b id="rVerde">0%</b><div class="track"><i class="fill e" id="rVerdeBar"></i><i class="meta" style="left:70%"></i></div><small>meta 70%</small></div>
+            <div class="med"><span>Energía</span><b id="rEnergia">0</b><small>MWh generados</small></div>
           </div>
           <div class="ctrl">
             <label for="rTurb"><span>Turbinas</span><span id="rTurbTxt">50%</span></label>
             <input type="range" id="rTurb" min="0" max="100" value="50">
           </div>
-          <div class="fila">
-            <button class="btn-sec" id="rValv" type="button">Abrir válvulas de descarga</button>
-            <button class="btn amar" id="rStart" type="button">Empezar el año</button>
-          </div>
+          <div class="fila"><button class="btn amar" id="rStart" type="button">Empezar</button></div>
           <div class="resultado" id="rRes" hidden><b id="rResT"></b><span id="rResD"></span><div class="fila"><button class="btn amar" id="rRetry" type="button">Probar de nuevo</button></div></div>
         </div>
         <div class="regula" id="jBombeo" hidden>
@@ -383,7 +382,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
   <section class="view" id="v-admin" hidden>
     <div class="wrap adm">
       <div class="eyebrow">Administración</div>
-      <h1 style="font-size:34px;text-transform:uppercase">Ranking de la muestra</h1>
+      <h1 style="font-size:34px;text-transform:uppercase">Ranking</h1>
       <div id="admBox" class="bloque"></div>
     </div>
   </section>
@@ -392,7 +391,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
   <section class="view" id="v-ranking" hidden>
     <div class="wrap">
       <div class="rk-head">
-        <div class="eyebrow">Muestra de obras</div>
+        <div class="eyebrow">Ranking</div>
         <h1>Mejores ingenieros</h1>
       </div>
       <div class="rk-stats">
@@ -412,7 +411,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
   <form class="caja" id="regForm" autocomplete="off">
     <svg class="casco" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44h48v6H8z" fill="#004582"/><path d="M12 44a20 20 0 0 1 40 0z" fill="#F7BE2B"/><path d="M28 18h8v26h-8z" fill="#EB7F27"/></svg>
     <h2>Bienvenido/a, ingeniero/a</h2>
-    <p>Elegí un nombre para el ranking de la muestra.</p>
+    <p>Elegí un nombre para aparecer en el ranking.</p>
     <div style="display:grid;gap:6px">
       <label for="alias">Tu nombre de ingeniero/a</label>
       <input id="alias" name="alias" maxlength="18" placeholder="Ej: Caro de Cosquín" required>
@@ -530,7 +529,7 @@ const OBRAS = [
     piezas:[
       {n:"Fundación sobre la roca", c:"#8E8A84", d:"La presa se apoya en la roca firme del fondo del valle."},
       {n:"Paredón de 60 metros", c:"#D5D9DD", d:"Un muro tan alto como un edificio de 20 pisos cierra el valle."},
-      {n:"Vertedero", c:"#009ADA", d:"Un canal escalonado al costado del paredón: por ahí sale el agua cuando el lago se llena."},
+      {n:"Vertedero de ventanas", c:"#009ADA", d:"Aberturas en lo alto del paredón: cuando el lago se llena, el agua sale por estas ventanas y cae al río."},
       {n:"Central hidroeléctrica", c:"#F7BE2B", d:"Cuatro turbinas de 13 MW transforman la caída del agua en electricidad."},
       {n:"Línea eléctrica", c:"#EB7F27", d:"La energía sale hacia la red provincial. Ahora te toca manejar el dique."}
     ],
@@ -540,7 +539,7 @@ const OBRAS = [
     {n:"3.430", t:"canchas de fútbol entran en la superficie del lago", s:"24,5 km² ÷ 0,71 ha de una cancha"},
     {n:"20", t:"pisos de altura tiene el paredón", s:"60 m ÷ 3 m por piso"}
   ],
-  ficha:[["Inauguración","1953"],["Central hidroeléctrica","1956 · 52 MW (4 turbinas de 13 MW)"],["Altura de la presa","60 m"],["Largo de la presa","240 m"],["Capacidad","399 hm³"],["Superficie del lago","24,5 km²"],["Funciones","Regulación, energía, agua potable y control de crecidas"]],
+  ficha:[["Inauguración","1953"],["Central hidroeléctrica","1956 · 52 MW (4 turbinas de 13 MW)"],["Altura de la presa","60 m"],["Largo de la presa","240 m"],["Capacidad","399 hm³"],["Superficie del lago","24,5 km²"],["Vertedero","Tipo ventana, en la parte alta del paredón"],["Funciones","Regulación, energía, agua potable y control de crecidas"]],
   fuente:"Fuente: Wikipedia (Los Molinos Dam). La simulación del juego es didáctica y no usa caudales reales."
 },
 {
@@ -697,7 +696,7 @@ const PROHIBIDAS = ["puto","puta","boludo","pelotudo","forro","concha","verga","
 function aliasOk(a){
   const n=a.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
   if(a.trim().length<2) return "Escribí al menos 2 letras.";
-  if(PROHIBIDAS.some(p=>n.includes(p))) return "Elegí otro nombre, que lo va a ver toda la muestra.";
+  if(PROHIBIDAS.some(p=>n.includes(p))) return "Elegí otro nombre: lo van a ver todos en el ranking.";
   return "";
 }
 
@@ -1046,6 +1045,11 @@ function buildAcueducto(){
     const d=T(2,5); return seen.has(d) && (mask(d)&E);
   }
   scramble(); flow();
+  const ruta=[[x0-1.25,z0+1*S]].concat(path.map(([r,c])=>[x0+c*S,z0+r*S])).concat([[dx-0.2,dz]]);
+  const rL=[]; let rT=0; for(let i=0;i<ruta.length-1;i++){ const L=Math.hypot(ruta[i+1][0]-ruta[i][0],ruta[i+1][1]-ruta[i][1]); rL.push(L); rT+=L; }
+  const enRuta=u=>{ let d=u*rT; for(let i=0;i<rL.length;i++){ if(d<=rL[i]){ const k=d/rL[i]; return [ruta[i][0]+(ruta[i+1][0]-ruta[i][0])*k, ruta[i][1]+(ruta[i+1][1]-ruta[i][1])*k]; } d-=rL[i]; } return ruta[ruta.length-1]; };
+  const gotas=[]; const gM=new THREE.MeshBasicMaterial({color:0xBFEFFF});
+  for(let i=0;i<14;i++){ const m=new THREE.Mesh(new THREE.SphereGeometry(0.08,8,6),gM); m.userData.u=i/14; m.visible=false; m.position.y=0.38; scene.add(m); gotas.push(m); }
   let locked=false, fill=0, done=false;
   const ray=new THREE.Raycaster();
   return {scene,camera,parts:[],halfW:5.6,halfH:3.9,target:new THREE.Vector3(0.6,0,0),puzzle:true,
@@ -1057,13 +1061,14 @@ function buildAcueducto(){
     setPipes(vis){ tiles.forEach(t=>t.g.visible=vis); },
     snapFill(v){ tqAgua.scale.y=v?1:0.01; tqAgua.position.y=0.7+0.23*(v?1:0.01); },
     update(dt){ tiles.forEach(t=>{ if(!t.anim) return; t.anim.t+=dt/0.18; const k=Math.min(1,t.anim.t); t.g.rotation.y=t.anim.from+(t.anim.to-t.anim.from)*ease(k); if(k>=1){ t.anim=null; t.rot%=4; t.g.rotation.y=-t.rot*Math.PI/2; } });
-      if(done && fill<1){ fill=Math.min(1,fill+dt*0.6); tqAgua.scale.y=Math.max(0.01,fill); tqAgua.position.y=0.7+0.23*fill; } }
+      if(done && fill<1){ fill=Math.min(1,fill+dt*0.6); tqAgua.scale.y=Math.max(0.01,fill); tqAgua.position.y=0.7+0.23*fill; }
+      gotas.forEach(g=>{ g.visible=done; if(!done) return; g.userData.u=(g.userData.u+dt*0.06)%1; const [x,z]=enRuta(g.userData.u); g.position.x=x; g.position.z=z; }); }
   };
 }
 
 /* --- Dique San Roque: armar + regular --- */
 function buildSanRoque(){ return buildDique({seed:57}); }
-function buildLosMolinos(){ return buildDique({seed:91,escalonado:true,lad:[0xB7B07E,0xC4A97F,0xA3B27A]}); }
+function buildLosMolinos(){ return buildDique({seed:91,ventanas:true,lad:[0xB7B07E,0xC4A97F,0xA3B27A]}); }
 function buildDique(opt){
   seed=opt.seed;
   const {scene,camera}=baseScene();
@@ -1095,20 +1100,25 @@ function buildDique(opt){
     const v=new THREE.Mesh(new THREE.BoxGeometry(0.2,h*0.7,0.005),ventM); v.position.set(b.position.x,h*0.45,b.position.z+0.183); scene.add(v); }
   const parts=[], concreto=M(0xD5D9DD);
   { const g=new THREE.Group(); const f=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.12,5.6),M(0x8E8A84)); f.position.set(0,0.06,0); g.add(f); scene.add(part(g)); parts.push(g); }
-  { const g=new THREE.Group(); const w=new THREE.Mesh(new THREE.BoxGeometry(0.62,2.05,5.6),concreto); w.position.set(0,1.1,0); g.add(w);
-    const cor=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.08,5.6),M(0xBFC5CB)); cor.position.set(0,2.16,0); g.add(cor);
+  { const g=new THREE.Group();
+    if(!opt.ventanas){ const w=new THREE.Mesh(new THREE.BoxGeometry(0.62,2.05,5.6),concreto); w.position.set(0,1.1,0); g.add(w);
+      const cor=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.08,5.6),M(0xBFC5CB)); cor.position.set(0,2.16,0); g.add(cor); }
+    else { [-1,1].forEach(sg=>{ const w=new THREE.Mesh(new THREE.BoxGeometry(0.62,2.05,1.75),concreto); w.position.set(0,1.1,sg*1.925); g.add(w); });
+      const baja=new THREE.Mesh(new THREE.BoxGeometry(0.62,1.645,2.1),concreto); baja.position.set(0,0.9,0); g.add(baja); }
     for(let z=-2.4;z<=2.4;z+=0.8){ const c=new THREE.Mesh(new THREE.BoxGeometry(0.3,1.9,0.12),M(0xC4CACF)); c.position.set(0.42,0.95,z); g.add(c); }
     scene.add(part(g)); parts.push(g); }
   const embudoAgua=new THREE.Mesh(new THREE.RingGeometry(0.12,0.4,24),new THREE.MeshBasicMaterial({color:0xE8F6FF,side:THREE.DoubleSide,transparent:true,opacity:0}));
-  if(!opt.escalonado){ const g=new THREE.Group(); const t=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.3,1.7,24,1,true),M(0xE7EAEE)); t.material.side=THREE.DoubleSide; t.position.set(-0.95,0.85+0.03,1.7); g.add(t);
+  if(!opt.ventanas){ const g=new THREE.Group(); const t=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.3,1.7,24,1,true),M(0xE7EAEE)); t.material.side=THREE.DoubleSide; t.position.set(-0.95,0.85+0.03,1.7); g.add(t);
     const rim=new THREE.Mesh(new THREE.TorusGeometry(0.46,0.05,6,24),M(0x009ADA)); rim.rotation.x=Math.PI/2; rim.position.set(-0.95,1.72,1.7); g.add(rim);
     embudoAgua.rotation.x=-Math.PI/2; embudoAgua.position.set(-0.95,1.7,1.7); g.add(embudoAgua);
     const sal=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,1.6,10),M(0xBFC5CB)); sal.rotation.z=Math.PI/2; sal.position.set(0.6,0.2,1.7); g.add(sal);
     scene.add(part(g)); parts.push(g); }
-  else { const g=new THREE.Group();
-    for(let k=0;k<7;k++){ const st=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.12,0.8),M(k%2?0xCBD1D6:0xDDE1E5)); st.position.set(0.36+k*0.3,1.72-k*0.27,2.15); g.add(st); }
-    const lat=new THREE.Mesh(new THREE.BoxGeometry(2.3,0.3,0.06),M(0xBFC5CB)); lat.position.set(1.3,1.0,2.58); lat.rotation.z=-0.72; g.add(lat);
-    const ch=new THREE.Mesh(new THREE.BoxGeometry(2.6,0.04,0.66),embudoAgua.material); ch.position.set(1.3,0.98,2.15); ch.rotation.z=-0.72; g.add(ch);
+  else { const g=new THREE.Group(); const pil=M(0xE7EAEE);
+    [-1.05,-0.53,0,0.53,1.05].forEach(z=>{ const p=new THREE.Mesh(new THREE.BoxGeometry(0.62,0.42,0.14),pil); p.position.set(0,1.93,z); g.add(p); });
+    const puente=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.08,5.6),M(0x009ADA)); puente.position.set(0,2.18,0); g.add(puente);
+    [-0.79,-0.26,0.26,0.79].forEach(z=>{ const cae=new THREE.Mesh(new THREE.BoxGeometry(0.05,1.6,0.4),embudoAgua.material); cae.position.set(0.36,0.92,z); g.add(cae); });
+    const cuenco=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.06,2.3),M(0xBFC5CB)); cuenco.position.set(0.8,0.05,0); g.add(cuenco);
+    const esp=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.04,2.1),embudoAgua.material); esp.position.set(0.8,0.1,0); g.add(esp);
     scene.add(part(g)); parts.push(g); }
   const turbM=new THREE.MeshLambertMaterial({color:0x2C3A47,emissive:0x000000}); const rotores=[];
   { const g=new THREE.Group(); const cs=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.6,1.3),M(0xF2E9D8)); cs.position.set(1.05,0.3,-1.5); g.add(cs);
@@ -1126,7 +1136,7 @@ function buildDique(opt){
     const top=LT(st.L); lago.scale.y=top; lago.position.y=top/2;
     rio.scale.z=Math.min(4,0.5+st.D*0.45); rio.material.color.set(st.D>3.6?0x6E8FA6:0x4FB0DC);
     inund.visible=st.flood>0.02; inund.scale.y=Math.max(0.001,st.flood*0.18); inund.position.y=inund.scale.y/2;
-    embudoAgua.material.opacity=st.spill>0?0.95:0; if(!opt.escalonado) embudoAgua.position.y=Math.min(1.72,top-0.01);
+    embudoAgua.material.opacity=st.spill>0?0.95:0; if(!opt.ventanas) embudoAgua.position.y=Math.min(1.72,top-0.01);
     const g=Math.min(1,st.P/1.2); turbM.emissive.setRGB(g*0.9,g*0.6,0); ventM.emissive.setRGB(g*1.0,g*0.82,g*0.3);
   }
   apply();
@@ -1304,7 +1314,7 @@ function openObra(id){
   const dato=$("#oDato"); dato.replaceChildren(el("b",{style:"color:"+o.color},[document.createTextNode(o.dato.n), o.dato.u?el("small",{text:o.dato.u}):null]), el("span",{text:o.dato.t}));
   $("#oEscala").replaceChildren(...o.escala.map(e=>el("div",{class:"eq"},[el("b",{style:"color:"+o.color,text:e.n}),el("span",{text:e.t}),el("small",{text:e.s})])));
   $("#oFicha").replaceChildren(...o.ficha.map(([k,v])=>el("div",{},[el("dt",{text:k}),el("dd",{text:v})])));
-  $("#oFuente").textContent=o.fuente+" Datos a validar por el área antes de la muestra.";
+  $("#oFuente").textContent=o.fuente;
   const i=OBRAS.indexOf(o), nx=OBRAS[(i+1)%OBRAS.length]; $("#oNextName").textContent=nx.nombre; $("#oNext").onclick=()=>go(nx.id);
   $("#jTitulo").textContent=o.juego.titulo;
   mount(ctx);
@@ -1340,77 +1350,69 @@ function elegir(p,btn){
   if(sc.onProgress) sc.onProgress(cur.n);
   $("#jPaso").textContent=cur.n+" de "+total; setProg(cur.n/total);
   $("#obraHint").style.opacity=0;
-  if(cur.n>=total){ consigna(p.d,"ok"); setTimeout(()=>{ if(sc.dique){ regPrepare(); } else if(sc.bombeo){ bmPrepare(); } else { sc.setDone(true); completar(); } },800); }
+  if(cur.n>=total){ consigna(p.d,"ok"); const o0=cur.o; setTimeout(()=>{ if(!cur||cur.o!==o0) return; if(sc.dique){ regPrepare(); } else if(sc.bombeo){ bmPrepare(); } else { sc.setDone(true); completar(); } },800); }
   else consigna(p.d,"ok");
 }
 $("#jReset").addEventListener("click",()=>cur&&resetJuego("nuevo"));
 
-/* ============ SIMULACIÓN DEL DIQUE ============ */
-const MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-const CLIMA=["Verano lluvioso","Verano lluvioso","Fin del verano","Otoño","Otoño seco","Invierno seco","Invierno seco","Invierno seco","Primavera","Primavera","Empiezan las lluvias","Verano lluvioso"];
-const APORTE=[2.4,2.6,2.2,1.0,0.5,0.25,0.2,0.2,0.3,0.8,1.6,2.2]; // % del lago por segundo
-const LLUVIOSO=new Set([0,1,2,10,11]);
-const META=34, MWH=80, TOMA=20, REBALSE=88, RIO_MAX=3.6;
+/* ============ SIMULACIÓN DEL DIQUE (versión simple) ============ */
+const TEMPORADAS=[{n:"Verano",c:"Llueve mucho en las sierras",ap:1.6,lluvia:true,dur:15},{n:"Otoño e invierno",c:"Época seca: casi no entra agua",ap:0.2,lluvia:false,dur:18},{n:"Primavera",c:"Vuelven las lluvias",ap:1.2,lluvia:true,dur:12}];
+const DURACION=45, VERDE=[35,85], TOMA=15, REBALSE=90, META_VERDE=0.7;
 const Reg={on:false};
-function regReset(){ Object.assign(Reg,{on:false,t:0,L:62,E:0,flood:0,valv:false,storm:0,nextStorm:2.5,ended:false,lastMsg:""}); $("#rValv").classList.remove("on"); $("#rValv").textContent="Abrir válvulas de descarga"; $("#rRes").hidden=true; $("#rStart").hidden=false; $("#rMeta").textContent=(META*MWH).toLocaleString("es-AR"); regUI(0,0,0,0); }
+function temporada(t){ let acc=0; for(const x of TEMPORADAS){ acc+=x.dur; if(t<acc) return x; } return TEMPORADAS[2]; }
+function regReset(){ Object.assign(Reg,{on:false,t:0,L:60,E:0,G:0,storm:0,next:4+Math.random()*2,ended:false,lastMsg:""}); $("#rRes").hidden=true; $("#rStart").hidden=false; $("#rTurb").value=50; regUI(); }
 function regPrepare(){
   $("#jBandeja").hidden=true; $("#jRegula").hidden=false; document.body.classList.add("regulando"); resize();
   cur.ctx.sc.setDone(true); regReset(); setProg(0); $("#jTitulo").textContent="Manejá el dique";
-  $("#jPaso").textContent="Un año en 60 segundos";
-  consigna("Generá energía con las turbinas sin que el lago rebalse ni se vacíe. Si se llena, el embudo descarga y el río se desborda aguas abajo. Si baja de la toma, las turbinas se apagan.","ok");
+  $("#jPaso").textContent="Un año en 45 segundos";
+  consigna("Mové las turbinas para mantener el lago en la zona verde. Si sube demasiado, se inunda el pueblo. Si baja mucho, las turbinas se apagan.","ok");
   $("#jRegula").scrollIntoView({behavior:"smooth",block:"center"});
 }
 function regStop(){ Reg.on=false; document.body.classList.remove("regulando"); }
 function regMsg(t,cls){ if(Reg.lastMsg===t) return; Reg.lastMsg=t; consigna(t,cls); }
-function regUI(T,D,P,S){
-  const mes=Math.min(11,Math.floor(Reg.t/5));
-  $("#rMes").textContent=MESES[mes]; $("#rClima").textContent=Reg.storm>0?"Tormenta en las sierras":CLIMA[mes];
-  $("#rTiempo").textContent=Math.max(0,Math.ceil(60-Reg.t))+" s";
+function regUI(){
+  const tp=temporada(Reg.t);
+  $("#rMes").textContent=tp.n; $("#rClima").textContent=Reg.storm>0?"¡Tormenta en las sierras!":tp.c;
+  $("#rTiempo").textContent=Math.max(0,Math.ceil(DURACION-Reg.t))+" s";
   $("#rNivel").style.width=Math.min(100,Reg.L).toFixed(1)+"%";
-  $("#rNivelTxt").textContent=Math.round(Reg.L)+"% · "+(Reg.L>=REBALSE?"rebalsando por el embudo":Reg.L<TOMA?"bajo la toma: sin generación":"nivel operativo");
-  $("#rEnergia").textContent=Math.round(Reg.E*MWH).toLocaleString("es-AR");
-  $("#rEnergiaBar").style.width=Math.min(100,Reg.E/META*100)+"%";
-  $("#rRioBar").style.width=Math.min(100,Reg.flood/2.5*100)+"%";
-  $("#rRio").textContent=D>RIO_MAX?"Desbordado":D>RIO_MAX*0.75?"Crecido":"Normal";
+  $("#rNivelTxt").textContent=Math.round(Reg.L)+"% · "+(Reg.L>=REBALSE?"¡muy alto!":Reg.L<TOMA?"turbinas apagadas":Reg.L>=VERDE[0]&&Reg.L<=VERDE[1]?"zona verde":Reg.L>VERDE[1]?"alto":"bajo");
+  const g=Reg.t>0?Reg.G/Reg.t:0; $("#rVerde").textContent=Math.round(g*100)+"%"; $("#rVerdeBar").style.width=Math.round(g*100)+"%";
+  $("#rEnergia").textContent=Math.round(Reg.E*80).toLocaleString("es-AR");
   $("#rTurbTxt").textContent=$("#rTurb").value+"%";
-  setProg(Math.min(1,Reg.t/60));
+  setProg(Math.min(1,Reg.t/DURACION));
 }
 function regTick(dt){
-  Reg.t+=dt; const mes=Math.min(11,Math.floor(Reg.t/5));
-  let I=APORTE[mes];
-  if(LLUVIOSO.has(mes) && Reg.t>=Reg.nextStorm && Reg.storm<=0){ Reg.storm=2.2; Reg.nextStorm=Reg.t+6+Math.random()*5; }
-  if(Reg.storm>0){ I+=7; Reg.storm-=dt; }
+  Reg.t+=dt; const tp=temporada(Reg.t);
+  let I=tp.ap;
+  if(tp.lluvia && Reg.t>=Reg.next && Reg.storm<=0){ Reg.storm=2.5; Reg.next=Reg.t+7+Math.random()*2; }
+  if(Reg.storm>0){ I+=9; Reg.storm-=dt; }
+  const aviso = tp.lluvia && Reg.storm<=0 && Reg.next-Reg.t<2.5 && Reg.next<DURACION;
   const turb=+$("#rTurb").value/100;
-  const T = Reg.L>TOMA ? turb*3.2 : 0;
-  const V = Reg.valv && Reg.L>1 ? 3.0 : 0;
-  const S = Reg.L>REBALSE ? (Reg.L-REBALSE)*0.8 : 0;
-  Reg.L=Math.max(0,Reg.L+(I-T-V-S)*dt);
-  const D=T+V+S+0.3;
-  if(D>RIO_MAX) Reg.flood+=(D-RIO_MAX)*dt*0.9; else Reg.flood=Math.max(0,Reg.flood-0.5*dt);
-  const P = T>0 ? turb*(0.3+Reg.L/100) : 0; Reg.E+=P*dt;
-  Reg.low = Reg.L<=TOMA ? (Reg.low||0)+dt : 0;
-  cur.ctx.sc.set(Reg.L,D,Reg.flood,P,S);
-  regUI(T,D,P,S);
-  if(Reg.storm>0) regMsg("¡Tormenta en las sierras! Entra mucha agua al lago. ¿Tenés lugar para recibirla?","err");
-  else if(Reg.L<TOMA) regMsg("El lago bajó de la toma: las turbinas se apagaron y la ciudad se queda sin la energía del dique.","err");
-  else if(S>0) regMsg("El lago rebalsa por el embudo y esa agua no genera energía. Cuidado con el río aguas abajo.","err");
-  else if(D>RIO_MAX) regMsg("Estás largando demasiada agua: el río se está desbordando sobre el pueblo.","err");
-  else if(!LLUVIOSO.has(mes)) regMsg("Época seca: casi no entra agua. Cuidá la reserva para que alcance hasta el verano.","");
-  else regMsg("Las turbinas generan más cuanto más alto está el lago. Mantenelo alto, pero con lugar para una tormenta.","");
-  if(Reg.L>=100) return regEnd("mal","Se desbordó el dique","El agua pasó por encima del paredón. Antes de una tormenta hay que tener el lago más bajo.");
-  if(Reg.low>=6) return regEnd("mal","Apagón en la ciudad","El lago estuvo demasiado tiempo bajo la toma y las turbinas no pudieron funcionar. En la época seca hay que gastar menos agua.");
-  if(Reg.flood>=2.5) return regEnd("mal","Inundaste el pueblo","Largaste más agua de la que el río puede llevar. Soltá agua de a poco y antes de que llegue la crecida.");
-  if(Reg.t>=60){ return Reg.E>=META ? regEnd("ok","¡Año completo!","Generaste "+Math.round(Reg.E*MWH).toLocaleString("es-AR")+" MWh sin inundar a nadie.") : regEnd("mal","No alcanzó la energía","Generaste "+Math.round(Reg.E*MWH).toLocaleString("es-AR")+" de "+(META*MWH).toLocaleString("es-AR")+" MWh. Usá más las turbinas y menos las válvulas."); }
+  const T = Reg.L>TOMA ? turb*3.6 : 0;
+  const S = Reg.L>REBALSE ? (Reg.L-REBALSE)*0.3 : 0;
+  Reg.L=Math.max(0,Reg.L+(I-T-S)*dt);
+  if(Reg.L>=VERDE[0] && Reg.L<=VERDE[1]) Reg.G+=dt;
+  const P = T>0 ? turb*(0.5+Reg.L/200) : 0; Reg.E+=P*dt;
+  cur.ctx.sc.set(Reg.L,T*0.8+S,Math.max(0,(Reg.L-88)/12)*2.5,P,S);
+  regUI();
+  if(aviso) regMsg("¡Se viene una tormenta! Abrí las turbinas para dejar lugar en el lago.","err");
+  else if(Reg.storm>0) regMsg("¡Tormenta! Está entrando mucha agua.","err");
+  else if(Reg.L>=REBALSE) regMsg("¡El lago está casi lleno! Abrí más las turbinas o se inunda el pueblo.","err");
+  else if(Reg.L<TOMA) regMsg("El lago está muy bajo y las turbinas se apagaron. Cerralas un poco para que se junte agua.","err");
+  else if(Reg.L>VERDE[1]) regMsg("El lago está alto. Abrí un poco más las turbinas.","");
+  else if(Reg.L<VERDE[0]) regMsg("El lago está bajando. Cerrá un poco las turbinas.","");
+  else regMsg("¡Muy bien! El lago está en la zona verde y generás energía.","ok");
+  if(Reg.L>=100) return regEnd("mal","Se inundó el pueblo","El lago se llenó y el agua desbordó. Cuando veas que viene una tormenta, abrí las turbinas antes.");
+  if(Reg.t>=DURACION){ const g=Reg.G/DURACION; return g>=META_VERDE ? regEnd("ok","¡Lo lograste!","Mantuviste el lago en la zona verde el "+Math.round(g*100)+"% del año y generaste "+Math.round(Reg.E*80).toLocaleString("es-AR")+" MWh.") : regEnd("mal","Casi","Estuviste en la zona verde el "+Math.round(g*100)+"% del tiempo y la meta es 70%. En la época seca cerrá un poco las turbinas."); }
 }
 function regEnd(cls,t,d){
   Reg.on=false; Reg.ended=true;
   const r=$("#rRes"); r.className="resultado "+cls; r.hidden=false; $("#rResT").textContent=t; $("#rResD").textContent=d;
-  $("#rStart").hidden=true; consigna(cls==="ok"?"Manejaste el dique durante un año entero.":"Probá de nuevo con otra estrategia.",cls==="ok"?"ok":"err");
-  if(cls==="ok"){ setProg(1); setTimeout(completar,700); }
+  $("#rStart").hidden=true; consigna(cls==="ok"?"Manejaste el dique durante un año entero.":"Probá de nuevo: podés lograrlo.",cls==="ok"?"ok":"err");
+  if(cls==="ok"){ setProg(1); const o=cur.o; setTimeout(()=>{ if(cur&&cur.o===o) completar(); },700); }
 }
 $("#rStart").addEventListener("click",()=>{ if(Reg.ended) regReset(); Reg.on=true; $("#rStart").hidden=true; });
 $("#rRetry").addEventListener("click",()=>{ regReset(); cur.ctx.sc.set(Reg.L,1,0,0,0); Reg.on=true; $("#rStart").hidden=true; });
-$("#rValv").addEventListener("click",()=>{ Reg.valv=!Reg.valv; $("#rValv").classList.toggle("on",Reg.valv); $("#rValv").textContent=Reg.valv?"Cerrar válvulas de descarga":"Abrir válvulas de descarga"; });
 $("#rTurb").addEventListener("input",()=>{ $("#rTurbTxt").textContent=$("#rTurb").value+"%"; });
 
 /* ============ SIMULACIÓN CENTRAL DE BOMBEO ============ */
@@ -1460,7 +1462,7 @@ function bmTick(dt){
 }
 function bmEnd(cls,t,d){
   BM.on=false; BM.ended=true; const r=$("#bRes"); r.className="resultado "+cls; r.hidden=false; $("#bResT").textContent=t; $("#bResD").textContent=d; $("#bStart").hidden=true;
-  if(cls==="ok"){ setProg(1); setTimeout(completar,700); }
+  if(cls==="ok"){ setProg(1); const o=cur.o; setTimeout(()=>{ if(cur&&cur.o===o) completar(); },700); }
 }
 $("#bStart").addEventListener("click",()=>{ if(BM.ended) bmReset(); BM.on=true; $("#bStart").hidden=true; });
 $("#bRetry").addEventListener("click",()=>{ bmReset(); cur.ctx.sc.set(BM.U,"stop",12); BM.on=true; $("#bStart").hidden=true; });
@@ -1472,7 +1474,7 @@ async function openAR(o){
   try{ if(!customElements.get("model-viewer")) await loadScript("https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js",true); await customElements.whenDefined("model-viewer"); }
   catch(e){ box.replaceChildren(el("p",{class:"nota",text:"No se pudo cargar el visor 3D. Revisá la conexión a internet.",style:"padding:16px"})); return; }
   const mv=document.createElement("model-viewer");
-  [["src","models/"+o.id+".glb"],["ar",""],["ar-modes","webxr scene-viewer quick-look"],["ar-placement","floor"],["ar-scale","auto"],["camera-controls",""],["touch-action","pan-y"],["auto-rotate",""],["shadow-intensity","1"],["exposure","1.1"],["alt","Maqueta 3D de "+o.nombre]].forEach(([k,v])=>mv.setAttribute(k,v));
+  [["src","models/"+o.id+".glb"],["ar",""],["ar-modes","webxr scene-viewer quick-look"],["ar-placement","floor"],["ar-scale","auto"],["camera-controls",""],["touch-action","pan-y"],["auto-rotate",""],["shadow-intensity","1"],["exposure","1.1"],["autoplay",""],["alt","Maqueta 3D de "+o.nombre]].forEach(([k,v])=>mv.setAttribute(k,v));
   const b=el("button",{class:"btn amar ar-go",slot:"ar-button",type:"button",text:"Ponerla en mi mesa"}); mv.append(b);
   box.replaceChildren(mv);
   mv.addEventListener("load",()=>{ $("#arNota").textContent = mv.canActivateAR ? "Tocá «Ponerla en mi mesa», apuntá el celular a una mesa o al piso y movela con el dedo." : "Para verla sobre tu mesa, abrí esta página desde un celular. Acá podés girarla con el mouse."; });
@@ -1534,7 +1536,7 @@ async function renderShare(){
   const c=document.createElement("canvas"); c.width=1080; c.height=1920; const x=c.getContext("2d");
   x.fillStyle="#004582"; x.fillRect(0,0,1080,1920);
   const pal=["#009ADA","#004582","#AF4178","#E2464C","#EB7F27","#F7BE2B","#BCCD00","#8BB91A","#32A430"]; pal.forEach((p,i)=>{ x.fillStyle=p; x.fillRect(i*120,0,120,22); x.fillRect(i*120,1898,120,22); });
-  x.fillStyle="#7FD3F5"; x.font='800 34px "Saira Semi Condensed", Arial'; x.fillText("MUESTRA DE OBRAS",80,130);
+  x.fillStyle="#7FD3F5"; x.font='800 34px "Saira Semi Condensed", Arial'; x.fillText("ARMÁ CÓRDOBA",80,130);
   x.fillStyle="#FFFFFF"; x.font='500 30px "Be Vietnam Pro", Arial'; x.fillText("Ministerio de Infraestructura y Servicios Públicos",80,178);
   x.fillStyle="#F7BE2B"; x.font='800 150px "Saira Semi Condensed", Arial'; x.fillText("YO ARMÉ",74,370);
   x.fillStyle="#FFFFFF"; x.font='800 92px "Saira Semi Condensed", Arial';
@@ -1599,7 +1601,7 @@ function renderRanking(){
   const ol=$("#rkList");
   if(!rows.length){ ol.replaceChildren(el("li",{class:"vacio",style:"display:block",text:"Todavía no hay ingenieros. Armá la primera obra y estrená el ranking."})); }
   else ol.replaceChildren(...rows.map((r,i)=>el("li",{class:r.id===meId?"yo":""},[el("span",{class:"n",text:i+1}),el("div",{class:"who"},[el("b",{text:r.alias+(r.id===meId?" (vos)":"")}),el("small",{text:NIVELES(r.count||0)})]),el("span",{class:"c",text:r.count||0})])));
-  $("#rkModo").textContent = Store.mode==="shared" ? "Ranking en vivo: se actualiza solo cada vez que alguien termina una obra." : "Ranking guardado en este dispositivo. En la versión final de la muestra se comparte entre todos los visitantes.";
+  $("#rkModo").textContent = Store.mode==="shared" ? "Ranking en vivo: se actualiza solo cada vez que alguien termina una obra." : "Ranking guardado en este dispositivo.";
 }
 Store.on(()=>{ if(!$("#v-ranking").hidden) renderRanking(); });
 
