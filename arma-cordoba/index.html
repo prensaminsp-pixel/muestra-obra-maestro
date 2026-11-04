@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>Armá Córdoba</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Saira+Semi+Condensed:wght@600;700;800&display=swap">
+<style>
+/* Layout: una sola columna tipo app móvil; escenario 3D a sangre, fichas en bloques blancos sobre un suelo celeste-gris "de maqueta". */
+:root{
+  color-scheme: light;
+  --suelo:#E8EFF4;      /* fondo general, gris con sesgo al celeste institucional */
+  --papel:#FFFFFF;
+  --tinta:#0B2440;      /* azul noche derivado del #004582 */
+  --azul:#004582;       /* paleta Gobierno de Córdoba */
+  --celeste:#009ADA;
+  --naranja:#EB7F27;
+  --verde:#32A430;
+  --amarillo:#F7BE2B;
+  --magenta:#AF4178;
+  --rojo:#E2464C;
+  --linea:#CFDCE6;
+  --tenue:#566B7E;
+  --f-display:"Saira Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --f-texto:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--suelo);color:var(--tinta)}
+body{font-family:var(--f-texto);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--celeste);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+.eyebrow{font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tenue)}
+
+/* Barra superior */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--azul)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--azul);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.marca{display:flex;flex-direction:column;line-height:1.05;min-width:0;flex:1;background:none;border:0;padding:0;text-align:left;cursor:pointer;color:#fff}
+.marca b{font-family:var(--f-display);font-size:20px;font-weight:800;letter-spacing:.01em;text-transform:uppercase}
+.marca b span{color:var(--amarillo)}
+.marca small{font-size:10.5px;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip-user{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 12px 6px 8px;cursor:pointer;color:#fff;white-space:nowrap}
+.dots{display:flex;gap:4px}
+.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.3);display:block}
+.dots i.on{background:var(--amarillo)}
+.chip-user span{font-weight:600;font-size:13px;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.barra{display:flex;height:4px}
+.barra i{flex:1}
+
+/* Vistas */
+.view[hidden]{display:none!important}
+.intro{padding-block:22px 10px}
+.intro h1{font-size:clamp(30px,8vw,46px);font-weight:800;line-height:.98;text-transform:uppercase}
+.intro h1 em{font-style:normal;color:var(--celeste)}
+.intro p{max-width:58ch;color:var(--tenue);margin:10px 0 0}
+
+.stage{position:relative;width:100%;height:min(64vh,560px);min-height:340px;background:linear-gradient(#DDE8F0,#EEF3F6);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.stage canvas{display:block;width:100%!important;height:100%!important}
+.pinlbl{position:absolute;left:0;top:0;transform:translate(-50%,-100%);pointer-events:auto;cursor:pointer;background:var(--papel);border:0;border-radius:10px;padding:6px 10px 6px 8px;box-shadow:0 4px 14px rgba(11,36,64,.18);display:flex;align-items:center;gap:7px;white-space:nowrap;font-size:12.5px;font-weight:600;color:var(--tinta)}
+.pinlbl i{width:10px;height:10px;border-radius:3px;display:block;flex:none}
+.pinlbl.done::after{content:"✓";color:var(--verde);font-weight:800}
+.maplbl{position:absolute;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(11,36,64,.55);white-space:nowrap}
+.maplbl.agua{color:#1D6E99;font-style:italic;letter-spacing:.06em}
+.hint3d{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(11,36,64,.78);color:#fff;font-size:12px;padding:6px 12px;border-radius:999px;pointer-events:none;white-space:nowrap}
+
+.lista{display:grid;gap:10px;padding-block:18px 8px}
+.obra-card{display:grid;grid-template-columns:8px 1fr auto;gap:14px;align-items:center;background:var(--papel);border:0;border-radius:var(--r);padding:14px 16px 14px 0;text-align:left;cursor:pointer;box-shadow:0 1px 0 var(--linea)}
+.obra-card .cinta{align-self:stretch;border-radius:0 6px 6px 0}
+.obra-card h3{font-size:19px;font-weight:700;line-height:1.1}
+.obra-card p{margin:2px 0 0;font-size:13px;color:var(--tenue)}
+.estado{font-size:12px;font-weight:700;white-space:nowrap;padding:5px 10px;border-radius:999px;background:var(--suelo);color:var(--tenue)}
+.estado.ok{background:#E3F3E2;color:#1F7A1D}
+
+/* Obra */
+.obra-head{padding-block:18px 14px;display:grid;gap:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:var(--f-display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:6px;color:#fff}
+.tag.claro{background:var(--papel);color:var(--tenue)}
+.obra-head h1{font-size:clamp(30px,8.5vw,48px);font-weight:800;line-height:.95;text-transform:uppercase}
+.obra-head .lugar{color:var(--tenue);font-size:13.5px;margin:0}
+.dato{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:4px}
+.dato b{font-family:var(--f-display);font-weight:800;font-size:56px;line-height:.9;font-variant-numeric:tabular-nums}
+.dato b small{font-size:26px;margin-left:4px}
+.dato span{max-width:34ch;font-size:14px;line-height:1.35}
+
+.juego{background:var(--tinta);color:#fff}
+.juego .wrap{padding-block:14px 16px;display:grid;gap:12px}
+.juego-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.juego-top h2{font-size:22px;font-weight:800;text-transform:uppercase}
+.paso{font-size:13px;font-variant-numeric:tabular-nums;opacity:.85}
+.barra-prog{height:6px;background:rgba(255,255,255,.15);border-radius:6px;overflow:hidden}
+.barra-prog i{display:block;height:100%;width:0;background:var(--amarillo);transition:width .4s}
+.consigna{margin:0;font-size:14px;opacity:.92;min-height:2.9em}
+.consigna.err{color:#FFB4A8}
+.consigna.ok{color:#B9F0B0}
+.bandeja{display:flex;flex-wrap:wrap;gap:8px}
+.pieza{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:10px 12px;cursor:pointer;color:#fff;font-weight:600;font-size:13.5px;text-align:left;transition:transform .15s,background .15s}
+.pieza:hover{background:rgba(255,255,255,.16)}
+.pieza i{width:22px;height:22px;border-radius:5px;flex:none;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18)}
+.pieza.shake{animation:shake .38s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.regula{display:grid;gap:12px}
+.reg-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.reg-top b{font-family:var(--f-display);font-size:22px;font-weight:800;text-transform:uppercase;color:var(--amarillo)}
+.reg-top span{font-size:13px;opacity:.85}
+.reg-top em{margin-left:auto;font-style:normal;font-size:12px;opacity:.7;font-variant-numeric:tabular-nums}
+.meds{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:8px}
+.med{background:rgba(255,255,255,.07);border-radius:10px;padding:9px 10px;display:grid;gap:5px;min-width:0}
+.med span{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.med b{font-family:var(--f-display);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.track{position:relative;height:12px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden}
+.track .zmin{position:absolute;left:0;top:0;bottom:0;width:20%;background:rgba(247,190,43,.45)}
+.track .zmax{position:absolute;left:88%;top:0;bottom:0;right:0;background:rgba(226,70,76,.6)}
+.track .fill{position:absolute;left:0;top:0;bottom:0;background:#4FB8E8;transition:width .1s}
+.track .fill.e{background:var(--amarillo)}
+.track .meta{position:absolute;top:-2px;bottom:-2px;width:2px;background:#fff}
+.med small{font-size:10.5px;opacity:.7}
+.ctrl{display:grid;gap:6px}
+.ctrl label{display:flex;justify-content:space-between;font-weight:600;font-size:14px}
+.ctrl input[type=range]{width:100%;accent-color:var(--amarillo);height:28px}
+.btn-sec.on{background:var(--rojo);border-color:var(--rojo)}
+.resultado{border-radius:12px;padding:14px;display:grid;gap:10px;background:rgba(255,255,255,.1)}
+.resultado b{font-family:var(--f-display);font-size:22px;text-transform:uppercase}
+.resultado.ok{background:rgba(50,164,48,.25)}
+.resultado.mal{background:rgba(226,70,76,.25)}
+body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
+.btn-sec{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer}
+
+.bloque{background:var(--papel);border-radius:var(--r);padding:18px;display:grid;gap:12px}
+.bloques{display:grid;gap:14px;padding-block:16px 28px}
+.bloque h2{font-size:22px;font-weight:800;text-transform:uppercase}
+.bloque > p{margin:0;color:var(--tenue);font-size:14px}
+
+.ad{position:relative;aspect-ratio:16/10;max-width:100%;border-radius:10px;overflow:hidden;background:var(--suelo);touch-action:pan-y;user-select:none}
+.ad img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ad .despues{clip-path:inset(0 0 0 50%)}
+.ad .mango{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-50%);box-shadow:0 0 0 1px rgba(11,36,64,.2)}
+.ad .mango::after{content:"◀ ▶";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:var(--azul);font-size:11px;font-weight:800;padding:8px 9px;border-radius:999px;box-shadow:0 2px 10px rgba(11,36,64,.25);white-space:nowrap}
+.ad .et{position:absolute;top:10px;font-family:var(--f-display);font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:rgba(11,36,64,.75);color:#fff;padding:4px 8px;border-radius:6px}
+.ad .et.a{left:10px}.ad .et.d{right:10px}
+.ad input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.nota{font-size:12px;color:var(--tenue);margin:0}
+
+.escala{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.eq{border:1px solid var(--linea);border-radius:12px;padding:14px;display:grid;gap:4px;align-content:start}
+.eq b{font-family:var(--f-display);font-size:40px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.eq span{font-size:14px;font-weight:600;line-height:1.3}
+.eq small{font-size:11.5px;color:var(--tenue)}
+
+.ficha{display:grid;gap:0;margin:0}
+.ficha div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:12px;padding:9px 0;border-top:1px solid var(--linea);font-size:14px}
+.ficha dt{color:var(--tenue)}
+.ficha dd{margin:0;font-weight:600}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:13px 18px;font-weight:700;font-size:15px;cursor:pointer;background:var(--azul);color:#fff}
+.btn.cel{background:var(--celeste)}
+.btn.amar{background:var(--amarillo);color:var(--tinta)}
+.btn.blanco{background:var(--papel);color:var(--azul);border:1px solid var(--linea)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.fila{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+.tarjeta-prev{display:grid;grid-template-columns:minmax(0,150px) 1fr;gap:16px;align-items:center}
+.tarjeta-prev img{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:10px;background:var(--suelo);box-shadow:0 6px 20px rgba(11,36,64,.18)}
+.bloqueo{display:flex;gap:12px;align-items:center;padding:14px;border:1px dashed var(--linea);border-radius:12px;color:var(--tenue);font-size:14px}
+.ar-box{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.ar-ico{width:64px;height:64px;border-radius:14px;background:var(--suelo);display:grid;place-items:center}
+
+.siguiente{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--azul);color:#fff;border:0;border-radius:var(--r);padding:16px 18px;cursor:pointer;text-align:left;width:100%}
+.siguiente small{display:block;opacity:.75;font-size:12px}
+.siguiente b{font-family:var(--f-display);font-size:20px;text-transform:uppercase}
+
+/* Ranking */
+.rk-head{padding-block:22px 6px;display:grid;gap:6px}
+.rk-head h1{font-size:clamp(30px,8vw,44px);font-weight:800;text-transform:uppercase;line-height:.98}
+.rk-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding-block:12px}
+.stat{background:var(--papel);border-radius:12px;padding:12px}
+.stat b{display:block;font-family:var(--f-display);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.stat span{font-size:12px;color:var(--tenue)}
+.podio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end;padding-block:10px}
+.pod{background:var(--papel);border-radius:12px 12px 4px 4px;padding:12px 8px;text-align:center;display:grid;gap:4px;min-width:0}
+.pod .pos{font-family:var(--f-display);font-weight:800;font-size:28px;line-height:1}
+.pod .nom{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pod .cnt{font-size:12px;color:var(--tenue)}
+.pod.p1{padding-block:22px;background:var(--amarillo)}
+.pod.p1 .cnt{color:var(--tinta)}
+.pod.p2{padding-block:16px}
+.rk-list{list-style:none;margin:0;padding:0;display:grid;gap:6px;padding-bottom:28px}
+.rk-list li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--papel);border-radius:10px;padding:10px 14px}
+.rk-list .n{font-family:var(--f-display);font-weight:800;font-size:18px;color:var(--tenue);font-variant-numeric:tabular-nums}
+.rk-list .who{min-width:0}
+.rk-list .who b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk-list .who small{color:var(--tenue);font-size:12px}
+.rk-list .c{font-family:var(--f-display);font-weight:800;font-size:22px;font-variant-numeric:tabular-nums}
+.rk-list li.yo{outline:2px solid var(--celeste)}
+.vacio{background:var(--papel);border-radius:12px;padding:22px;text-align:center;color:var(--tenue)}
+.modo{font-size:12px;color:var(--tenue);padding-bottom:28px}
+
+/* Modal registro / festejo */
+.modal{position:fixed;inset:0;z-index:30;background:rgba(11,36,64,.6);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.caja{background:var(--papel);border-radius:18px;max-width:420px;width:100%;padding:22px;display:grid;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.caja h2{font-size:28px;font-weight:800;text-transform:uppercase;line-height:1}
+.caja p{margin:0;color:var(--tenue);font-size:14px}
+.caja label{font-weight:600;font-size:13px}
+.caja input{width:100%;font:inherit;font-size:18px;padding:12px 14px;border:2px solid var(--linea);border-radius:12px;color:var(--tinta);background:var(--papel)}
+.caja input:focus{border-color:var(--celeste);outline:none}
+.err-txt{color:var(--rojo);font-size:13px;min-height:1.2em;margin:0}
+.casco{width:56px;height:56px}
+.festejo .grande{font-family:var(--f-display);font-weight:800;font-size:22px;text-transform:uppercase}
+
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:40;background:var(--tinta);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);max-width:calc(100% - 32px)}
+
+footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:420px){.dato b{font-size:46px}.tarjeta-prev{grid-template-columns:110px 1fr}.marca small{display:none}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <button class="marca" id="goHome" aria-label="Ir al mapa">
+      <b>Armá <span>Córdoba</span></b>
+      <small>Ministerio de Infraestructura y Servicios Públicos · Gobierno de Córdoba</small>
+    </button>
+    <button class="chip-user" id="goRanking" aria-label="Ver ranking de ingenieros">
+      <div class="dots" id="dots"></div>
+      <span id="chipName">Ranking</span>
+    </button>
+  </div>
+  <div class="barra" aria-hidden="true"><i style="background:#009ADA"></i><i style="background:#004582"></i><i style="background:#AF4178"></i><i style="background:#E2464C"></i><i style="background:#EB7F27"></i><i style="background:#F7BE2B"></i><i style="background:#BCCD00"></i><i style="background:#8BB91A"></i><i style="background:#32A430"></i></div>
+</header>
+
+<main>
+  <!-- INICIO: mapa 3D -->
+  <section class="view" id="v-home">
+    <div class="wrap intro">
+      <div class="eyebrow">Muestra de obras · Prototipo</div>
+      <h1>Las obras de Córdoba, <em>armadas por vos</em></h1>
+      <p>Girá el mapa, elegí una obra y construila pieza por pieza. Cada obra que terminás suma en el ranking de ingenieros de la muestra.</p>
+    </div>
+    <div class="stage" id="mapStage"><div class="hint3d" id="mapHint">Arrastrá para girar · Tocá una obra</div></div>
+    <div class="wrap lista" id="lista"></div>
+    <footer class="wrap">Prototipo para la muestra del Ministerio. Datos tomados de comunicaciones oficiales y medios; a validar por cada área antes de la versión final.</footer>
+  </section>
+
+  <!-- OBRA -->
+  <section class="view" id="v-obra" hidden>
+    <div class="wrap obra-head">
+      <div class="tags" id="oTags"></div>
+      <h1 id="oNombre"></h1>
+      <p class="lugar" id="oLugar"></p>
+      <div class="dato" id="oDato"></div>
+    </div>
+    <div class="stage" id="obraStage"><div class="hint3d" id="obraHint">Arrastrá para girar la maqueta</div></div>
+    <div class="juego">
+      <div class="wrap">
+        <div class="juego-top">
+          <h2 id="jTitulo">Armala</h2>
+          <div class="fila"><span class="paso" id="jPaso"></span><button class="btn-sec" id="jReset">Empezar de nuevo</button></div>
+        </div>
+        <div class="barra-prog"><i id="jProg"></i></div>
+        <p class="consigna" id="jConsigna" aria-live="polite"></p>
+        <div class="bandeja" id="jBandeja"></div>
+        <div class="regula" id="jRegula" hidden>
+          <div class="reg-top"><b id="rMes">Enero</b><span id="rClima"></span><em id="rTiempo"></em></div>
+          <div class="meds">
+            <div class="med"><span>Nivel del lago</span><div class="track"><i class="zmin"></i><i class="zmax"></i><i class="fill" id="rNivel"></i></div><small id="rNivelTxt"></small></div>
+            <div class="med"><span>Energía</span><b id="rEnergia">0</b><div class="track"><i class="fill e" id="rEnergiaBar"></i></div><small>MWh · meta <span id="rMeta"></span></small></div>
+            <div class="med"><span>Río abajo</span><b id="rRio">Normal</b><div class="track"><i class="fill" id="rRioBar" style="background:#E2464C"></i></div><small>riesgo de inundación</small></div>
+          </div>
+          <div class="ctrl">
+            <label for="rTurb"><span>Turbinas</span><span id="rTurbTxt">50%</span></label>
+            <input type="range" id="rTurb" min="0" max="100" value="50">
+          </div>
+          <div class="fila">
+            <button class="btn-sec" id="rValv" type="button">Abrir válvulas de descarga</button>
+            <button class="btn amar" id="rStart" type="button">Empezar el año</button>
+          </div>
+          <div class="resultado" id="rRes" hidden><b id="rResT"></b><span id="rResD"></span><div class="fila"><button class="btn amar" id="rRetry" type="button">Probar de nuevo</button></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap bloques">
+      <article class="bloque">
+        <div class="eyebrow">Antes y después</div>
+        <h2>Deslizá para comparar</h2>
+        <div class="ad" id="adBox">
+          <img id="adAntes" alt="La zona antes de la obra">
+          <img id="adDespues" class="despues" alt="La zona con la obra terminada">
+          <div class="mango" id="adMango"></div>
+          <span class="et a">Antes</span><span class="et d">Después</span>
+          <input type="range" id="adRange" min="0" max="100" value="50" aria-label="Comparar antes y después">
+        </div>
+        <p class="nota">En el prototipo se muestran las maquetas. En la versión final van las fotos de archivo y tomas de dron de la obra.</p>
+      </article>
+
+      <article class="bloque">
+        <div class="eyebrow">En escala humana</div>
+        <h2>¿Cuánto es eso?</h2>
+        <div class="escala" id="oEscala"></div>
+      </article>
+
+      <article class="bloque">
+        <div class="eyebrow">Ficha técnica</div>
+        <h2>Los números de la obra</h2>
+        <dl class="ficha" id="oFicha"></dl>
+        <p class="nota" id="oFuente"></p>
+      </article>
+
+      <article class="bloque">
+        <div class="eyebrow">Realidad aumentada</div>
+        <div class="ar-box">
+          <div class="ar-ico" aria-hidden="true">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#004582" stroke-width="2.2" stroke-linejoin="round"><path d="M18 5 30 11.5v13L18 31 6 24.5v-13z"/><path d="M6 11.5 18 18l12-6.5M18 18v13"/></svg>
+          </div>
+          <div>
+            <h2 style="font-size:20px">Ver la maqueta en tu mesa</h2>
+            <p class="nota" style="margin-top:4px">En la versión publicada, este botón abre la cámara y apoya la obra en 3D sobre la mesa o el piso. Funciona en iPhone y Android sin instalar nada.</p>
+          </div>
+        </div>
+        <div class="fila"><button class="btn blanco" id="arBtn">Ver en tu espacio</button></div>
+      </article>
+
+      <article class="bloque">
+        <div class="eyebrow">Compartí tu logro</div>
+        <h2>Tu tarjeta para historias</h2>
+        <div id="shareLocked" class="bloqueo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          <span>Terminá de armar la obra y se genera tu tarjeta 9:16 para subir a Instagram o TikTok.</span>
+        </div>
+        <div id="shareReady" class="tarjeta-prev" hidden>
+          <img id="shareImg" alt="Tarjeta para compartir">
+          <div style="display:grid;gap:10px">
+            <p class="nota" style="font-size:14px">Guardala y subila a tus historias.</p>
+            <div class="fila"><button class="btn amar" id="shareSave">Guardar imagen</button></div>
+            <p class="nota" id="shareMsg"></p>
+          </div>
+        </div>
+      </article>
+
+      <button class="siguiente" id="oNext"><span><small>Siguiente obra</small><b id="oNextName"></b></span><span aria-hidden="true" style="font-size:24px">→</span></button>
+    </div>
+  </section>
+
+  <!-- RANKING -->
+  <section class="view" id="v-ranking" hidden>
+    <div class="wrap">
+      <div class="rk-head">
+        <div class="eyebrow">Muestra de obras</div>
+        <h1>Mejores ingenieros</h1>
+      </div>
+      <div class="rk-stats">
+        <div class="stat"><b id="sJug">0</b><span>ingenieros</span></div>
+        <div class="stat"><b id="sObras">0</b><span>obras armadas</span></div>
+        <div class="stat"><b id="sYo">–</b><span>tu puesto</span></div>
+      </div>
+      <div class="podio" id="podio"></div>
+      <ol class="rk-list" id="rkList"></ol>
+      <p class="modo" id="rkModo"></p>
+    </div>
+  </section>
+</main>
+
+<!-- Registro -->
+<div class="modal" id="mReg" hidden>
+  <form class="caja" id="regForm" autocomplete="off">
+    <svg class="casco" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44h48v6H8z" fill="#004582"/><path d="M12 44a20 20 0 0 1 40 0z" fill="#F7BE2B"/><path d="M28 18h8v26h-8z" fill="#EB7F27"/></svg>
+    <h2>Bienvenido/a, ingeniero/a</h2>
+    <p>Elegí un nombre para el ranking de la muestra. Solo el nombre: no pedimos mail ni teléfono.</p>
+    <div style="display:grid;gap:6px">
+      <label for="alias">Tu nombre de ingeniero/a</label>
+      <input id="alias" name="alias" maxlength="18" placeholder="Ej: Caro de Cosquín" required>
+      <p class="err-txt" id="regErr"></p>
+    </div>
+    <button class="btn" type="submit">Empezar a construir</button>
+  </form>
+</div>
+
+<!-- Festejo -->
+<div class="modal" id="mFin" hidden>
+  <div class="caja festejo">
+    <div class="eyebrow" id="finEje"></div>
+    <h2 id="finTitulo">¡Obra terminada!</h2>
+    <p id="finTexto"></p>
+    <div class="fila">
+      <button class="btn amar" id="finShare">Ver mi tarjeta</button>
+      <button class="btn blanco" id="finRank">Ver ranking</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+"use strict";
+const GEO = {"outline":[[-65.772,-31.045],[-65.521,-30.485],[-65.423,-30.12],[-65.158,-30.047],[-64.941,-29.85],[-64.964,-29.596],[-64.342,-29.5],[-63.977,-29.555],[-63.953,-29.621],[-63.875,-29.623],[-63.812,-29.579],[-63.718,-29.66],[-63.465,-29.665],[-63.478,-29.717],[-63.451,-29.758],[-62.807,-29.816],[-62.835,-29.867],[-62.786,-29.961],[-62.663,-29.999],[-62.656,-30.054],[-62.556,-30.063],[-62.593,-30.259],[-62.519,-30.339],[-62.174,-30.345],[-62.129,-30.481],[-61.841,-30.745],[-62.126,-31.616],[-62.237,-31.702],[-62.222,-31.883],[-62.167,-31.987],[-62.195,-32.117],[-62.129,-32.208],[-62.038,-32.261],[-61.927,-32.464],[-61.901,-32.569],[-61.92,-32.587],[-61.889,-32.61],[-61.943,-32.673],[-61.857,-32.694],[-61.785,-32.795],[-61.787,-33.006],[-61.923,-33.123],[-62.88,-34.383],[-63.381,-34.387],[-63.384,-35.0],[-65.117,-35.0],[-65.143,-33.195],[-65.062,-33.126],[-65.002,-33.006],[-65.022,-32.973],[-64.966,-32.866],[-64.924,-32.615],[-64.883,-32.571],[-64.896,-32.487],[-64.94,-32.307],[-65.211,-32.326],[-65.241,-32.101],[-65.315,-32.042],[-65.628,-31.899],[-65.77,-31.889],[-65.772,-31.045]],"deps":[[[-63.24,-33.81],[-62.55,-33.95],[-62.88,-34.38],[-63.38,-34.38],[-63.38,-34.53],[-63.82,-34.54],[-63.82,-34.36],[-64.14,-34.36],[-64.14,-34.27],[-64.23,-34.24],[-64.05,-34.17],[-64.05,-33.84],[-63.24,-33.81]],[[-63.1,-31.95],[-63.19,-32.11],[-63.2,-32.07],[-63.47,-32.1],[-63.37,-32.21],[-63.46,-32.26],[-63.51,-32.24],[-63.55,-32.32],[-63.57,-32.39],[-63.51,-32.4],[-63.58,-32.71],[-63.56,-32.83],[-63.72,-32.8],[-63.7,-32.73],[-63.91,-32.72],[-64.03,-32.76],[-63.9,-32.39],[-64.07,-32.32],[-64.24,-32.31],[-64.25,-32.36],[-64.3,-32.32],[-64.23,-32.0],[-63.97,-31.96],[-63.92,-32.01],[-63.7,-32.0],[-63.68,-32.04],[-63.68,-32.0],[-63.58,-31.97],[-63.44,-31.99],[-63.24,-31.94],[-63.22,-32.0],[-63.14,-31.95],[-63.1,-31.95]],[[-63.56,-32.83],[-63.54,-32.88],[-63.43,-32.92],[-63.41,-32.86],[-63.35,-32.87],[-63.4,-33.05],[-63.47,-33.04],[-63.49,-33.13],[-63.32,-33.16],[-63.3,-33.1],[-63.21,-33.12],[-63.22,-33.25],[-63.09,-33.28],[-63.25,-33.84],[-64.05,-33.84],[-64.06,-33.66],[-63.88,-33.66],[-63.89,-33.21],[-64.05,-33.2],[-64.05,-33.12],[-63.98,-33.12],[-63.96,-33.07],[-64.07,-33.05],[-63.99,-32.76],[-63.7,-32.73],[-63.72,-32.8],[-63.56,-32.83]],[[-63.73,-29.66],[-63.78,-29.66],[-63.78,-29.77],[-63.82,-29.87],[-63.89,-29.89],[-63.94,-30.09],[-64.17,-30.08],[-64.21,-29.98],[-64.4,-29.94],[-64.4,-29.84],[-64.46,-29.83],[-64.46,-29.52],[-63.98,-29.56],[-63.96,-29.62],[-63.78,-29.58],[-63.82,-29.61],[-63.73,-29.66]],[[-64.17,-30.08],[-63.53,-30.19],[-63.54,-30.28],[-63.4,-30.28],[-63.39,-30.33],[-63.35,-30.34],[-63.32,-30.22],[-62.54,-30.35],[-62.56,-30.44],[-62.35,-30.48],[-62.35,-30.54],[-62.56,-30.54],[-62.68,-30.5],[-62.73,-30.53],[-62.7,-30.57],[-63.06,-30.69],[-63.62,-30.53],[-63.63,-30.57],[-63.81,-30.57],[-63.84,-30.42],[-63.96,-30.42],[-64.04,-30.48],[-64.29,-30.47],[-64.29,-30.38],[-64.38,-30.34],[-64.34,-30.21],[-64.28,-30.22],[-64.29,-30.1],[-64.98,-30.01],[-64.99,-29.89],[-64.94,-29.85],[-64.96,-29.6],[-64.46,-29.52],[-64.46,-29.83],[-64.4,-29.84],[-64.4,-29.94],[-64.21,-29.98],[-64.17,-30.08]],[[-64.29,-30.47],[-64.09,-30.8],[-64.52,-30.77],[-64.53,-30.68],[-64.85,-30.64],[-65.04,-30.41],[-64.98,-30.41],[-64.98,-30.01],[-64.29,-30.1],[-64.28,-30.22],[-64.34,-30.21],[-64.37,-30.38],[-64.29,-30.38],[-64.29,-30.47]],[[-63.58,-30.54],[-63.62,-30.68],[-63.67,-30.67],[-63.74,-30.94],[-63.84,-30.98],[-63.84,-31.03],[-63.9,-31.03],[-63.9,-30.95],[-64.0,-30.91],[-64.17,-30.97],[-64.42,-30.92],[-64.43,-30.78],[-64.09,-30.79],[-64.26,-30.47],[-64.04,-30.48],[-63.96,-30.42],[-63.84,-30.42],[-63.81,-30.57],[-63.58,-30.54]],[[-64.99,-29.89],[-64.98,-30.41],[-65.04,-30.41],[-64.85,-30.64],[-64.62,-30.68],[-64.61,-30.76],[-64.67,-30.82],[-64.7,-31.01],[-64.64,-31.04],[-64.79,-31.42],[-64.93,-31.4],[-64.94,-31.19],[-65.04,-31.04],[-65.12,-31.03],[-65.16,-30.87],[-65.32,-30.88],[-65.35,-30.7],[-65.59,-30.64],[-65.42,-30.12],[-65.16,-30.05],[-64.99,-29.89]],[[-63.84,-31.03],[-63.88,-31.27],[-63.95,-31.27],[-63.97,-31.46],[-64.06,-31.44],[-64.06,-31.31],[-64.31,-31.31],[-64.31,-31.38],[-64.39,-31.35],[-64.45,-31.39],[-64.42,-30.92],[-64.17,-30.97],[-64.0,-30.91],[-63.9,-30.95],[-63.9,-31.03],[-63.84,-31.03]],[[-64.45,-31.39],[-64.55,-31.56],[-64.52,-31.7],[-64.73,-31.67],[-64.84,-31.41],[-64.79,-31.42],[-64.75,-31.35],[-64.64,-31.04],[-64.7,-31.01],[-64.67,-30.82],[-64.61,-30.76],[-64.62,-30.68],[-64.53,-30.68],[-64.52,-30.77],[-64.44,-30.79],[-64.45,-31.39]],[[-64.06,-31.31],[-64.06,-31.52],[-64.31,-31.52],[-64.31,-31.31],[-64.06,-31.31]],[[-63.12,-32.0],[-62.85,-32.08],[-62.93,-32.4],[-63.03,-32.39],[-63.15,-32.52],[-63.05,-32.54],[-63.11,-32.82],[-63.07,-32.86],[-63.14,-32.92],[-63.19,-33.12],[-63.3,-33.1],[-63.32,-33.16],[-63.49,-33.13],[-63.47,-33.04],[-63.4,-33.05],[-63.35,-32.87],[-63.41,-32.86],[-63.43,-32.92],[-63.54,-32.88],[-63.58,-32.78],[-63.51,-32.4],[-63.57,-32.39],[-63.55,-32.32],[-63.51,-32.24],[-63.46,-32.26],[-63.37,-32.21],[-63.47,-32.1],[-63.2,-32.07],[-63.19,-32.11],[-63.12,-32.0]],[[-63.94,-31.56],[-64.02,-31.61],[-63.98,-31.64],[-64.03,-31.77],[-63.95,-31.75],[-63.92,-32.01],[-63.97,-31.96],[-64.23,-32.0],[-64.21,-31.92],[-64.3,-31.95],[-64.33,-31.8],[-64.42,-31.86],[-64.5,-31.82],[-64.55,-31.88],[-64.9,-31.9],[-64.75,-31.82],[-64.73,-31.67],[-64.52,-31.7],[-64.54,-31.54],[-64.42,-31.35],[-64.31,-31.38],[-64.31,-31.52],[-64.06,-31.52],[-64.06,-31.44],[-63.96,-31.44],[-63.94,-31.56]],[[-65.77,-31.25],[-65.77,-31.04],[-65.59,-30.64],[-65.35,-30.7],[-65.32,-30.88],[-65.16,-30.87],[-65.12,-31.03],[-64.98,-31.1],[-64.92,-31.25],[-65.77,-31.25]],[[-64.93,-31.38],[-65.11,-31.42],[-65.16,-31.55],[-65.28,-31.64],[-65.47,-31.61],[-65.51,-31.76],[-65.77,-31.74],[-65.77,-31.25],[-64.93,-31.25],[-64.93,-31.38]],[[-64.9,-31.9],[-65.06,-31.87],[-65.27,-31.94],[-65.36,-31.89],[-65.77,-31.89],[-65.77,-31.74],[-65.51,-31.76],[-65.47,-31.61],[-65.28,-31.64],[-65.16,-31.55],[-65.11,-31.42],[-64.93,-31.38],[-64.84,-31.41],[-64.73,-31.68],[-64.75,-31.82],[-64.9,-31.9]],[[-65.0,-31.88],[-64.9,-31.9],[-64.94,-32.3],[-64.98,-32.32],[-65.21,-32.33],[-65.24,-32.09],[-65.61,-31.91],[-65.36,-31.89],[-65.27,-31.94],[-65.0,-31.88]],[[-63.12,-32.0],[-63.1,-31.95],[-63.14,-31.95],[-63.22,-32.0],[-63.24,-31.94],[-63.44,-31.99],[-63.58,-31.97],[-63.68,-32.0],[-63.68,-32.04],[-63.7,-32.0],[-63.92,-32.0],[-63.95,-31.75],[-64.03,-31.77],[-63.98,-31.64],[-64.02,-31.61],[-63.94,-31.56],[-63.68,-31.54],[-63.68,-31.49],[-63.55,-31.41],[-63.38,-31.37],[-63.38,-31.31],[-63.27,-31.33],[-63.27,-31.48],[-63.21,-31.48],[-63.23,-31.57],[-63.13,-31.67],[-63.06,-31.67],[-62.96,-31.94],[-62.85,-32.08],[-63.12,-32.0]],[[-62.16,-30.39],[-62.13,-30.48],[-61.84,-30.74],[-62.13,-31.62],[-62.24,-31.7],[-62.17,-31.99],[-62.19,-32.08],[-62.53,-31.98],[-62.55,-32.01],[-62.63,-31.99],[-62.64,-32.06],[-62.84,-32.02],[-62.85,-32.06],[-62.96,-31.94],[-63.06,-31.67],[-63.18,-31.64],[-63.23,-31.57],[-63.21,-31.48],[-63.27,-31.48],[-63.27,-31.33],[-63.24,-31.27],[-63.19,-31.28],[-63.12,-31.11],[-63.04,-31.13],[-63.01,-31.07],[-62.96,-31.08],[-62.93,-30.97],[-62.83,-30.95],[-62.8,-30.86],[-62.94,-30.75],[-62.92,-30.71],[-63.06,-30.69],[-62.7,-30.57],[-62.73,-30.54],[-62.69,-30.5],[-62.35,-30.54],[-62.35,-30.35],[-62.16,-30.39]],[[-62.82,-33.9],[-63.24,-33.81],[-63.09,-33.28],[-63.22,-33.25],[-63.23,-33.2],[-63.14,-32.92],[-63.07,-32.86],[-63.11,-32.82],[-63.05,-32.54],[-63.15,-32.52],[-63.03,-32.39],[-62.93,-32.4],[-62.84,-32.02],[-62.64,-32.06],[-62.63,-31.99],[-62.55,-32.01],[-62.53,-31.98],[-62.32,-32.01],[-62.33,-32.06],[-62.29,-32.06],[-62.37,-32.3],[-62.3,-32.31],[-62.31,-32.37],[-62.41,-32.45],[-62.51,-32.78],[-62.45,-32.87],[-62.52,-32.85],[-62.53,-33.05],[-62.64,-33.11],[-62.52,-33.15],[-62.69,-33.3],[-62.6,-33.31],[-62.82,-33.9]],[[-63.06,-30.69],[-63.05,-30.72],[-62.92,-30.71],[-62.94,-30.75],[-62.8,-30.86],[-62.83,-30.95],[-62.93,-30.97],[-62.96,-31.08],[-63.01,-31.07],[-63.04,-31.13],[-63.12,-31.11],[-63.26,-31.34],[-63.38,-31.31],[-63.38,-31.37],[-63.55,-31.41],[-63.68,-31.49],[-63.68,-31.54],[-63.96,-31.55],[-63.95,-31.27],[-63.88,-31.27],[-63.84,-30.98],[-63.74,-30.94],[-63.67,-30.67],[-63.62,-30.68],[-63.58,-30.54],[-63.06,-30.69]],[[-62.55,-33.95],[-62.82,-33.9],[-62.79,-33.79],[-62.76,-33.79],[-62.6,-33.31],[-62.69,-33.3],[-62.52,-33.15],[-62.64,-33.11],[-62.53,-33.05],[-62.52,-32.85],[-62.45,-32.87],[-62.5,-32.76],[-62.41,-32.45],[-62.31,-32.37],[-62.3,-32.31],[-62.37,-32.3],[-62.34,-32.14],[-62.29,-32.06],[-62.19,-32.08],[-62.18,-32.16],[-62.04,-32.26],[-61.91,-32.49],[-61.89,-32.61],[-61.95,-32.68],[-61.86,-32.69],[-61.79,-32.79],[-61.79,-33.0],[-61.92,-33.12],[-62.55,-33.95]],[[-63.99,-32.76],[-64.07,-33.05],[-63.96,-33.07],[-63.98,-33.12],[-64.05,-33.12],[-64.05,-33.2],[-63.89,-33.21],[-63.88,-33.66],[-64.06,-33.66],[-64.05,-34.17],[-64.23,-34.24],[-64.44,-34.22],[-64.84,-34.05],[-65.0,-34.04],[-65.12,-33.94],[-65.14,-33.19],[-65.0,-33.0],[-64.92,-32.61],[-64.51,-32.62],[-64.43,-32.41],[-64.26,-32.4],[-64.24,-32.31],[-64.07,-32.32],[-63.9,-32.39],[-64.03,-32.76],[-63.99,-32.76]],[[-64.55,-34.19],[-64.14,-34.27],[-64.14,-34.36],[-63.82,-34.36],[-63.82,-34.54],[-63.38,-34.53],[-63.38,-35.0],[-65.12,-35.0],[-65.12,-33.94],[-65.0,-34.04],[-64.83,-34.05],[-64.55,-34.19]],[[-64.31,-31.81],[-64.3,-31.95],[-64.21,-31.93],[-64.25,-32.17],[-64.3,-32.19],[-64.26,-32.4],[-64.43,-32.41],[-64.51,-32.62],[-64.9,-32.59],[-64.94,-32.3],[-64.91,-31.91],[-64.55,-31.88],[-64.5,-31.82],[-64.42,-31.86],[-64.31,-31.81]],[[-63.78,-29.66],[-63.47,-29.66],[-63.46,-29.76],[-62.81,-29.82],[-62.84,-29.87],[-62.79,-29.96],[-62.66,-30.0],[-62.66,-30.06],[-62.56,-30.06],[-62.59,-30.26],[-62.52,-30.34],[-62.17,-30.35],[-62.16,-30.39],[-62.35,-30.35],[-62.35,-30.48],[-62.56,-30.44],[-62.54,-30.35],[-63.32,-30.22],[-63.35,-30.34],[-63.4,-30.28],[-63.54,-30.28],[-63.53,-30.19],[-63.94,-30.09],[-63.89,-29.89],[-63.82,-29.87],[-63.78,-29.77],[-63.78,-29.66]]]};
+
+/* ============ DATOS DE OBRAS ============ */
+const OBRAS = [
+{
+  id:"punilla", lblDx:-6, lblAlign:"left", nombre:"Autovía de Punilla", eje:"Vialidad", color:"#EB7F27",
+  lugar:"Comuna San Roque · Bialet Massé · Santa María de Punilla · Cosquín · Molinari",
+  estado:"Habilitada en noviembre de 2024", lon:-64.47, lat:-31.24,
+  dato:{n:"21,8", u:"km", t:"de autovía de cuatro carriles que sacan el tránsito pasante de los centros urbanos del valle."},
+  juego:{tipo:"secuencia", titulo:"Armá la autovía", consigna:"Una ruta se construye de abajo hacia arriba. Tocá las piezas en el orden correcto.",
+    piezas:[
+      {n:"Subrasante compactada", c:"#A47C55", d:"Se nivela y compacta el suelo natural. Es el piso de todo lo demás."},
+      {n:"Sub-base granular", c:"#CDB78C", d:"Una capa de ripio que reparte el peso y deja escurrir el agua."},
+      {n:"Base estabilizada", c:"#9C9C96", d:"Material más fino y firme, que sostiene el asfalto."},
+      {n:"Carpeta asfáltica", c:"#3B3F46", d:"La superficie por donde ruedan los autos."},
+      {n:"Puente sobre el lago San Roque", c:"#E7EAEE", d:"480 metros sobre la embocadura del río Cosquín, con paso peatonal."},
+      {n:"Demarcación y luminarias", c:"#F7BE2B", d:"Líneas, señales e iluminación en los distribuidores: la autovía ya puede habilitarse."}
+    ],
+    mal:"Esa pieza va más arriba. Fijate qué capa falta debajo."},
+  escala:[
+    {n:"207", t:"canchas de fútbol en fila", s:"21,8 km ÷ 105 m de una cancha"},
+    {n:"7", t:"Obeliscos acostados, uno tras otro, entran en el puente del lago", s:"480 m ÷ 67,5 m del Obelisco"},
+    {n:"9.000", t:"vehículos por día, en promedio", s:"3,3 millones de vehículos por año ÷ 365 días"}
+  ],
+  ficha:[["Extensión","21,8 km, cuatro carriles"],["Puente sobre el lago San Roque","480 m, con paso peatonal"],["Puente sobre el río Yuspe","210 m"],["Inversión","US$ 130 millones"],["Tránsito estimado","3,3 millones de vehículos por año"],["Habilitación","25 de noviembre de 2024"],["Reconocimiento","Obra Vial Provincial del Año"]],
+  fuente:"Fuentes: comunicaciones del Gobierno de Córdoba recogidas por La Voz de San Justo, Hoy Día Córdoba e InfoNegocios."
+},
+{
+  id:"san-roque", lblDx:-6, lblBajo:true, lblAlign:"left", nombre:"Dique San Roque", eje:"Infraestructura Hídrica", color:"#004582",
+  lugar:"Valle de Punilla, a unos 29 km de la ciudad de Córdoba",
+  estado:"En funcionamiento", lon:-64.47, lat:-31.37,
+  dato:{n:"1.600", u:"ha", t:"de lago que regulan las crecidas del río Suquía, dan agua potable a la Capital y mueven una central hidroeléctrica."},
+  juego:{tipo:"dique", titulo:"Armá y manejá el dique", consigna:"Primero armá el dique pieza por pieza. Después vas a tener que manejarlo durante un año.",
+    piezas:[
+      {n:"Fundación sobre la roca", c:"#8E8A84", d:"Se limpia el lecho del río hasta llegar a roca firme. Ahí se apoya toda la presa."},
+      {n:"Paredón de la presa", c:"#D5D9DD", d:"El muro cierra el valle y empieza a retener el agua del río."},
+      {n:"Vertedero tipo embudo", c:"#009ADA", d:"Cuando el lago llega al tope, el agua cae por el embudo y sale sin pasar por encima del paredón."},
+      {n:"Central hidroeléctrica", c:"#F7BE2B", d:"El agua baja por caños hasta las turbinas y las hace girar. Así se genera electricidad."},
+      {n:"Línea eléctrica", c:"#EB7F27", d:"La energía viaja por los cables hasta la ciudad. El dique está listo: ahora te toca manejarlo."}
+    ],
+    mal:"Todavía no. ¿Qué tiene que estar antes para que esa pieza funcione?"},
+  escala:[
+    {n:"2.240", t:"canchas de fútbol entran en la superficie del lago", s:"1.600 ha ÷ 0,71 ha de una cancha de 105 × 68 m"},
+    {n:"1/4", t:"del volumen total del lago llegó en un solo día de lluvias intensas", s:"Por eso hay que regular: una tormenta en las sierras llena el lago muy rápido"},
+    {n:"135", t:"años desde que se levantó el primer paredón, en 1891", s:"El dique actual se inauguró en 1945"}
+  ],
+  ficha:[["Ubicación","Valle de Punilla, a unos 29 km de Córdoba"],["Inauguración","1945 (el primer dique es de 1891)"],["Superficie del lago","1.600 ha"],["Funciones","Regular crecidas del Suquía, agua potable, energía y turismo"],["Vertedero","Tipo embudo"],["Central hidroeléctrica","4 turbinas, opera EPEC"]],
+  fuente:"Fuentes: La Voz, Editores (revista técnica), Los Andes y Vía País. La simulación del juego es didáctica y no usa caudales reales."
+},
+{
+  id:"acueducto", nombre:"Acueducto Santa Fe – Córdoba", eje:"Infraestructura Hídrica", color:"#009ADA",
+  lugar:"Etapa I: de Coronda (Santa Fe) a San Francisco (Córdoba)",
+  estado:"En ejecución", lon:-62.08, lat:-31.43,
+  dato:{n:"410.000", u:"", t:"habitantes de Santa Fe y Córdoba van a recibir agua del río Paraná en la primera etapa."},
+  juego:{tipo:"canerias", titulo:"Llevá el agua", consigna:"Tocá los caños para girarlos y llevá el agua del río Paraná hasta San Francisco."},
+  escala:[
+    {n:"7", t:"Estadios Kempes llenos", s:"410.000 habitantes ÷ 57.000 lugares del estadio"},
+    {n:"144", t:"km de conducto troncal: como ir de Córdoba a Villa María", s:"Distancia aproximada por ruta"},
+    {n:"489", t:"km de caños en total, más que ir y volver de Córdoba a Río Cuarto", s:"144 km de troncal + 345 km de ramales"}
+  ],
+  ficha:[["Etapa I","Coronda – San Francisco"],["Conducto troncal","144 km"],["Ramales","345 km"],["Localidades","54, en Santa Fe y Córdoba"],["Habitantes","410.000 en la Etapa I"],["Ejecución","Unidad Ejecutora Biprovincial Santa Fe – Córdoba"],["Estado","En ejecución, por bloques"]],
+  fuente:"Fuentes: Gobierno de Santa Fe, Cadena 3 y La Voz de San Justo."
+},
+{
+  id:"bajo-grande", lblDx:6, lblBajo:true, lblAlign:"right", nombre:"Planta Depuradora Bajo Grande", eje:"Saneamiento", color:"#32A430",
+  lugar:"Ciudad de Córdoba, a orillas del río Suquía",
+  estado:"En funcionamiento", lon:-64.10, lat:-31.40,
+  dato:{n:"1,9", u:"millones", t:"de personas tienen sus líquidos cloacales tratados antes de volver al río Suquía."},
+  juego:{tipo:"secuencia", titulo:"Limpiá el agua", consigna:"Seguí el recorrido del agua: tocá cada etapa de la planta en el orden en que pasa el líquido.",
+    piezas:[
+      {n:"Colector de llegada", c:"#8A7A66", d:"Los colectores traen los líquidos cloacales de la ciudad hasta la planta."},
+      {n:"Pretratamiento", c:"#B4BCC4", d:"Rejas y desarenadores retienen basura, arena y sólidos grandes."},
+      {n:"Sedimentadores primarios", c:"#C9D3DA", d:"Seis piletas circulares de 45 metros de diámetro: lo pesado se va al fondo."},
+      {n:"Tanques de aireación", c:"#7FB7A8", d:"Cuatro tanques de 44 metros donde bacterias, con aire, se comen la materia orgánica."},
+      {n:"Descarga al río Suquía", c:"#3FA9D6", d:"El agua tratada vuelve al río, que sigue hasta la laguna Mar de Ansenuza."}
+    ],
+    mal:"El agua todavía no pasó por ahí. ¿Qué etapa viene antes?"},
+  escala:[
+    {n:"4", t:"piletas olímpicas por hora suma la ampliación", s:"10.000 m³/h nuevos ÷ 2.500 m³ de una pileta olímpica"},
+    {n:"33", t:"Estadios Kempes llenos de vecinos beneficiados", s:"1,9 millones ÷ 57.000 lugares"},
+    {n:"1,6", t:"canchas de básquet entran en el ancho de cada sedimentador", s:"45 m de diámetro ÷ 28 m de una cancha"}
+  ],
+  ficha:[["Población beneficiada","1,9 millones de habitantes"],["Capacidad nueva","2 módulos de 5.000 m³/h"],["Sedimentadores primarios","6, de 45 m de diámetro"],["Tanques de aireación","4, de 44 m"],["Equipo en obra","65 ingenieros y unos 220 obreros por mes"],["Inversión informada","$ 24.431 millones"],["Horizonte de diseño","20 años"]],
+  fuente:"Fuentes: comunicaciones del Gobierno de Córdoba recogidas por Hoy Día Córdoba, El Constructor y Vía País."
+}
+];
+const OB = Object.fromEntries(OBRAS.map(o=>[o.id,o]));
+
+/* ============ UTILIDADES ============ */
+const $ = s => document.querySelector(s);
+const el = (tag, attrs={}, kids=[]) => { const e=document.createElement(tag); for(const k in attrs){ if(k==="text") e.textContent=attrs[k]; else if(k==="style") e.style.cssText=attrs[k]; else e.setAttribute(k,attrs[k]); } (Array.isArray(kids)?kids:[kids]).forEach(c=>c&&e.append(c)); return e; };
+let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646;};
+const ease = t => 1-Math.pow(1-t,3);
+const easeBack = t => { const c1=1.4,c3=c1+1; return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2); };
+function toast(msg,ms=2600){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,ms); }
+const LS = { get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
+
+/* ============ JUGADOR Y RANKING ============ */
+const Player = LS.get("arma.player", {alias:"", obras:{}});
+const Store = {
+  mode:"local", db:null, uid:null, rows:[], listeners:[],
+  async init(){
+    try{
+      if(!window.claude || !window.claude.use) return;
+      const [db,user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+      if(!db || !user) return;
+      const id = await user.id();
+      if(!id) return;
+      this.db=db; this.uid=id; this.mode="shared";
+      db.collection("ingenieros").onSnapshot(snap=>{
+        this.rows = snap.docs.map(d=>({id:d.id, ...d.data()})).filter(r=>r && r.alias);
+        this.emit();
+      }, err=>{ this.mode="local"; this.emit(); });
+      const mine = await db.doc("ingenieros/"+id).get().catch(()=>null);
+      if(mine && mine.exists){
+        const d=mine.data()||{};
+        if(!Player.alias && d.alias){ Player.alias=d.alias; }
+        (d.obras||[]).forEach(o=>{ if(!Player.obras[o]) Player.obras[o]=d.updatedAt||Date.now(); });
+        LS.set("arma.player",Player);
+        refreshChrome();
+        if(Player.alias) $("#mReg").hidden=true;
+      }
+      if(Player.alias) this.save();
+    }catch(e){ this.mode="local"; }
+    this.emit();
+  },
+  async save(){
+    LS.set("arma.player",Player);
+    if(this.mode!=="shared") { this.emit(); return; }
+    const obras=Object.keys(Player.obras);
+    try{
+      await this.db.doc("ingenieros/"+this.uid).set({alias:Player.alias, obras, count:obras.length, updatedAt: Math.max(0,...Object.values(Player.obras), 0) || Date.now()});
+    }catch(e){ toast("No se pudo guardar en el ranking compartido. Tu avance queda en este celular."); }
+  },
+  list(){
+    let rows = this.mode==="shared" ? this.rows.slice() : [];
+    const meId = this.mode==="shared" ? this.uid : "yo";
+    if(Player.alias && !rows.some(r=>r.id===meId)){
+      const obras=Object.keys(Player.obras);
+      rows.push({id:meId, alias:Player.alias, obras, count:obras.length, updatedAt:Math.max(0,...Object.values(Player.obras))});
+    }
+    rows.sort((a,b)=> (b.count||0)-(a.count||0) || (a.updatedAt||0)-(b.updatedAt||0));
+    return {rows, meId};
+  },
+  on(fn){ this.listeners.push(fn); }, emit(){ this.listeners.forEach(f=>f()); }
+};
+const NIVELES = n => n>=OBRAS.length ? "Jefe/a de obra" : n>=2 ? "Ingeniero/a de obra" : n===1 ? "Ayudante técnico" : "Aprendiz";
+const PROHIBIDAS = ["puto","puta","boludo","pelotudo","forro","concha","verga","pija","mierda","choto","trolo","nazi","hdp","cagon","pajero","sorete"];
+function aliasOk(a){
+  const n=a.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+  if(a.trim().length<2) return "Escribí al menos 2 letras.";
+  if(PROHIBIDAS.some(p=>n.includes(p))) return "Elegí otro nombre, que lo va a ver toda la muestra.";
+  return "";
+}
+
+/* ============ THREE: RENDERER ÚNICO ============ */
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+let snapR = null;
+function snapRenderer(){ if(!snapR){ snapR=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}); snapR.setPixelRatio(1); snapR.setSize(960,600); } return snapR; }
+const M = c => new THREE.MeshLambertMaterial({color:c, flatShading:true});
+function lights(scene){
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8FA3B3, 0.62));
+  const d=new THREE.DirectionalLight(0xffffff,0.55); d.position.set(4,8,5); scene.add(d);
+}
+let active=null; // {scene,camera,controls,update,stage,labels}
+function mount(ctx){
+  if(active && active.controls) active.controls.enabled=false;
+  active=ctx;
+  ctx.stage.prepend(renderer.domElement);
+  resize();
+  if(ctx.controls) ctx.controls.enabled=true;
+}
+function resize(){
+  if(!active) return;
+  const w=active.stage.clientWidth, h=active.stage.clientHeight;
+  renderer.setSize(w,h,false);
+  active.camera.aspect=w/h;
+  if(active.fit) active.fit(w/h);
+  active.camera.updateProjectionMatrix();
+}
+window.addEventListener("resize",resize);
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  if(!active || document.hidden) return;
+  const dt=Math.min(clock.getDelta(),0.05), t=clock.elapsedTime;
+  if(active.controls) active.controls.update();
+  if(active.update) active.update(dt,t);
+  if(Reg.on && cur && active===cur.ctx) regTick(dt);
+  renderer.render(active.scene, active.camera);
+  if(active.labels) placeLabels(active);
+}
+function placeLabels(ctx){
+  const w=ctx.stage.clientWidth, h=ctx.stage.clientHeight, v=new THREE.Vector3();
+  ctx.labels.forEach(L=>{
+    v.copy(L.pos).project(ctx.camera);
+    const vis = v.z<1 && v.x>-1.2 && v.x<1.2 && v.y>-1.2 && v.y<1.2;
+    L.el.style.display = vis?"":"none";
+    let px=(v.x+1)/2*w+(L.dx||0), py=(1-v.y)/2*h; const ax=L.align==="left"?1:L.align==="right"?0:0.5; if(!L.center){ const ow=L.el.offsetWidth; let left=px-ow*ax; left=Math.max(6,Math.min(w-ow-6,left)); px=left+ow*ax; } L.el.style.transform = `translate(${px}px,${py}px) translate(${-ax*100}%,${L.center?"-50%":L.bajo?"40%":"-115%"})`;
+  });
+}
+/* Detecta toque (no arrastre) sobre el canvas */
+function onTap(stage, fn){
+  let sx=0,sy=0,st=0;
+  stage.addEventListener("pointerdown",e=>{sx=e.clientX;sy=e.clientY;st=performance.now();});
+  stage.addEventListener("pointerup",e=>{
+    if(Math.hypot(e.clientX-sx,e.clientY-sy)<8 && performance.now()-st<500){
+      const r=stage.getBoundingClientRect();
+      fn(new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1));
+    }
+  });
+}
+function orbit(camera, dom, target, opts={}){
+  const c=new THREE.OrbitControls(camera, dom);
+  c.target.copy(target); c.enableDamping=true; c.dampingFactor=0.08; c.enablePan=false;
+  c.minPolarAngle=opts.minPolar??0.25; c.maxPolarAngle=opts.maxPolar??1.25;
+  c.minDistance=opts.minD??4; c.maxDistance=opts.maxD??16; c.rotateSpeed=0.7;
+  c.touches={ONE:THREE.TOUCH.ROTATE, TWO:THREE.TOUCH.DOLLY_ROTATE};
+  c.enabled=false;
+  return c;
+}
+
+/* ============ MAPA 3D DE LA PROVINCIA ============ */
+const LON0=-63.77, LAT0=-32.25, KX=Math.cos(LAT0*Math.PI/180);
+const P = (lon,lat)=>({x:(lon-LON0)*KX, z:-(lat-LAT0)});
+function segDist(px,py,ax,ay,bx,by){ const dx=bx-ax,dy=by-ay; let t=((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy||1); t=Math.max(0,Math.min(1,t)); return Math.hypot(px-(ax+t*dx),py-(ay+t*dy)); }
+const SIERRAS=[ // lonA,latA,lonB,latB, metros, ancho(°)
+  [-64.80,-31.05,-64.90,-32.20,2200,0.17],
+  [-64.94,-31.99,-64.94,-31.99,700,0.07],
+  [-64.32,-30.85,-64.42,-31.95,1250,0.09],
+  [-64.92,-32.25,-64.98,-33.35,1600,0.09],
+  [-64.20,-29.95,-64.45,-30.75,850,0.16],
+  [-65.15,-30.90,-65.25,-31.60,1000,0.11]
+];
+function inPoly(x,y,poly){ let c=false; for(let i=0,j=poly.length-1;i<poly.length;j=i++){ const [xi,yi]=poly[i],[xj,yj]=poly[j]; if(((yi>y)!==(yj>y)) && (x<(xj-xi)*(y-yi)/(yj-yi)+xi)) c=!c; } return c; }
+function noise2(x,y){ return Math.sin(x*12.9+y*4.1)*0.5+Math.sin(x*3.7-y*9.3)*0.35+Math.sin((x+y)*21.1)*0.15; }
+function altura(lon,lat){
+  let m=0; for(const s of SIERRAS){ const d=segDist(lon,lat,s[0],s[1],s[2],s[3]); m+=s[4]*Math.exp(-((d/s[5])**2)); }
+  m*= 1+0.18*noise2(lon,lat);
+  return Math.max(0,m);
+}
+const HS=0.62/2800;
+function edgeDist(lon,lat){ let d=9; const o=GEO.outline; for(let i=0;i<o.length-1;i++) d=Math.min(d,segDist(lon,lat,o[i][0],o[i][1],o[i+1][0],o[i+1][1])); return d; }
+function hWorld(lon,lat){ const f=Math.min(1,edgeDist(lon,lat)/0.09); return altura(lon,lat)*HS*(f*f*(3-2*f)); }
+
+function buildMap(){
+  const stage=$("#mapStage");
+  const scene=new THREE.Scene(); lights(scene);
+  const camera=new THREE.PerspectiveCamera(42,1,0.1,100);
+  camera.position.set(0.4,6.2,5.2);
+  const g=new THREE.Group(); scene.add(g);
+  // losa base (silueta exacta de la provincia)
+  const shape=new THREE.Shape(GEO.outline.map(([lo,la])=>{const p=P(lo,la);return new THREE.Vector2(p.x,-p.z);}));
+  const slab=new THREE.ExtrudeGeometry(shape,{depth:0.16,bevelEnabled:false});
+  slab.rotateX(-Math.PI/2); slab.translate(0,-0.16,0);
+  g.add(new THREE.Mesh(slab,[M(0xD7E7C3),M(0xC7D5DF)]));
+  // relieve
+  const step=0.03, b={x0:-65.8,x1:-61.75,y0:-35.02,y1:-29.48};
+  const nx=Math.ceil((b.x1-b.x0)/step)+1, ny=Math.ceil((b.y1-b.y0)/step)+1;
+  const pos=[],col=[],inside=[],idx=[];
+  const cPlano=new THREE.Color(0xD7E7C3), cMedio=new THREE.Color(0xB9CB8E), cAlto=new THREE.Color(0xC4AE88), cCima=new THREE.Color(0xEFE9DF), tmp=new THREE.Color();
+  for(let j=0;j<ny;j++) for(let i=0;i<nx;i++){
+    const lon=b.x0+i*step, lat=b.y0+j*step, p=P(lon,lat);
+    const ins=inPoly(lon,lat,GEO.outline); inside.push(ins);
+    const h= ins? hWorld(lon,lat):0;
+    pos.push(p.x,h+0.002,p.z);
+    const t=h/0.5;
+    if(t<0.25) tmp.copy(cPlano).lerp(cMedio,t/0.25); else if(t<0.7) tmp.copy(cMedio).lerp(cAlto,(t-0.25)/0.45); else tmp.copy(cAlto).lerp(cCima,Math.min(1,(t-0.7)/0.3));
+    const jit=0.03*noise2(lon*3,lat*3); col.push(tmp.r+jit,tmp.g+jit,tmp.b+jit);
+  }
+  for(let j=0;j<ny-1;j++) for(let i=0;i<nx-1;i++){
+    const a=j*nx+i,b2=a+1,c=a+nx,d=c+1;
+    if(inside[a]&&inside[b2]&&inside[c]) idx.push(a,c,b2);
+    if(inside[b2]&&inside[c]&&inside[d]) idx.push(b2,c,d);
+  }
+  const tg=new THREE.BufferGeometry();
+  tg.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
+  tg.setAttribute("color",new THREE.Float32BufferAttribute(col,3));
+  tg.setIndex(idx); tg.computeVertexNormals();
+  g.add(new THREE.Mesh(tg,new THREE.MeshLambertMaterial({vertexColors:true,flatShading:true})));
+  // límites departamentales
+  const lm=new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:0.55});
+  GEO.deps.forEach(poly=>{
+    const pts=[]; for(let k=0;k<poly.length-1;k++){ const [a0,a1]=poly[k],[b0,b1]=poly[k+1]; const n=Math.max(1,Math.ceil(Math.hypot(b0-a0,b1-a1)/0.05)); for(let s=0;s<n;s++){ const lo=a0+(b0-a0)*s/n, la=a1+(b1-a1)*s/n, p=P(lo,la); pts.push(new THREE.Vector3(p.x,hWorld(lo,la)+0.008,p.z)); } }
+    pts.push(pts[0].clone());
+    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lm));
+  });
+  // Mar de Ansenuza y lago San Roque
+  const agua=new THREE.MeshLambertMaterial({color:0x5DB7E0});
+  const mc=P(-62.62,-30.73); const ans=new THREE.Mesh(new THREE.CircleGeometry(1,40),agua); ans.rotation.x=-Math.PI/2; ans.scale.set(0.42*KX*1.0,0.27,1); ans.position.set(mc.x,0.006,mc.z); g.add(ans);
+  const sr=P(-64.47,-31.37); const lsr=new THREE.Mesh(new THREE.CircleGeometry(0.045,16),agua); lsr.rotation.x=-Math.PI/2; lsr.position.set(sr.x,hWorld(-64.47,-31.37)+0.01,sr.z); g.add(lsr);
+  // pines de obras
+  const pins=[], labels=[];
+  OBRAS.forEach(o=>{
+    const p=P(o.lon,o.lat), h=hWorld(o.lon,o.lat);
+    const pin=new THREE.Group(); pin.position.set(p.x,h,p.z);
+    const mat=M(new THREE.Color(o.color));
+    const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.018,0.5,8),M(0x0B2440)); stem.position.y=0.25; pin.add(stem);
+    const head=new THREE.Mesh(new THREE.OctahedronGeometry(0.11,0),mat); head.position.y=0.58; pin.add(head);
+    const ring=new THREE.Mesh(new THREE.RingGeometry(0.06,0.09,32),new THREE.MeshBasicMaterial({color:o.color,transparent:true,opacity:0.8,side:THREE.DoubleSide})); ring.rotation.x=-Math.PI/2; ring.position.y=0.01; pin.add(ring);
+    pin.userData={id:o.id,head,ring}; g.add(pin); pins.push(pin);
+    const lb=el("button",{class:"pinlbl"},[el("i",{style:"background:"+o.color}), document.createTextNode(o.nombre.replace("Planta Depuradora ","Planta "))]);
+    lb.dataset.id=o.id; lb.addEventListener("click",()=>go(o.id)); stage.append(lb);
+    labels.push({el:lb,pos:new THREE.Vector3(p.x,o.lblBajo?h:h+0.72,p.z),id:o.id,dx:o.lblDx||0,bajo:!!o.lblBajo,align:o.lblAlign||""});
+  });
+  [["Ciudad de Córdoba",-64.18,-31.42,false],["Mar de Ansenuza",-62.62,-30.73,true],["Sierras Grandes",-64.95,-31.55,false],["Río Cuarto",-64.35,-33.12,false],["Villa María",-63.24,-32.41,false],["San Francisco",-62.08,-31.43,false]].forEach(([n,lo,la,ag])=>{
+    if(n==="San Francisco"||n==="Ciudad de Córdoba") return;
+    const p=P(lo,la); const d=el("div",{class:"maplbl"+(ag?" agua":""),text:n}); stage.append(d);
+    labels.push({el:d,pos:new THREE.Vector3(p.x,hWorld(lo,la)+0.03,p.z),center:true});
+  });
+  const controls=orbit(camera,renderer.domElement,new THREE.Vector3(0,0,0.15),{minD:3.2,maxD:11,maxPolar:1.15});
+  const ray=new THREE.Raycaster();
+  onTap(stage, v=>{
+    if(active.stage!==stage) return;
+    ray.setFromCamera(v,camera);
+    const hit=ray.intersectObjects(pins,true)[0];
+    if(hit){ let o=hit.object; while(o && !o.userData.id) o=o.parent; if(o) go(o.userData.id); }
+  });
+  stage.addEventListener("pointerdown",()=>{$("#mapHint").style.opacity=0;},{once:true});
+  return {stage,scene,camera,controls,labels,
+    fit(a){ if(this._a===a) return; this._a=a; const t=Math.tan(camera.fov*Math.PI/360); const d=Math.max(2.5/t, 2.0/(t*a)); const dir=camera.position.clone().sub(controls.target).normalize(); camera.position.copy(controls.target).addScaledVector(dir,d); controls.maxDistance=Math.max(11,d*1.4); },
+    update(dt,t){ pins.forEach((p,i)=>{ const u=p.userData; u.head.rotation.y=t*1.2+i; u.head.position.y=0.58+Math.sin(t*2+i)*0.03; const s=1+((t*0.8+i*0.3)%1)*2.2; u.ring.scale.set(s,s,1); u.ring.material.opacity=0.8*(1-((t*0.8+i*0.3)%1)); }); }
+  };
+}
+
+/* ============ ESCENAS DE OBRA ============ */
+function baseScene(){
+  const scene=new THREE.Scene(); lights(scene);
+  const camera=new THREE.PerspectiveCamera(45,1,0.1,200);
+  return {scene,camera};
+}
+function drop(obj,dur=0.7){ obj.visible=true; obj.userData.anim={t:0,dur,from:obj.userData.home.y+3.2}; obj.position.y=obj.userData.anim.from; }
+function stepAnims(objs,dt){ objs.forEach(o=>{ const a=o.userData.anim; if(!a) return; a.t+=dt; const k=Math.min(1,a.t/a.dur); o.position.y=a.from+(o.userData.home.y-a.from)*easeBack(k); if(k>=1){ o.position.y=o.userData.home.y; o.userData.anim=null; } }); }
+function part(group){ group.userData.home=group.position.clone(); group.visible=false; return group; }
+function trees(scene,n,area,avoid){
+  const tm=M(0x4E8F3A), tm2=M(0x6FA34B), tr=M(0x7A5A3A);
+  for(let i=0;i<n;i++){
+    const x=(rnd()-0.5)*area[0], z=(rnd()-0.5)*area[1];
+    if(avoid(x,z)) continue;
+    const t=new THREE.Group(); const s=0.6+rnd()*0.6;
+    const c=new THREE.Mesh(new THREE.ConeGeometry(0.22*s,0.6*s,6),rnd()>0.5?tm:tm2); c.position.y=0.42*s; t.add(c);
+    const k=new THREE.Mesh(new THREE.CylinderGeometry(0.04*s,0.04*s,0.18*s,5),tr); k.position.y=0.09*s; t.add(k);
+    t.position.set(x,0,z); scene.add(t);
+  }
+}
+
+/* --- Autovía de Punilla --- */
+function buildPunilla(){
+  seed=11;
+  const {scene,camera}=baseScene();
+  camera.position.set(6.5,5.2,8.2);
+  const landM=M(0xC9DBA8), sideM=M(0xB8A27F);
+  [[-5,6],[5,6]].forEach(([x,w])=>{ const m=new THREE.Mesh(new THREE.BoxGeometry(w,1,10),[sideM,sideM,landM,sideM,sideM,sideM]); m.position.set(x,-0.5,0); scene.add(m); });
+  const fondo=new THREE.Mesh(new THREE.BoxGeometry(4,0.5,10),M(0xA88E6A)); fondo.position.set(0,-0.95,0); scene.add(fondo);
+  const lago=new THREE.Mesh(new THREE.BoxGeometry(4,0.55,10),new THREE.MeshLambertMaterial({color:0x4FB0DC,transparent:true,opacity:0.88})); lago.position.set(0,-0.6,0); scene.add(lago);
+  // cerros
+  const cerroM=[M(0xA9C27D),M(0xBFB28A),M(0x9DB874)];
+  [[-6,-3.6,2.2,1.9],[-3.8,-4,1.6,1.3],[5.8,-3.4,2.4,2.3],[3.6,-4.2,1.5,1.1],[-6.4,3.8,1.8,1.2],[6.2,3.6,1.7,1.4],[7,-1.5,1.2,0.9]].forEach(([x,z,r,h],i)=>{
+    const c=new THREE.Mesh(new THREE.ConeGeometry(r,h,7),cerroM[i%3]); c.position.set(x,h/2,z); c.rotation.y=i; scene.add(c);
+  });
+  trees(scene,70,[15,9.5],(x,z)=>Math.abs(z)<1.8||Math.abs(x)<2.2);
+  // piezas
+  const parts=[];
+  const capas=[0xA47C55,0xCDB78C,0x9C9C96,0x3B3F46];
+  capas.forEach((c,i)=>{
+    const g=new THREE.Group();
+    [[-5,6],[5,6]].forEach(([x,w])=>{ const m=new THREE.Mesh(new THREE.BoxGeometry(w,0.07,2.4-i*0.12),M(c)); m.position.set(x,0,0); g.add(m); });
+    g.position.y=0.035+i*0.07; scene.add(part(g)); parts.push(g);
+  });
+  const top=4*0.07;
+  { // puente
+    const g=new THREE.Group(); const deck=new THREE.Mesh(new THREE.BoxGeometry(4.1,0.16,2.2),M(0xE7EAEE)); deck.position.y=top-0.08; g.add(deck);
+    const asf=new THREE.Mesh(new THREE.BoxGeometry(4.1,0.02,1.9),M(0x3B3F46)); asf.position.y=top+0.005; g.add(asf);
+    [-1.3,0,1.3].forEach(x=>[-0.65,0.65].forEach(z=>{ const p=new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.13,1.3,8),M(0xD5DADF)); p.position.set(x,top-0.8,z); g.add(p); }));
+    [-1.05,1.05].forEach(z=>{ const r=new THREE.Mesh(new THREE.BoxGeometry(4.1,0.12,0.05),M(0x009ADA)); r.position.set(0,top+0.08,z); g.add(r); });
+    const ped=new THREE.Mesh(new THREE.BoxGeometry(4.1,0.03,0.25),M(0xF3D9A8)); ped.position.set(0,top+0.02,0.95); g.add(ped);
+    scene.add(part(g)); parts.push(g);
+  }
+  { // demarcación + luminarias
+    const g=new THREE.Group(), wM=new THREE.MeshBasicMaterial({color:0xffffff}), yM=new THREE.MeshBasicMaterial({color:0xF7BE2B});
+    for(let x=-7.8;x<8;x+=0.7){ [-0.45,0.45].forEach(z=>{ const d=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.01,0.05),wM); d.position.set(x,top+0.02,z); g.add(d); }); }
+    [-0.9,0.9].forEach(z=>{ const l=new THREE.Mesh(new THREE.BoxGeometry(16,0.01,0.04),wM); l.position.set(0,top+0.02,z); g.add(l); });
+    const med=new THREE.Mesh(new THREE.BoxGeometry(16,0.012,0.06),yM); med.position.set(0,top+0.022,0); g.add(med);
+    for(let x=-7;x<=7;x+=2.33){ const p=new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.03,0.9,6),M(0x8A939B)); p.position.set(x,top+0.45,1.2); g.add(p); const h=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.04,0.08),new THREE.MeshBasicMaterial({color:0xFFE38A})); h.position.set(x-0.1,top+0.9,1.12); g.add(h); }
+    scene.add(part(g)); parts.push(g);
+  }
+  // autos
+  const cars=[], carCols=[0xE2464C,0x009ADA,0xffffff,0xF7BE2B,0x004582,0xAF4178];
+  for(let i=0;i<8;i++){ const c=new THREE.Group(); const b=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.13,0.22),M(carCols[i%6])); b.position.y=0.07; c.add(b); const cab=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.1,0.18),M(0xDDE6EE)); cab.position.set(-0.02,0.18,0); c.add(cab); c.userData={dir:i%2?1:-1,x:-8+i*2.1,v:1.6+rnd()*0.9,lane:(i%2?0.22:-0.22)+(i%4<2?0.45:-0.45)*0+((i%2)?0.45:-0.45)}; c.position.set(0,top,c.userData.lane); c.visible=false; scene.add(c); cars.push(c); }
+  return {scene,camera,parts,halfW:5.6,halfH:4.2,target:new THREE.Vector3(0,0.2,0),
+    setDone(on){ cars.forEach(c=>c.visible=on); },
+    update(dt){ stepAnims(parts,dt); cars.forEach(c=>{ if(!c.visible) return; const u=c.userData; u.x+=u.v*dt*u.dir; if(u.x>8.2)u.x=-8.2; if(u.x<-8.2)u.x=8.2; c.position.x=u.x; c.rotation.y=u.dir>0?0:Math.PI; }); }
+  };
+}
+
+/* --- Planta Bajo Grande --- */
+function buildBajoGrande(){
+  seed=23;
+  const {scene,camera}=baseScene();
+  camera.position.set(2.5,7.2,8.6);
+  const g0=new THREE.Mesh(new THREE.BoxGeometry(17,0.4,10),[M(0xB8A27F),M(0xB8A27F),M(0xC9DBA8),M(0xB8A27F),M(0xB8A27F),M(0xB8A27F)]); g0.position.y=-0.2; scene.add(g0);
+  const pad=new THREE.Mesh(new THREE.BoxGeometry(8.6,0.04,6.4),M(0xDCE1E5)); pad.position.set(-1.2,0.02,0); scene.add(pad);
+  // ciudad
+  for(let i=0;i<22;i++){ const h=0.3+rnd()*1.6; const b=new THREE.Mesh(new THREE.BoxGeometry(0.4+rnd()*0.3,h,0.4+rnd()*0.3),M([0xF2F4F6,0xE2E8EE,0xD6DEE6,0xF7E9D2][i%4])); b.position.set(-7.6+rnd()*1.6,h/2,-4+rnd()*8); scene.add(b); }
+  // río Suquía (cinta curva)
+  const pts=[]; for(let z=-5;z<=5.01;z+=0.25) pts.push([5.6+Math.sin(z*0.7)*0.5,z]);
+  const rs=new THREE.Shape(); pts.forEach(([x,z],i)=> i?rs.lineTo(x-0.55,z):rs.moveTo(x-0.55,z)); pts.slice().reverse().forEach(([x,z])=>rs.lineTo(x+0.55,z));
+  const rg=new THREE.ShapeGeometry(rs); rg.rotateX(Math.PI/2);
+  const rioM=new THREE.MeshLambertMaterial({color:0x8C8068, side:THREE.DoubleSide});
+  const rio=new THREE.Mesh(rg,rioM); rio.position.y=0.03; scene.add(rio);
+  trees(scene,40,[16,9.5],(x,z)=>(x>-5.8&&x<3.6&&Math.abs(z)<3.4)||Math.abs(x-5.6)<1.1||x<-6);
+  const W=[0x7A5E44,0x8C7656,0x7E8E78,0x5F9EA8,0x3FA9D6].map(c=>new THREE.MeshLambertMaterial({color:c}));
+  const concreto=M(0xC9D0D6), parts=[], anim={arms:[],bubbles:[]};
+  const canal=(x0,x1,z,mat)=>{ const g=new THREE.Group(); const c=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,0.14,0.34),concreto); c.position.set((x0+x1)/2,0.07,z); g.add(c); const w=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,0.02,0.24),mat); w.position.set((x0+x1)/2,0.145,z); g.add(w); return g; };
+  { const g=new THREE.Group(); const p=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,2.0,12),M(0x9AA4AD)); p.rotation.z=Math.PI/2; p.position.set(-6.0,0.22,0); g.add(p); g.add(canal(-5.0,-4.6,0,W[0])); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group(); const b=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.45,1.6),concreto); b.position.set(-3.9,0.22,0); g.add(b); const w=new THREE.Mesh(new THREE.BoxGeometry(1.1,0.02,1.3),W[0]); w.position.set(-3.9,0.46,0); g.add(w);
+    for(let k=0;k<7;k++){ const r=new THREE.Mesh(new THREE.BoxGeometry(0.03,0.32,1.3),M(0x4B5560)); r.position.set(-4.35+k*0.03*0+k*0.06,0.6,0); g.add(r); }
+    g.add(canal(-3.25,-2.85,0,W[1])); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group();
+    [-2.2,-1.0].forEach(x=>[-1.5,0,1.5].forEach(z=>{ const t=new THREE.Mesh(new THREE.CylinderGeometry(0.56,0.56,0.36,28),concreto); t.position.set(x,0.18,z); g.add(t); const w=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.02,28),W[1]); w.position.set(x,0.36,z); g.add(w); const arm=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.05,0.08),M(0xF7BE2B)); arm.position.set(x,0.41,z); g.add(arm); anim.arms.push(arm); }));
+    const col=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.1,3.6),concreto); col.position.set(-1.6,0.05,0); g.add(col);
+    g.add(canal(-0.44,-0.05,0,W[2])); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group();
+    [-1.5,-0.5,0.5,1.5].forEach(z=>{ const t=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.34,0.8),concreto); t.position.set(1.1,0.17,z); g.add(t); const w=new THREE.Mesh(new THREE.BoxGeometry(2.0,0.02,0.64),W[3]); w.position.set(1.1,0.345,z); g.add(w);
+      for(let k=0;k<10;k++){ const b=new THREE.Mesh(new THREE.SphereGeometry(0.035,6,4),new THREE.MeshBasicMaterial({color:0xffffff})); b.position.set(0.15+rnd()*1.9,0.36,z-0.25+rnd()*0.5); b.userData.ph=rnd(); g.add(b); anim.bubbles.push(b); } });
+    scene.add(part(g)); parts.push(g); }
+  { const g=canal(2.25,5.1,0,W[4]); scene.add(part(g)); parts.push(g); }
+  return {scene,camera,parts,halfW:6.2,halfH:4.4,target:new THREE.Vector3(-0.6,0.2,0),
+    setDone(on){ rioM.color.set(on?0x3FA9D6:0x8C8068); },
+    onProgress(n){ rioM.color.set(n>=5?0x3FA9D6:0x8C8068); },
+    update(dt,t){ stepAnims(parts,dt); anim.arms.forEach((a,i)=>a.rotation.y=t*0.4+i); anim.bubbles.forEach(b=>{ const k=(t*0.7+b.userData.ph)%1; b.position.y=0.36+k*0.18; b.scale.setScalar(1-k*0.6); }); }
+  };
+}
+
+/* --- Acueducto Santa Fe – Córdoba: rompecabezas de caños --- */
+function buildAcueducto(){
+  seed=41;
+  const {scene,camera}=baseScene();
+  camera.position.set(0.2,9.0,6.6);
+  const COLS=6, ROWS=4, S=1.15, x0=-(COLS-1)/2*S, z0=-(ROWS-1)/2*S;
+  const base=new THREE.Mesh(new THREE.BoxGeometry(16,0.4,10),M(0xB8A27F)); base.position.y=-0.2; scene.add(base);
+  const campos=[0xD6E3A6,0xC3D88E,0xE8D9A0,0xB6CF86,0xDCE7B8,0xEBDDB0];
+  for(let i=-8;i<8;i+=1.6) for(let j=-5;j<5;j+=1.25){ const f=new THREE.Mesh(new THREE.BoxGeometry(1.55,0.02,1.2),M(campos[Math.floor(rnd()*campos.length)])); f.position.set(i+0.8,0.01,j+0.62); scene.add(f); }
+  // río Paraná y toma
+  const parana=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.06,10),M(0x3FA9D6)); parana.position.set(x0-2.4,0.03,0); scene.add(parana);
+  const toma=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.55,0.7),M(0xE7EAEE)); toma.position.set(x0-1.25,0.28,z0+1*S); scene.add(toma);
+  const tomaT=new THREE.Mesh(new THREE.BoxGeometry(0.74,0.08,0.74),M(0x009ADA)); tomaT.position.set(x0-1.25,0.58,z0+1*S); scene.add(tomaT);
+  const pipeEmpty=M(0xA9B4BE), pipeWater=new THREE.MeshLambertMaterial({color:0x009ADA,emissive:0x003a5a});
+  const stub=(x,z,len)=>{ const m=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.13,len,10),pipeWater); m.rotation.z=Math.PI/2; m.position.set(x,0.22,z); scene.add(m); return m; };
+  stub(x0-0.75,z0+1*S,0.5);
+  // San Francisco
+  const casas=[], ventM=new THREE.MeshLambertMaterial({color:0x5A6B7A});
+  const dx=x0+(COLS-1)*S+1.5, dz=z0+2*S;
+  for(let i=0;i<11;i++){ const c=new THREE.Group(); const w=0.38+rnd()*0.2; const b=new THREE.Mesh(new THREE.BoxGeometry(w,0.34,w),M(0xF4F1EC)); b.position.y=0.17; c.add(b); const r=new THREE.Mesh(new THREE.ConeGeometry(w*0.78,0.24,4),M(0xC2593F)); r.position.y=0.46; r.rotation.y=Math.PI/4; c.add(r); const v=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.1,0.01),ventM); v.position.set(0,0.18,w/2+0.006); c.add(v); c.position.set(dx+0.3+(i%4)*0.62, 0, dz-1.6+Math.floor(i/4)*0.75+((i%2)*0.15)); scene.add(c); casas.push(c); }
+  const tanque=new THREE.Group(); const tq=new THREE.Mesh(new THREE.CylinderGeometry(0.32,0.32,0.5,14),M(0xE7EAEE)); tq.position.y=1.15; tanque.add(tq); const pata=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.9,6),M(0x9AA4AD)); pata.position.y=0.45; tanque.add(pata);
+  const tqAgua=new THREE.Mesh(new THREE.CylinderGeometry(0.29,0.29,0.46,14),pipeWater); tqAgua.position.y=0.93; tqAgua.scale.y=0.01; tanque.add(tqAgua); tanque.position.set(dx-0.4,0,dz-1.4); scene.add(tanque);
+  const outStub=stub(x0+(COLS-1)*S+0.75,dz,0.5); outStub.material=pipeEmpty;
+  // grilla
+  const N=1,E=2,Sd=4,Wd=8, DIRS=[[N,0,-1],[E,1,0],[Sd,0,1],[Wd,-1,0]];
+  const rotMask=(m,k)=>{ let r=0; for(let i=0;i<4;i++) if(m&(1<<i)) r|=1<<((i+k)%4); return r; };
+  const opp=b=>({1:4,2:8,4:1,8:2})[b];
+  const path=[[1,0],[1,1],[1,2],[2,2],[3,2],[3,3],[3,4],[2,4],[2,5]];
+  const want={};
+  path.forEach(([r,c],i)=>{ let m=0; const prev=i?path[i-1]:[1,-1], next=i<path.length-1?path[i+1]:[2,6];
+    [prev,next].forEach(([rr,cc])=>{ if(rr<r)m|=N; else if(rr>r)m|=Sd; else if(cc>c)m|=E; else m|=Wd; }); want[r+","+c]=m; });
+  const tiles=[], tileMeshes=[];
+  const armGeo=new THREE.CylinderGeometry(0.13,0.13,S/2,10);
+  function makePipe(mask){
+    const g=new THREE.Group(), meshes=[];
+    DIRS.forEach(([b,dx2,dz2])=>{ if(!(mask&b)) return; const a=new THREE.Mesh(armGeo,pipeEmpty); a.rotation.set(dz2?Math.PI/2:0,0,dx2?Math.PI/2:0); a.position.set(dx2*S/4,0.22,dz2*S/4); g.add(a); meshes.push(a); });
+    const j=new THREE.Mesh(new THREE.SphereGeometry(0.16,12,8),pipeEmpty); j.position.y=0.22; g.add(j); meshes.push(j);
+    return {g,meshes};
+  }
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    let base0 = want[r+","+c];
+    let shapeMask = base0 ?? (rnd()<0.5 ? (N|Sd) : (N|E));
+    // forma canónica: recta N|S o codo N|E
+    const isStraight = (shapeMask===(N|Sd)||shapeMask===(E|Wd));
+    const canon = isStraight?(N|Sd):(N|E);
+    let k0=0; while(rotMask(canon,k0)!==shapeMask && k0<4) k0++;
+    const tileG=new THREE.Group(); tileG.position.set(x0+c*S,0,z0+r*S);
+    const plate=new THREE.Mesh(new THREE.BoxGeometry(S*0.94,0.1,S*0.94),M(0xEEF2F5)); plate.position.y=0.05; tileG.add(plate);
+    const pipe=makePipe(canon); tileG.add(pipe.g);
+    const t={r,c,canon,rot:0,solRot:k0,g:pipe.g,meshes:pipe.meshes,plate,anim:null,onPath:!!base0};
+    plate.userData.tile=t; pipe.meshes.forEach(m=>m.userData.tile=t);
+    scene.add(tileG); tiles.push(t); tileMeshes.push(plate,...pipe.meshes);
+  }
+  const T=(r,c)=>tiles[r*COLS+c];
+  function scramble(){ tiles.forEach(t=>{ t.rot=Math.floor(rnd()*4); if(t.onPath && t.rot===t.solRot) t.rot=(t.rot+1+Math.floor(rnd()*2))%4; t.g.rotation.y=-t.rot*Math.PI/2; t.anim=null; }); }
+  function solve(){ tiles.forEach(t=>{ if(t.onPath){ t.rot=t.solRot; t.g.rotation.y=-t.rot*Math.PI/2; } }); }
+  function flow(){
+    const mask=t=>rotMask(t.canon,t.rot%4); const seen=new Set(); const q=[];
+    const s=T(1,0); if(mask(s)&Wd){ q.push(s); seen.add(s); }
+    while(q.length){ const t=q.shift(); const m=mask(t); DIRS.forEach(([b,dc,dr])=>{ if(!(m&b)) return; const r=t.r+dr,c=t.c+dc; if(r<0||c<0||r>=ROWS||c>=COLS) return; const n=T(r,c); if(seen.has(n)) return; if(mask(n)&opp(b)){ seen.add(n); q.push(n); } }); }
+    tiles.forEach(t=>t.meshes.forEach(m=>m.material=seen.has(t)?pipeWater:pipeEmpty));
+    const d=T(2,5); return seen.has(d) && (mask(d)&E);
+  }
+  scramble(); flow();
+  let locked=false, fill=0, done=false;
+  const ray=new THREE.Raycaster();
+  return {scene,camera,parts:[],halfW:5.6,halfH:3.9,target:new THREE.Vector3(0.6,0,0),puzzle:true,
+    tap(v){ if(locked) return null; ray.setFromCamera(v,camera); const hit=ray.intersectObjects(tileMeshes,false)[0]; if(!hit) return null; const t=hit.object.userData.tile; if(t.anim) return null;
+      t.anim={from:-t.rot*Math.PI/2,to:-(t.rot+1)*Math.PI/2,t:0}; t.rot=(t.rot+1); return "rot"; },
+    check(){ const ok=flow(); return ok; },
+    reset(){ locked=false; done=false; fill=0; tqAgua.scale.y=0.01; outStub.material=pipeEmpty; casas.forEach(c=>c.children[2].material=ventM); scramble(); flow(); },
+    setDone(on){ done=on; locked=on; if(on){ solve(); flow(); outStub.material=pipeWater; const glow=new THREE.MeshBasicMaterial({color:0xFFD84A}); casas.forEach(c=>c.children[2].material=glow); } },
+    setPipes(vis){ tiles.forEach(t=>t.g.visible=vis); },
+    snapFill(v){ tqAgua.scale.y=v?1:0.01; tqAgua.position.y=0.7+0.23*(v?1:0.01); },
+    update(dt){ tiles.forEach(t=>{ if(!t.anim) return; t.anim.t+=dt/0.18; const k=Math.min(1,t.anim.t); t.g.rotation.y=t.anim.from+(t.anim.to-t.anim.from)*ease(k); if(k>=1){ t.anim=null; t.rot%=4; t.g.rotation.y=-t.rot*Math.PI/2; } });
+      if(done && fill<1){ fill=Math.min(1,fill+dt*0.6); tqAgua.scale.y=Math.max(0.01,fill); tqAgua.position.y=0.7+0.23*fill; } }
+  };
+}
+
+/* --- Dique San Roque: armar + regular --- */
+function buildSanRoque(){
+  seed=57;
+  const {scene,camera}=baseScene();
+  camera.position.set(6.5,8.8,8.6);
+  const tierra=M(0xB8A27F), pasto=M(0xC9DBA8);
+  const base=new THREE.Mesh(new THREE.BoxGeometry(16,0.4,9.6),[tierra,tierra,pasto,tierra,tierra,tierra]); base.position.y=-0.2; scene.add(base);
+  // laderas del valle
+  const lad=[M(0xA9C27D),M(0xB9AE86),M(0x9DB874)];
+  [-1,1].forEach(sg=>{
+    const wh=sg>0?2.0:2.5; const w=new THREE.Mesh(new THREE.BoxGeometry(16,wh,1.9),[tierra,tierra,pasto,tierra,tierra,tierra]); w.position.set(0,wh/2,sg*3.75); scene.add(w);
+    if(sg>0) return;
+    for(let i=0;i<7;i++){ const r=0.9+rnd()*0.8,h=0.9+rnd()*1.4; const c=new THREE.Mesh(new THREE.ConeGeometry(r,h,6),lad[i%3]); c.position.set(-7+i*2.3+rnd()*0.6,2.5+h/2,sg*(3.7+rnd()*0.5)); c.rotation.y=rnd()*3; scene.add(c); }
+  });
+  trees(scene,30,[15,9],(x,z)=>Math.abs(z)<2.95||x>3.2&&z>0.3||z>0);
+  // lago (corte de maqueta)
+  const aguaM=new THREE.MeshLambertMaterial({color:0x3FA0D2,transparent:true,opacity:0.86});
+  const lago=new THREE.Mesh(new THREE.BoxGeometry(7.2,1,5.6),aguaM); lago.position.set(-3.95,0,0); scene.add(lago);
+  const LT=(L)=>0.03+L/100*1.85; // altura del agua según nivel %
+  // río aguas abajo
+  const rioM=new THREE.MeshLambertMaterial({color:0x4FB0DC});
+  const rio=new THREE.Mesh(new THREE.BoxGeometry(7.6,0.05,0.6),rioM); rio.position.set(4.2,0.03,0.2); scene.add(rio);
+  // pueblo ribereño (zona inundable)
+  const casas=[];
+  for(let i=0;i<9;i++){ const g=new THREE.Group(); const b=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.28,0.34),M(0xF4F1EC)); b.position.y=0.14; g.add(b); const r=new THREE.Mesh(new THREE.ConeGeometry(0.28,0.2,4),M(0xC2593F)); r.position.y=0.38; r.rotation.y=Math.PI/4; g.add(r); g.position.set(3.9+(i%3)*0.75+rnd()*0.2,0,1.05+Math.floor(i/3)*0.55); scene.add(g); casas.push(g); }
+  const inund=new THREE.Mesh(new THREE.BoxGeometry(3.2,1,2.4),new THREE.MeshLambertMaterial({color:0x6E9CB8,transparent:true,opacity:0.75})); inund.position.set(4.8,0,1.5); inund.scale.y=0.001; inund.visible=false; scene.add(inund);
+  // ciudad
+  const ventanas=[]; const ventM=new THREE.MeshLambertMaterial({color:0x4A5866,emissive:0x000000});
+  for(let i=0;i<12;i++){ const h=0.4+rnd()*1.3; const b=new THREE.Mesh(new THREE.BoxGeometry(0.36,h,0.36),M(0xE4E9EE)); b.position.set(6.2+(i%4)*0.5,h/2,-2.45+Math.floor(i/4)*0.48); scene.add(b);
+    const v=new THREE.Mesh(new THREE.BoxGeometry(0.2,h*0.7,0.005),ventM); v.position.set(b.position.x,h*0.45,b.position.z+0.183); scene.add(v); }
+  const parts=[], concreto=M(0xD5D9DD);
+  { const g=new THREE.Group(); const f=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.12,5.6),M(0x8E8A84)); f.position.set(0,0.06,0); g.add(f); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group(); const w=new THREE.Mesh(new THREE.BoxGeometry(0.62,2.05,5.6),concreto); w.position.set(0,1.1,0); g.add(w);
+    const cor=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.08,5.6),M(0xBFC5CB)); cor.position.set(0,2.16,0); g.add(cor);
+    for(let z=-2.4;z<=2.4;z+=0.8){ const c=new THREE.Mesh(new THREE.BoxGeometry(0.3,1.9,0.12),M(0xC4CACF)); c.position.set(0.42,0.95,z); g.add(c); }
+    scene.add(part(g)); parts.push(g); }
+  const embudoAgua=new THREE.Mesh(new THREE.RingGeometry(0.12,0.4,24),new THREE.MeshBasicMaterial({color:0xE8F6FF,side:THREE.DoubleSide,transparent:true,opacity:0}));
+  { const g=new THREE.Group(); const t=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.3,1.7,24,1,true),M(0xE7EAEE)); t.material.side=THREE.DoubleSide; t.position.set(-0.95,0.85+0.03,1.7); g.add(t);
+    const rim=new THREE.Mesh(new THREE.TorusGeometry(0.46,0.05,6,24),M(0x009ADA)); rim.rotation.x=Math.PI/2; rim.position.set(-0.95,1.72,1.7); g.add(rim);
+    embudoAgua.rotation.x=-Math.PI/2; embudoAgua.position.set(-0.95,1.7,1.7); g.add(embudoAgua);
+    const sal=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,1.6,10),M(0xBFC5CB)); sal.rotation.z=Math.PI/2; sal.position.set(0.6,0.2,1.7); g.add(sal);
+    scene.add(part(g)); parts.push(g); }
+  const turbM=new THREE.MeshLambertMaterial({color:0x2C3A47,emissive:0x000000}); const rotores=[];
+  { const g=new THREE.Group(); const cs=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.6,1.3),M(0xF2E9D8)); cs.position.set(1.05,0.3,-1.5); g.add(cs);
+    const techo=new THREE.Mesh(new THREE.BoxGeometry(1.08,0.08,1.38),M(0xF7BE2B)); techo.position.set(1.05,0.64,-1.5); g.add(techo);
+    for(let k=0;k<4;k++){ const r=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.06,8),turbM); r.rotation.z=Math.PI/2; r.position.set(1.56,0.3,-1.95+k*0.3); g.add(r); rotores.push(r);
+      const p=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,1.0,8),M(0x8A939B)); p.position.set(0.5,0.75,-1.95+k*0.3); p.rotation.z=-0.85; g.add(p); }
+    scene.add(part(g)); parts.push(g); }
+  const pulsos=[];
+  { const g=new THREE.Group(); const tor=[1.9,3.6,5.3]; tor.forEach(x=>{ const t=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.07,1.4,4),M(0x6B7682)); t.position.set(x,0.7,-2.3); g.add(t); const br=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.04,0.5),M(0x6B7682)); br.position.set(x,1.35,-2.3); g.add(br); });
+    const cab=new THREE.Mesh(new THREE.BoxGeometry(4.8,0.015,0.015),new THREE.MeshBasicMaterial({color:0x33404D})); cab.position.set(3.95,1.37,-2.3); g.add(cab);
+    for(let k=0;k<6;k++){ const p=new THREE.Mesh(new THREE.SphereGeometry(0.06,8,6),new THREE.MeshBasicMaterial({color:0xFFD84A})); p.position.set(1.6+k*0.9,1.37,-2.3); p.visible=false; g.add(p); pulsos.push(p); }
+    scene.add(part(g)); parts.push(g); }
+  const st={L:4,D:0.4,flood:0,P:0,spill:0};
+  function apply(){
+    const top=LT(st.L); lago.scale.y=top; lago.position.y=top/2;
+    rio.scale.z=Math.min(4,0.5+st.D*0.45); rio.material.color.set(st.D>3.6?0x6E8FA6:0x4FB0DC);
+    inund.visible=st.flood>0.02; inund.scale.y=Math.max(0.001,st.flood*0.18); inund.position.y=inund.scale.y/2;
+    embudoAgua.material.opacity=st.spill>0?0.95:0; embudoAgua.position.y=Math.min(1.72,top-0.01);
+    const g=Math.min(1,st.P/1.2); turbM.emissive.setRGB(g*0.9,g*0.6,0); ventM.emissive.setRGB(g*1.0,g*0.82,g*0.3);
+  }
+  apply();
+  return {scene,camera,parts,halfW:6.4,halfH:4.3,target:new THREE.Vector3(0.6,0.8,0),dique:true,state:st,
+    setDone(on){ st.L=on?62:4; st.D=on?1.2:0.4; st.flood=0; st.spill=0; st.P=on?0.6:0; apply(); },
+    set(L,D,flood,P,spill){ st.L=L; st.D=D; st.flood=flood; st.P=P; st.spill=spill; apply(); },
+    update(dt,t){ stepAnims(parts,dt); rotores.forEach(r=>r.rotation.x+=dt*st.P*14); embudoAgua.rotation.z+=dt*3;
+      const n=Math.round(Math.min(1,st.P/1.1)*6); pulsos.forEach((p,k)=>{ p.visible=parts[4].visible && k<n; p.position.x=1.6+((t*1.6+k*0.9)%5.4); }); }
+  };
+}
+
+/* ============ CONTROLADOR DE OBRA ============ */
+const BUILDERS={punilla:buildPunilla,"san-roque":buildSanRoque,acueducto:buildAcueducto,"bajo-grande":buildBajoGrande};
+const CTX={};
+let cur=null; // {o, sc, ctx, n, order}
+function getCtx(id){
+  if(CTX[id]) return CTX[id];
+  const sc=BUILDERS[id]();
+  const stage=$("#obraStage");
+  const controls=orbit(sc.camera,renderer.domElement,sc.target,{minD:5,maxD:17,maxPolar:1.2});
+  const ctx={stage,scene:sc.scene,camera:sc.camera,controls,sc,
+    fit(a){ if(this._a===a) return; this._a=a; const t=Math.tan(sc.camera.fov*Math.PI/360); const d=Math.max(sc.halfH/t, sc.halfW/(t*a)); controls.maxDistance=Math.max(17,d*1.3); const dir=sc.camera.position.clone().sub(sc.target).normalize(); sc.camera.position.copy(sc.target).addScaledVector(dir,d); },
+    update:(dt,t)=>sc.update(dt,t)};
+  CTX[id]=ctx; return ctx;
+}
+onTap($("#obraStage"), v=>{
+  if(!cur || !cur.ctx.sc.puzzle) return;
+  const r=cur.ctx.sc.tap(v);
+  if(r){ cur.moves++; $("#jPaso").textContent=cur.moves+" giros"; setTimeout(()=>{ if(cur && cur.ctx.sc.check() && !cur.solved){ cur.solved=true; cur.ctx.sc.setDone(true); setProg(1); consigna("¡Llegó el agua a San Francisco! Las casas ya tienen servicio.","ok"); completar(); } },200); }
+});
+
+function snapshot(ctx, builtState){
+  const sc=ctx.sc, r=snapRenderer(), cam=sc.camera.clone();
+  cam.aspect=960/600; cam.position.copy(sc.target).add(new THREE.Vector3(1,0.85,1.15).normalize().multiplyScalar(12.5)); cam.lookAt(sc.target); cam.updateProjectionMatrix();
+  // guardar estado
+  const vis=sc.parts.map(p=>p.visible);
+  if(sc.puzzle){ sc.setPipes(builtState); if(builtState){ sc.setDone(true); sc.snapFill(true);} }
+  else { sc.parts.forEach(p=>{ p.visible=builtState; p.position.y=p.userData.home.y; }); sc.setDone(builtState); }
+  r.setClearColor(0xE2EBF2,1); r.render(sc.scene,cam);
+  const url=r.domElement.toDataURL("image/jpeg",0.86);
+  // restaurar
+  if(sc.puzzle){ sc.setPipes(true); if(!cur.solved){ sc.reset(); } }
+  else { sc.parts.forEach((p,i)=>p.visible=vis[i]); sc.setDone(cur && cur.n>=sc.parts.length); if(sc.onProgress) sc.onProgress(cur?cur.n:0); }
+  return url;
+}
+
+function consigna(t,cls=""){ const c=$("#jConsigna"); c.textContent=t; c.className="consigna "+cls; }
+function setProg(f){ $("#jProg").style.width=Math.round(f*100)+"%"; }
+
+function openObra(id){
+  const o=OB[id], ctx=getCtx(id);
+  cur={o,ctx,n:0,moves:0,solved:false,order:[]};
+  // encabezado
+  const tags=$("#oTags"); tags.replaceChildren(el("span",{class:"tag",style:"background:"+o.color,text:o.eje}), el("span",{class:"tag claro",text:o.estado}));
+  $("#oNombre").textContent=o.nombre; $("#oLugar").textContent=o.lugar;
+  const dato=$("#oDato"); dato.replaceChildren(el("b",{style:"color:"+o.color},[document.createTextNode(o.dato.n), o.dato.u?el("small",{text:o.dato.u}):null]), el("span",{text:o.dato.t}));
+  $("#oEscala").replaceChildren(...o.escala.map(e=>el("div",{class:"eq"},[el("b",{style:"color:"+o.color,text:e.n}),el("span",{text:e.t}),el("small",{text:e.s})])));
+  $("#oFicha").replaceChildren(...o.ficha.map(([k,v])=>el("div",{},[el("dt",{text:k}),el("dd",{text:v})])));
+  $("#oFuente").textContent=o.fuente+" Datos a validar por el área antes de la muestra.";
+  const i=OBRAS.indexOf(o), nx=OBRAS[(i+1)%OBRAS.length]; $("#oNextName").textContent=nx.nombre; $("#oNext").onclick=()=>go(nx.id);
+  $("#jTitulo").textContent=o.juego.titulo;
+  mount(ctx);
+  resetJuego(Player.obras[id]?"ya":"nuevo");
+  // antes y después
+  requestAnimationFrame(()=>{ $("#adAntes").src=snapshot(ctx,false); $("#adDespues").src=ctx._after||(ctx._after=snapshot(ctx,true)); setAD(50); });
+  renderShare();
+  window.scrollTo({top:0});
+}
+function resetJuego(modo){
+  const o=cur.o, sc=cur.ctx.sc;
+  regStop(); $("#jRegula").hidden=true; $("#jBandeja").hidden=false; $("#jTitulo").textContent=o.juego.titulo;
+  cur.n=0; cur.moves=0; cur.solved=false;
+  if(sc.puzzle){
+    sc.reset(); $("#jBandeja").replaceChildren(); $("#jPaso").textContent="0 giros"; setProg(0);
+    consigna(modo==="ya"?"Ya armaste esta obra. Podés volver a jugarla: "+o.juego.consigna.charAt(0).toLowerCase()+o.juego.consigna.slice(1):o.juego.consigna);
+    $("#obraHint").textContent="Tocá un caño para girarlo";
+    $("#obraHint").style.opacity=1;
+    return;
+  }
+  sc.parts.forEach(p=>{p.visible=false;p.userData.anim=null;}); sc.setDone(false); if(sc.onProgress) sc.onProgress(0);
+  const piezas=o.juego.piezas.map((p,i)=>({...p,i}));
+  for(let k=piezas.length-1;k>0;k--){ const j=Math.floor(Math.random()*(k+1)); [piezas[k],piezas[j]]=[piezas[j],piezas[k]]; }
+  const b=$("#jBandeja"); b.replaceChildren(...piezas.map(p=>{ const btn=el("button",{class:"pieza",type:"button"},[el("i",{style:"background:"+p.c}),document.createTextNode(p.n)]); btn.addEventListener("click",()=>elegir(p,btn)); return btn; }));
+  $("#jPaso").textContent="0 de "+o.juego.piezas.length; setProg(0);
+  consigna(modo==="ya"?"Ya armaste esta obra. Podés volver a armarla cuando quieras.":o.juego.consigna);
+  $("#obraHint").textContent="Arrastrá para girar la maqueta"; $("#obraHint").style.opacity=1;
+}
+function elegir(p,btn){
+  const o=cur.o, sc=cur.ctx.sc, total=o.juego.piezas.length;
+  if(p.i!==cur.n){ btn.classList.remove("shake"); void btn.offsetWidth; btn.classList.add("shake"); consigna(o.juego.mal,"err"); return; }
+  drop(sc.parts[cur.n]); cur.n++; btn.remove();
+  if(sc.onProgress) sc.onProgress(cur.n);
+  $("#jPaso").textContent=cur.n+" de "+total; setProg(cur.n/total);
+  $("#obraHint").style.opacity=0;
+  if(cur.n>=total){ consigna(p.d,"ok"); setTimeout(()=>{ if(sc.dique){ regPrepare(); } else { sc.setDone(true); completar(); } },800); }
+  else consigna(p.d,"ok");
+}
+$("#jReset").addEventListener("click",()=>cur&&resetJuego("nuevo"));
+
+/* ============ SIMULACIÓN DEL DIQUE ============ */
+const MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const CLIMA=["Verano lluvioso","Verano lluvioso","Fin del verano","Otoño","Otoño seco","Invierno seco","Invierno seco","Invierno seco","Primavera","Primavera","Empiezan las lluvias","Verano lluvioso"];
+const APORTE=[2.4,2.6,2.2,1.0,0.5,0.25,0.2,0.2,0.3,0.8,1.6,2.2]; // % del lago por segundo
+const LLUVIOSO=new Set([0,1,2,10,11]);
+const META=34, MWH=80, TOMA=20, REBALSE=88, RIO_MAX=3.6;
+const Reg={on:false};
+function regReset(){ Object.assign(Reg,{on:false,t:0,L:62,E:0,flood:0,valv:false,storm:0,nextStorm:2.5,ended:false,lastMsg:""}); $("#rValv").classList.remove("on"); $("#rValv").textContent="Abrir válvulas de descarga"; $("#rRes").hidden=true; $("#rStart").hidden=false; $("#rMeta").textContent=(META*MWH).toLocaleString("es-AR"); regUI(0,0,0,0); }
+function regPrepare(){
+  $("#jBandeja").hidden=true; $("#jRegula").hidden=false; document.body.classList.add("regulando"); resize();
+  cur.ctx.sc.setDone(true); regReset(); setProg(0); $("#jTitulo").textContent="Manejá el dique";
+  $("#jPaso").textContent="Un año en 60 segundos";
+  consigna("Generá energía con las turbinas sin que el lago rebalse ni se vacíe. Si se llena, el embudo descarga y el río se desborda aguas abajo. Si baja de la toma, las turbinas se apagan.","ok");
+  $("#jRegula").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function regStop(){ Reg.on=false; document.body.classList.remove("regulando"); }
+function regMsg(t,cls){ if(Reg.lastMsg===t) return; Reg.lastMsg=t; consigna(t,cls); }
+function regUI(T,D,P,S){
+  const mes=Math.min(11,Math.floor(Reg.t/5));
+  $("#rMes").textContent=MESES[mes]; $("#rClima").textContent=Reg.storm>0?"Tormenta en las sierras":CLIMA[mes];
+  $("#rTiempo").textContent=Math.max(0,Math.ceil(60-Reg.t))+" s";
+  $("#rNivel").style.width=Math.min(100,Reg.L).toFixed(1)+"%";
+  $("#rNivelTxt").textContent=Math.round(Reg.L)+"% · "+(Reg.L>=REBALSE?"rebalsando por el embudo":Reg.L<TOMA?"bajo la toma: sin generación":"nivel operativo");
+  $("#rEnergia").textContent=Math.round(Reg.E*MWH).toLocaleString("es-AR");
+  $("#rEnergiaBar").style.width=Math.min(100,Reg.E/META*100)+"%";
+  $("#rRioBar").style.width=Math.min(100,Reg.flood/2.5*100)+"%";
+  $("#rRio").textContent=D>RIO_MAX?"Desbordado":D>RIO_MAX*0.75?"Crecido":"Normal";
+  $("#rTurbTxt").textContent=$("#rTurb").value+"%";
+  setProg(Math.min(1,Reg.t/60));
+}
+function regTick(dt){
+  Reg.t+=dt; const mes=Math.min(11,Math.floor(Reg.t/5));
+  let I=APORTE[mes];
+  if(LLUVIOSO.has(mes) && Reg.t>=Reg.nextStorm && Reg.storm<=0){ Reg.storm=2.2; Reg.nextStorm=Reg.t+6+Math.random()*5; }
+  if(Reg.storm>0){ I+=7; Reg.storm-=dt; }
+  const turb=+$("#rTurb").value/100;
+  const T = Reg.L>TOMA ? turb*3.2 : 0;
+  const V = Reg.valv && Reg.L>1 ? 3.0 : 0;
+  const S = Reg.L>REBALSE ? (Reg.L-REBALSE)*0.8 : 0;
+  Reg.L=Math.max(0,Reg.L+(I-T-V-S)*dt);
+  const D=T+V+S+0.3;
+  if(D>RIO_MAX) Reg.flood+=(D-RIO_MAX)*dt*0.9; else Reg.flood=Math.max(0,Reg.flood-0.5*dt);
+  const P = T>0 ? turb*(0.3+Reg.L/100) : 0; Reg.E+=P*dt;
+  Reg.low = Reg.L<=TOMA ? (Reg.low||0)+dt : 0;
+  cur.ctx.sc.set(Reg.L,D,Reg.flood,P,S);
+  regUI(T,D,P,S);
+  if(Reg.storm>0) regMsg("¡Tormenta en las sierras! Entra mucha agua al lago. ¿Tenés lugar para recibirla?","err");
+  else if(Reg.L<TOMA) regMsg("El lago bajó de la toma: las turbinas se apagaron y la ciudad se queda sin la energía del dique.","err");
+  else if(S>0) regMsg("El lago rebalsa por el embudo y esa agua no genera energía. Cuidado con el río aguas abajo.","err");
+  else if(D>RIO_MAX) regMsg("Estás largando demasiada agua: el río se está desbordando sobre el pueblo.","err");
+  else if(!LLUVIOSO.has(mes)) regMsg("Época seca: casi no entra agua. Cuidá la reserva para que alcance hasta el verano.","");
+  else regMsg("Las turbinas generan más cuanto más alto está el lago. Mantenelo alto, pero con lugar para una tormenta.","");
+  if(Reg.L>=100) return regEnd("mal","Se desbordó el dique","El agua pasó por encima del paredón. Antes de una tormenta hay que tener el lago más bajo.");
+  if(Reg.low>=6) return regEnd("mal","Apagón en la ciudad","El lago estuvo demasiado tiempo bajo la toma y las turbinas no pudieron funcionar. En la época seca hay que gastar menos agua.");
+  if(Reg.flood>=2.5) return regEnd("mal","Inundaste el pueblo","Largaste más agua de la que el río puede llevar. Soltá agua de a poco y antes de que llegue la crecida.");
+  if(Reg.t>=60){ return Reg.E>=META ? regEnd("ok","¡Año completo!","Generaste "+Math.round(Reg.E*MWH).toLocaleString("es-AR")+" MWh sin inundar a nadie.") : regEnd("mal","No alcanzó la energía","Generaste "+Math.round(Reg.E*MWH).toLocaleString("es-AR")+" de "+(META*MWH).toLocaleString("es-AR")+" MWh. Usá más las turbinas y menos las válvulas."); }
+}
+function regEnd(cls,t,d){
+  Reg.on=false; Reg.ended=true;
+  const r=$("#rRes"); r.className="resultado "+cls; r.hidden=false; $("#rResT").textContent=t; $("#rResD").textContent=d;
+  $("#rStart").hidden=true; consigna(cls==="ok"?"Manejaste el dique durante un año entero.":"Probá de nuevo con otra estrategia.",cls==="ok"?"ok":"err");
+  if(cls==="ok"){ setProg(1); setTimeout(completar,700); }
+}
+$("#rStart").addEventListener("click",()=>{ if(Reg.ended) regReset(); Reg.on=true; $("#rStart").hidden=true; });
+$("#rRetry").addEventListener("click",()=>{ regReset(); cur.ctx.sc.set(Reg.L,1,0,0,0); Reg.on=true; $("#rStart").hidden=true; });
+$("#rValv").addEventListener("click",()=>{ Reg.valv=!Reg.valv; $("#rValv").classList.toggle("on",Reg.valv); $("#rValv").textContent=Reg.valv?"Cerrar válvulas de descarga":"Abrir válvulas de descarga"; });
+$("#rTurb").addEventListener("input",()=>{ $("#rTurbTxt").textContent=$("#rTurb").value+"%"; });
+
+/* ============ COMPLETAR, TARJETA, FESTEJO ============ */
+function completar(){
+  const o=cur.o, nueva=!Player.obras[o.id];
+  if(nueva) Player.obras[o.id]=Date.now();
+  Store.save(); refreshChrome();
+  const n=Object.keys(Player.obras).length;
+  $("#finEje").textContent=o.eje; $("#finEje").style.color=o.color;
+  $("#finTitulo").textContent=nueva?"¡Obra terminada!":"¡La armaste otra vez!";
+  $("#finTexto").textContent=(nueva?"Sumaste: "+o.nombre+". ":"")+"Llevás "+n+" de "+OBRAS.length+" obras: tu rango es "+NIVELES(n)+".";
+  $("#mFin").hidden=false;
+  renderShare();
+}
+$("#finShare").addEventListener("click",()=>{ $("#mFin").hidden=true; $("#shareReady").scrollIntoView({behavior:"smooth",block:"center"}); });
+$("#finRank").addEventListener("click",()=>{ $("#mFin").hidden=true; go("ranking"); });
+$("#mFin").addEventListener("click",e=>{ if(e.target.id==="mFin") $("#mFin").hidden=true; });
+
+let shareBlob=null;
+async function renderShare(){
+  const o=cur.o, hecho=!!Player.obras[o.id];
+  $("#shareLocked").hidden=hecho; $("#shareReady").hidden=!hecho; $("#shareMsg").textContent="";
+  if(!hecho) return;
+  try{ await Promise.all([document.fonts.load('800 100px "Saira Semi Condensed"'),document.fonts.load('600 40px "Be Vietnam Pro"')]); }catch(e){}
+  const c=document.createElement("canvas"); c.width=1080; c.height=1920; const x=c.getContext("2d");
+  x.fillStyle="#004582"; x.fillRect(0,0,1080,1920);
+  const pal=["#009ADA","#004582","#AF4178","#E2464C","#EB7F27","#F7BE2B","#BCCD00","#8BB91A","#32A430"]; pal.forEach((p,i)=>{ x.fillStyle=p; x.fillRect(i*120,0,120,22); x.fillRect(i*120,1898,120,22); });
+  x.fillStyle="#7FD3F5"; x.font='800 34px "Saira Semi Condensed", Arial'; x.fillText("MUESTRA DE OBRAS",80,130);
+  x.fillStyle="#FFFFFF"; x.font='500 30px "Be Vietnam Pro", Arial'; x.fillText("Ministerio de Infraestructura y Servicios Públicos",80,178);
+  x.fillStyle="#F7BE2B"; x.font='800 150px "Saira Semi Condensed", Arial'; x.fillText("YO ARMÉ",74,370);
+  x.fillStyle="#FFFFFF"; x.font='800 92px "Saira Semi Condensed", Arial';
+  const palabras=o.nombre.toUpperCase().split(" "); let linea="", y=470; const lines=[];
+  palabras.forEach(w=>{ const t=linea?linea+" "+w:w; if(x.measureText(t).width>920){ lines.push(linea); linea=w; } else linea=t; }); lines.push(linea);
+  lines.forEach(l=>{ x.fillText(l,80,y); y+=92; });
+  const img=new Image(); img.src=cur.ctx._after||snapshot(cur.ctx,true); cur.ctx._after=img.src;
+  await new Promise(r=>{ img.onload=r; img.onerror=r; });
+  const iy=y+30, ih=600; x.save(); x.beginPath(); if(x.roundRect) x.roundRect(80,iy,920,ih,28); else x.rect(80,iy,920,ih); x.clip(); x.drawImage(img,0,0,960,600,80,iy,920,ih); x.restore();
+  let ty=iy+ih+120;
+  x.fillStyle=o.color; x.font='800 120px "Saira Semi Condensed", Arial'; const dn=o.dato.n+(o.dato.u?" "+o.dato.u:""); x.fillText(dn,80,ty);
+  x.fillStyle="#FFFFFF"; x.font='400 34px "Be Vietnam Pro", Arial';
+  let ln="", ly=ty+60; o.dato.t.split(" ").forEach(w=>{ const t=ln?ln+" "+w:w; if(x.measureText(t).width>900){ x.fillText(ln,80,ly); ly+=46; ln=w; } else ln=t; }); x.fillText(ln,80,ly);
+  const n=Object.keys(Player.obras).length;
+  x.fillStyle="rgba(255,255,255,.12)"; x.fillRect(80,1660,920,150);
+  x.fillStyle="#FFFFFF"; x.font='800 54px "Saira Semi Condensed", Arial'; x.fillText(("ING. "+Player.alias).toUpperCase().slice(0,26),112,1728);
+  x.font='500 30px "Be Vietnam Pro", Arial'; x.fillStyle="#BFE6F7"; x.fillText(NIVELES(n)+" · "+n+" de "+OBRAS.length+" obras armadas",112,1778);
+  x.fillStyle="#FFFFFF"; x.font='600 26px "Be Vietnam Pro", Arial'; x.fillText("Gobierno de la Provincia de Córdoba",80,1866);
+  const url=c.toDataURL("image/png"); $("#shareImg").src=url;
+  shareBlob=await new Promise(r=>c.toBlob(r,"image/png"));
+}
+$("#shareSave").addEventListener("click",async()=>{
+  const msg=$("#shareMsg");
+  try{
+    const d=window.claude&&window.claude.use?await window.claude.use("downloads"):null;
+    if(!d) throw {code:"unavailable"};
+    await d.save({filename:"arme-"+cur.o.id+".png", data:shareBlob});
+    msg.textContent="Listo, la imagen se guardó.";
+  }catch(e){
+    msg.textContent = e&&e.code==="declined" ? "Cancelaste la descarga." : "Mantené presionada la tarjeta para guardarla en tu galería.";
+  }
+});
+$("#arBtn").addEventListener("click",()=>toast("La realidad aumentada se activa en la versión publicada en GitHub, con permiso de cámara."));
+
+/* Antes / después */
+function setAD(v){ $("#adDespues").style.clipPath=`inset(0 0 0 ${v}%)`; $("#adMango").style.left=v+"%"; $("#adRange").value=v; }
+$("#adRange").addEventListener("input",e=>setAD(+e.target.value));
+
+/* ============ HOME: LISTA Y CHROME ============ */
+function refreshChrome(){
+  $("#dots").replaceChildren(...OBRAS.map(o=>el("i",{class:Player.obras[o.id]?"on":""})));
+  $("#chipName").textContent=Player.alias?("Ing. "+Player.alias):"Ranking";
+  $("#lista").replaceChildren(...OBRAS.map(o=>{
+    const ok=!!Player.obras[o.id];
+    const b=el("button",{class:"obra-card",type:"button"},[el("span",{class:"cinta",style:"background:"+o.color}), el("div",{},[el("div",{class:"eyebrow",text:o.eje,style:"color:"+o.color}),el("h3",{text:o.nombre}),el("p",{text:o.lugar})]), el("span",{class:"estado"+(ok?" ok":""),text:ok?"Armada":"Para armar"})]);
+    b.addEventListener("click",()=>go(o.id)); return b;
+  }));
+  document.querySelectorAll(".pinlbl").forEach(p=>p.classList.toggle("done",!!Player.obras[p.dataset.id]));
+}
+
+/* ============ RANKING ============ */
+function renderRanking(){
+  const {rows,meId}=Store.list();
+  $("#sJug").textContent=rows.length;
+  $("#sObras").textContent=rows.reduce((s,r)=>s+(r.count||0),0);
+  const yo=rows.findIndex(r=>r.id===meId); $("#sYo").textContent=yo>=0?(yo+1)+"º":"–";
+  const pod=$("#podio"); pod.replaceChildren();
+  const top=rows.slice(0,3);
+  if(top.length){
+    [1,0,2].forEach(i=>{ const r=top[i]; if(!r){ pod.append(el("div")); return; } pod.append(el("div",{class:"pod p"+(i+1)},[el("div",{class:"pos",text:(i+1)+"º"}),el("div",{class:"nom",text:r.alias}),el("div",{class:"cnt",text:(r.count||0)+((r.count||0)===1?" obra · ":" obras · ")+NIVELES(r.count||0)})])); });
+  }
+  const ol=$("#rkList");
+  if(!rows.length){ ol.replaceChildren(el("li",{class:"vacio",style:"display:block",text:"Todavía no hay ingenieros. Armá la primera obra y estrená el ranking."})); }
+  else ol.replaceChildren(...rows.map((r,i)=>el("li",{class:r.id===meId?"yo":""},[el("span",{class:"n",text:i+1}),el("div",{class:"who"},[el("b",{text:r.alias+(r.id===meId?" (vos)":"")}),el("small",{text:NIVELES(r.count||0)})]),el("span",{class:"c",text:r.count||0})])));
+  $("#rkModo").textContent = Store.mode==="shared" ? "Ranking en vivo: se actualiza solo cada vez que alguien termina una obra." : "Ranking guardado en este dispositivo. En la versión final de la muestra se comparte entre todos los visitantes.";
+}
+Store.on(()=>{ if(!$("#v-ranking").hidden) renderRanking(); });
+
+/* ============ RUTEO ============ */
+let mapCtx=null;
+function go(id){ if(location.hash!=="#"+id) location.hash=id; else route(); }
+function route(){
+  const h=location.hash.replace("#","");
+  regStop();
+  ["v-home","v-obra","v-ranking"].forEach(v=>$("#"+v).hidden=true);
+  if(OB[h]){ $("#v-obra").hidden=false; openObra(h); }
+  else if(h==="ranking"){ $("#v-ranking").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderRanking(); window.scrollTo({top:0}); }
+  else { $("#v-home").hidden=false; if(!mapCtx) mapCtx=buildMap(); mount(mapCtx); refreshChrome(); }
+}
+window.addEventListener("hashchange",route);
+$("#goHome").addEventListener("click",()=>{ if(location.hash){ location.hash=""; } else route(); });
+$("#goRanking").addEventListener("click",()=>go("ranking"));
+
+/* ============ REGISTRO ============ */
+$("#regForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const a=$("#alias").value.trim().replace(/\s+/g," ");
+  const err=aliasOk(a); $("#regErr").textContent=err; if(err) return;
+  Player.alias=a; Store.save(); refreshChrome(); $("#mReg").hidden=true;
+  toast("¡Listo, Ing. "+a+"! A construir.");
+  if(cur && Player.obras[cur.o.id]) renderShare();
+});
+
+/* ============ ARRANQUE ============ */
+refreshChrome();
+route();
+loop();
+if(!Player.alias) $("#mReg").hidden=false;
+Store.init();
+</script>
+
+</body>
+</html>
