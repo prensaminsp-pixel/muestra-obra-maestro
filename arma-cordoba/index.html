@@ -237,6 +237,11 @@ body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
 /* Mascota */
 .masc{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;align-items:end}
 .masc svg{width:72px;height:60px;display:block;overflow:visible}
+.masc canvas.rita{width:84px;height:84px;display:block}
+.masc{grid-template-columns:84px minmax(0,1fr)}
+.masc.r3d svg{display:none}
+.masc.r3d.feliz canvas,.masc.r3d.preocupada canvas,.masc.r3d.triste canvas{animation:none}
+.masc.tranquila.sobre-claro .burbuja{border-color:var(--linea)}
 .burbuja{position:relative;background:#fff;color:var(--tinta);border-radius:14px 14px 14px 4px;padding:10px 13px;font-size:14px;line-height:1.4;min-height:2.6em;border:2px solid transparent}
 .burbuja b.quien{display:block;font-family:var(--f-display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--tenue);margin-bottom:1px}
 .masc.preocupada .burbuja{border-color:#E2464C;background:#FFF1F0}
@@ -267,10 +272,13 @@ body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
 .juego-card small{font-size:12px;color:var(--amarillo);font-weight:700}
 .mini-head{padding-block:18px 10px;display:grid;gap:6px}
 .mini-head h1{font-size:clamp(30px,8vw,44px);font-weight:800;text-transform:uppercase;line-height:.95}
-.mini-stage{position:relative;width:100%;height:min(62vh,560px);min-height:360px;background:#5B6068;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.extra{display:grid;gap:12px}
+.mini-stage{position:relative;width:100%;border-radius:12px;height:min(62vh,540px);min-height:360px;background:#5B6068;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
 .mini-stage canvas{display:block;width:100%;height:100%}
 .mini-hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;padding:10px 12px;color:#fff;font-family:var(--f-display);font-weight:800;font-size:20px;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.4)}
-.corte{position:relative;width:100%;height:min(58vh,520px);min-height:380px;overflow:hidden;background:linear-gradient(#BFE3F5 0 12%,#9AA0A6 12% 15%,#B98E62 15% 100%)}
+.corte .fachadas{position:absolute;left:0;right:0;top:0;height:12%;display:flex;align-items:flex-end;gap:3px;padding-inline:6px}
+.corte .fachadas i{display:block;flex:1;border-radius:3px 3px 0 0}
+.corte{position:relative;width:100%;border-radius:12px;height:min(58vh,520px);min-height:380px;overflow:hidden;background:linear-gradient(#BFE3F5 0 12%,#9AA0A6 12% 15%,#B98E62 15% 100%)}
 .corte .vereda{position:absolute;left:0;top:12%;width:38%;height:3%;background:#D9D6CF}
 .corte .calle{position:absolute;left:38%;right:0;top:12%;height:3%;background:#3B3F46}
 .corte .capa{position:absolute;left:0;right:0;height:1px;background:rgba(0,0,0,.08)}
@@ -311,13 +319,6 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
     </div>
     <div class="stage" id="mapStage"><div class="hint3d" id="mapHint">Arrastrá para girar · Tocá un número</div></div>
     <div class="wrap lista" id="lista"></div>
-    <div class="wrap">
-      <div class="eyebrow" style="padding-top:8px">Juegos rápidos</div>
-      <div class="juegos-home">
-        <button class="juego-card" type="button" id="goBacheo"><b>Bacheo exprés</b><span>Tapá los pozos antes de que pasen los autos.</span><small id="recBacheo"></small></button>
-        <button class="juego-card" type="button" id="goCanos" style="background:#AF4178"><b>¿Dónde va cada caño?</b><span>Ubicá los servicios debajo de la calle.</span><small id="recCanos"></small></button>
-      </div>
-    </div>
     <footer class="wrap">Datos tomados de comunicaciones oficiales y medios. Las simulaciones de los juegos son didácticas.</footer>
   </section>
 
@@ -385,6 +386,22 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
         <p class="nota">En el prototipo se muestran las maquetas. En la versión final van las fotos de archivo y tomas de dron de la obra.</p>
       </article>
 
+      <article class="bloque" id="oExtra" hidden>
+        <div class="eyebrow" id="exEyebrow">Juego extra</div>
+        <h2 id="exTitulo"></h2>
+        <div id="exBacheo" class="extra" hidden>
+          <div class="mini-stage" id="bchStage"><canvas id="bchCanvas"></canvas><div class="mini-hud"><span id="bchVidas"></span><span id="bchPts">0</span><span id="bchT">45</span></div></div>
+          <div class="masc tranquila sobre-claro" id="bchMasc"></div>
+          <div class="fila"><button class="btn amar" id="bchStart" type="button">Empezar</button><small class="nota" id="recBacheo"></small></div>
+        </div>
+        <div id="exCanos" class="extra" hidden>
+          <div class="corte" id="cnCorte"><div class="fachadas" id="cnFachadas"></div><div class="vereda"></div><div class="calle"></div></div>
+          <div class="masc tranquila sobre-claro" id="cnMasc"></div>
+          <div class="canos" id="cnCanos"></div>
+          <div class="fila"><button class="btn blanco" id="cnReset" type="button">Empezar de nuevo</button><small class="nota" id="recCanos"></small></div>
+        </div>
+      </article>
+
       <article class="bloque">
         <div class="eyebrow">En escala humana</div>
         <h2>¿Cuánto es eso?</h2>
@@ -437,20 +454,6 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
 
       <button class="siguiente" id="oNext"><span><small>Siguiente obra</small><b id="oNextName"></b></span><span aria-hidden="true" style="font-size:24px">→</span></button>
     </div>
-  </section>
-
-  <!-- BACHEO -->
-  <section class="view" id="v-bacheo" hidden>
-    <div class="wrap mini-head"><div class="eyebrow">Juego rápido · Vialidad</div><h1>Bacheo exprés</h1></div>
-    <div class="mini-stage" id="bchStage"><canvas id="bchCanvas"></canvas><div class="mini-hud"><span id="bchVidas"></span><span id="bchPts">0</span><span id="bchT">45</span></div></div>
-    <div class="juego"><div class="wrap"><div class="masc tranquila" id="bchMasc"></div><div class="fila"><button class="btn amar" id="bchStart" type="button">Empezar</button><button class="btn-sec" id="bchVolver" type="button">Volver al mapa</button></div></div></div>
-  </section>
-
-  <!-- CAÑOS -->
-  <section class="view" id="v-canos" hidden>
-    <div class="wrap mini-head"><div class="eyebrow">Juego rápido · Servicios públicos</div><h1>¿Dónde va cada caño?</h1></div>
-    <div class="corte" id="cnCorte"><div class="vereda"></div><div class="calle"></div></div>
-    <div class="juego"><div class="wrap"><div class="masc tranquila" id="cnMasc"></div><div class="canos" id="cnCanos"></div><div class="fila"><button class="btn-sec" id="cnReset" type="button">Empezar de nuevo</button><button class="btn-sec" id="cnVolver" type="button">Volver al mapa</button></div></div></div>
   </section>
 
   <!-- ADMIN -->
@@ -793,10 +796,73 @@ const MASC_SVG=`<svg viewBox="0 0 130 104" aria-hidden="true">
 <g class="cara c-preocupada"><path d="M77 30 L84 27.5" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><path d="M92 27.5 L99 30" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><circle cx="81" cy="35" r="3" fill="#0B2440"/><circle cx="95" cy="35" r="3" fill="#0B2440"/><path d="M82 45 q3 -3 6 0 t6 0" stroke="#0B2440" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M106 18 q5 7 0 9 q-5 -2 0 -9z" fill="#7FD3F5"/></g>
 <g class="cara c-triste"><path d="M77 31 L84 29" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><path d="M92 29 L99 31" stroke="#0B2440" stroke-width="2.2" stroke-linecap="round"/><path d="M78 36 h6" stroke="#0B2440" stroke-width="2.6" stroke-linecap="round"/><path d="M92 36 h6" stroke="#0B2440" stroke-width="2.6" stroke-linecap="round"/><path d="M82 47 Q88 42 94 47" stroke="#0B2440" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M80 39 q3 5 0 6 q-3 -1 0 -6z" fill="#7FD3F5"/></g>
 </svg>`;
+/* Rita en 3D: un solo renderizador WebGL dibuja a todas las Ritas visibles */
+const RITA=(()=>{
+  let r=null; try{ r=new THREE.WebGLRenderer({antialias:true,alpha:true}); r.setPixelRatio(1); r.setSize(168,168); }catch(e){ return null; }
+  const scene=new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff,0x9AA8B8,0.75)); const dl=new THREE.DirectionalLight(0xffffff,0.7); dl.position.set(2,4,5); scene.add(dl);
+  const cam=new THREE.PerspectiveCamera(30,1,0.1,50); cam.position.set(0.5,1.25,6.2); cam.lookAt(0,1.0,0);
+  const T=c=>new THREE.MeshToonMaterial({color:c});
+  const amarillo=T(0xF7BE2B), oscuro=T(0x2B2F36), negro=new THREE.MeshBasicMaterial({color:0x0B2440}), blanco=new THREE.MeshBasicMaterial({color:0xffffff}), naranja=T(0xEB7F27), gris=T(0x5A6B7A);
+  const root=new THREE.Group(); scene.add(root);
+  // cuerpo chiquito
+  const cuerpo=new THREE.Group(); root.add(cuerpo);
+  const chasis=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.42,0.9),T(0xE0A81E)); chasis.position.y=0.48; cuerpo.add(chasis);
+  [-0.5,0.5].forEach(z=>{ const o=new THREE.Mesh(new THREE.CapsuleGeometry(0.19,1.05,6,12),oscuro); o.rotation.z=Math.PI/2; o.position.set(0,0.2,z); cuerpo.add(o); });
+  const brazo=new THREE.Group(); brazo.position.set(0.62,0.55,0.15); cuerpo.add(brazo);
+  const b1=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.75,10),naranja); b1.rotation.z=-0.9; b1.position.set(0.3,0.22,0); brazo.add(b1);
+  const codo=new THREE.Group(); codo.position.set(0.6,0.45,0); brazo.add(codo);
+  const b2=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.55,10),naranja); b2.position.set(0,-0.27,0); codo.add(b2);
+  const pala=new THREE.Mesh(new THREE.BoxGeometry(0.34,0.22,0.36),gris); pala.position.set(0.06,-0.6,0); codo.add(pala);
+  // cabeza grande (la cabina)
+  const cabeza=new THREE.Group(); cabeza.position.y=1.45; root.add(cabeza);
+  const casco=new THREE.Mesh(new THREE.SphereGeometry(1,40,28),amarillo); casco.scale.set(1.12,0.98,0.92); cabeza.add(casco);
+  const cara=new THREE.Mesh(new THREE.SphereGeometry(0.8,40,28),new THREE.MeshToonMaterial({color:0xEAF6FF})); cara.scale.set(1.0,0.82,0.42); cara.position.set(0,-0.05,0.6); cabeza.add(cara);
+  const baliza=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.16,0.2,16),new THREE.MeshToonMaterial({color:0xEB7F27,emissive:0x000000})); baliza.position.y=1.02; cabeza.add(baliza);
+  const F=new THREE.Group(); F.position.set(0,-0.05,0.93); cabeza.add(F);
+  const ojos=[-0.3,0.3].map(x=>{ const g=new THREE.Group(); g.position.set(x,0.12,0); const o=new THREE.Mesh(new THREE.SphereGeometry(0.12,20,14),negro); g.add(o); const br=new THREE.Mesh(new THREE.SphereGeometry(0.04,10,8),blanco); br.position.set(0.04,0.05,0.1); g.add(br); F.add(g); return g; });
+  const arcos=[-0.3,0.3].map(x=>{ const m=new THREE.Mesh(new THREE.TorusGeometry(0.11,0.032,8,20,Math.PI),negro); m.position.set(x,0.1,0.04); F.add(m); return m; });
+  const cejas=[-0.3,0.3].map(x=>{ const m=new THREE.Mesh(new THREE.CapsuleGeometry(0.025,0.18,4,8),negro); m.rotation.z=Math.PI/2; m.position.set(x,0.36,0.02); F.add(m); return m; });
+  const sonrisa=new THREE.Mesh(new THREE.TorusGeometry(0.16,0.035,8,24,Math.PI),negro); sonrisa.rotation.z=Math.PI; sonrisa.position.set(0,-0.12,0.03); F.add(sonrisa);
+  const boca=new THREE.Mesh(new THREE.CircleGeometry(0.2,24,Math.PI,Math.PI),new THREE.MeshBasicMaterial({color:0xC2593F})); boca.position.set(0,-0.12,0.05); F.add(boca);
+  const oBoca=new THREE.Mesh(new THREE.TorusGeometry(0.07,0.03,8,16),negro); oBoca.position.set(0,-0.2,0.03); F.add(oBoca);
+  const cachetes=[-0.5,0.5].map(x=>{ const m=new THREE.Mesh(new THREE.CircleGeometry(0.09,16),new THREE.MeshBasicMaterial({color:0xF4A6A0})); m.position.set(x,-0.08,0.0); F.add(m); return m; });
+  const gota=new THREE.Mesh(new THREE.SphereGeometry(0.09,12,10),T(0x7FD3F5)); gota.scale.set(0.8,1.25,0.8); gota.position.set(0.85,0.55,0.55); cabeza.add(gota);
+  const lagrima=new THREE.Mesh(new THREE.SphereGeometry(0.06,12,10),T(0x7FD3F5)); lagrima.scale.set(0.8,1.3,0.8); F.add(lagrima);
+  root.rotation.y=-0.3;
+  function pose(mood,t,dt0){
+    const fe=mood==="feliz", pr=mood==="preocupada", tr=mood==="triste";
+    ojos.forEach(o=>{ o.visible=!fe; const blink=((t%3.2)<0.12)?0.15:1; o.scale.set(1,(tr?0.75:1)*blink,1); });
+    arcos.forEach(a=>a.visible=fe);
+    cejas.forEach((c,i)=>{ const sg=i?1:-1; c.visible=pr||tr; c.rotation.z=Math.PI/2+(pr?-0.35:-0.3)*sg; c.position.y=pr?0.4:0.33; });
+    sonrisa.visible=mood==="tranquila"||tr; sonrisa.rotation.z=tr?0:Math.PI; sonrisa.position.y=tr?-0.28:-0.12;
+    boca.visible=fe; oBoca.visible=pr; cachetes.forEach(c=>c.visible=fe||mood==="tranquila"); cachetes.forEach(c=>c.material.opacity=1);
+    gota.visible=pr; if(pr) gota.position.y=0.55-((t*0.6)%0.3);
+    lagrima.visible=tr; if(tr){ const k=(t*0.5)%1; lagrima.position.set(-0.3,-0.05-k*0.45,0.06); }
+    const rec=Math.min(1,dt0/1.2);
+    root.position.y= fe? Math.abs(Math.sin(t*7))*0.28*(1-rec*0.6) : Math.sin(t*2)*0.04;
+    root.rotation.z= pr? Math.sin(t*28)*0.06*(1-rec*0.7) : fe? Math.sin(t*3)*0.05 : 0;
+    cabeza.rotation.x= tr? 0.22 : 0; cabeza.rotation.z= fe? Math.sin(t*4)*0.08 : tr? 0.06 : Math.sin(t*1.3)*0.04;
+    brazo.rotation.z= fe? Math.sin(t*8)*0.35+0.2 : pr? Math.sin(t*16)*0.12 : tr? -0.25 : Math.sin(t*1.5)*0.15;
+    codo.rotation.z= fe? Math.sin(t*8+1)*0.4 : Math.sin(t*1.5+1)*0.2;
+    baliza.material.emissive.setRGB((Math.sin(t*(pr?14:fe?10:3))>0?0.9:0.2),0.35,0);
+  }
+  const insts=[];
+  function frame(){
+    requestAnimationFrame(frame); if(document.hidden) return;
+    const t=performance.now()/1000, vh=window.innerHeight;
+    insts.forEach(I=>{ if(!I.box.isConnected || !I.box.offsetParent) return; const rc=I.cv.getBoundingClientRect(); if(rc.bottom<0||rc.top>vh) return;
+      pose(I.mood,t+I.seed,t-I.since); r.render(scene,cam); I.ctx.clearRect(0,0,168,168); I.ctx.drawImage(r.domElement,0,0); });
+  }
+  requestAnimationFrame(frame);
+  return { add(box){ const cv=document.createElement("canvas"); cv.className="rita"; cv.width=168; cv.height=168; box.prepend(cv); const I={box,cv,ctx:cv.getContext("2d"),mood:"tranquila",since:0,seed:Math.random()*10}; insts.push(I); box.classList.add("r3d"); return I; },
+    snap(mood){ pose(mood,0.3,5); r.render(scene,cam); const c=document.createElement("canvas"); c.width=168; c.height=168; c.getContext("2d").drawImage(r.domElement,0,0); return c; } };
+})();
 function Mascota(box){
   box.innerHTML=MASC_SVG+'<div class="burbuja"><b class="quien">Rita, la retro</b><span class="txt"></span></div>';
+  const I=RITA?RITA.add(box):null;
   const txt=box.querySelector(".txt"); let last="";
-  return { say(t,mood="tranquila"){ if(t===last && box.classList.contains(mood)) return; last=t; txt.textContent=t; box.classList.remove("tranquila","feliz","preocupada","triste"); void box.offsetWidth; box.classList.add(mood); } };
+  return { say(t,mood="tranquila"){ if(t===last && box.classList.contains(mood)) return; last=t; txt.textContent=t; box.classList.remove("tranquila","feliz","preocupada","triste"); void box.offsetWidth; box.classList.add(mood); if(I){ I.mood=mood; I.since=performance.now()/1000; } } };
 }
 const JM=Mascota($("#jMasc")), REGM=Mascota($("#regMasc")), FINM=Mascota($("#finMasc"));
 REGM.say("¡Hola! Soy Rita, la retro. Te voy a acompañar en cada obra. ¿Cómo querés que te llame?","feliz");
@@ -1422,7 +1488,7 @@ function openObra(id){
   resetJuego(Player.obras[id]?"ya":"nuevo");
   // antes y después
   requestAnimationFrame(()=>{ $("#adAntes").src=snapshot(ctx,false); $("#adDespues").src=ctx._after||(ctx._after=snapshot(ctx,true)); setAD(50); });
-  renderShare(); renderTrivia(o);
+  renderShare(); renderTrivia(o); renderExtra(o);
   window.scrollTo({top:0});
 }
 function resetJuego(modo){
@@ -1656,6 +1722,7 @@ async function renderShare(){
   x.fillStyle="#FFFFFF"; x.font='800 54px "Saira Semi Condensed", Arial'; x.fillText(("ING. "+Player.alias).toUpperCase().slice(0,26),112,1728);
   x.font='500 30px "Be Vietnam Pro", Arial'; x.fillStyle="#BFE6F7"; x.fillText(NIVELES(n)+" · "+n+" de "+OBRAS.length+" obras armadas",112,1778);
   x.fillStyle="#FFFFFF"; x.font='600 26px "Be Vietnam Pro", Arial'; x.fillText("Gobierno de la Provincia de Córdoba",80,1866);
+  if(RITA){ try{ x.drawImage(RITA.snap("feliz"),810,1590,210,210); }catch(e){} }
   const url=c.toDataURL("image/png"); $("#shareImg").src=url;
   shareBlob=await new Promise(r=>c.toBlob(r,"image/png"));
 }
@@ -1680,7 +1747,7 @@ $("#adRange").addEventListener("input",e=>setAD(+e.target.value));
 function refreshChrome(){
   $("#dots").replaceChildren(...OBRAS.map(o=>el("i",{class:Player.obras[o.id]?"on":""})));
   $("#chipName").textContent=Player.alias?(Player.alias+" · "+puntos()+" pts"):"Ranking";
-  if($("#recBacheo")) { $("#recBacheo").textContent=Player.juegos.bacheo?"Tu récord: "+Player.juegos.bacheo+" baches":""; $("#recCanos").textContent=Player.juegos.canos?"Tu mejor: "+Player.juegos.canos+" pts":""; }
+  $("#recBacheo").textContent=Player.juegos.bacheo?"Tu récord: "+Player.juegos.bacheo+" baches":""; $("#recCanos").textContent=Player.juegos.canos?"Tu mejor: "+Player.juegos.canos+" pts":"";
   $("#lista").replaceChildren(...OBRAS.map(o=>{
     const ok=!!Player.obras[o.id];
     const b=el("button",{class:"obra-card",type:"button"},[el("span",{class:"cinta",style:"background:"+o.color}), el("div",{},[el("div",{class:"eyebrow",style:"color:"+o.color},[el("span",{class:"num",style:"background:"+o.color,text:String(OBRAS.indexOf(o)+1)}),document.createTextNode(o.eje)]),el("h3",{text:o.nombre}),el("p",{text:o.lugar})]), el("span",{class:"estado"+(ok?" ok":""),text:ok?"Armada":"Para armar"})]);
@@ -1750,24 +1817,31 @@ function renderTrivia(o){
 const BCH={on:false};
 const BM_M=Mascota($("#bchMasc"));
 function bchSize(){ const c=$("#bchCanvas"), st=$("#bchStage"), dpr=Math.min(2,window.devicePixelRatio||1); c.width=st.clientWidth*dpr; c.height=st.clientHeight*dpr; BCH.w=st.clientWidth; BCH.h=st.clientHeight; BCH.dpr=dpr; }
-function bchReset(){ bchSize(); Object.assign(BCH,{on:false,t:0,pts:0,vidas:3,cars:[],pozos:[],nextCar:0.5,nextPozo:0.6,flash:0,last:performance.now(),lastWarn:0}); bchHud(); bchDraw(); }
-function bchLane(l){ const x0=BCH.w*0.14, w=BCH.w*0.72; return x0+w*(l+0.5)/3; }
-function bchHud(){ $("#bchVidas").textContent="♥".repeat(BCH.vidas)+"♡".repeat(3-BCH.vidas); $("#bchPts").textContent=BCH.pts+" baches"; $("#bchT").textContent=Math.max(0,Math.ceil(45-BCH.t))+" s"; }
-function bchOpen(){ bchReset(); $("#bchStart").hidden=false; BM_M.say("¡Hola! En esta calle aparecen pozos. Tocalos para taparlos antes de que pase un auto. Tenés 3 vidas y 45 segundos.","tranquila"); }
-function bchStart(){ bchReset(); BCH.on=true; $("#bchStart").hidden=true; BM_M.say("¡Arrancamos! Mirá bien la calle.","feliz"); requestAnimationFrame(bchLoop); }
+function bchReset(){ bchSize(); Object.assign(BCH,{on:false,t:0,pts:0,VMAX:5,vidas:5,cars:[],pozos:[],nextCar:2.5,nextPozo:0.4,flash:0,last:performance.now(),lastWarn:0}); bchHud(); bchDraw(); }
+function bchLane(l){ const x0=BCH.w*0.18, w=BCH.w*0.64; return x0+w*(l+0.5)/3; }
+function bchHud(){ $("#bchVidas").textContent="♥".repeat(Math.max(0,BCH.vidas))+"♡".repeat(Math.max(0,BCH.VMAX-BCH.vidas)); $("#bchPts").textContent=BCH.pts+" baches"; $("#bchT").textContent=Math.max(0,Math.ceil(45-BCH.t))+" s"; }
+function bchOpen(tema){ BCH.tema=tema; bchReset(); BCH.on=false; $("#bchStart").hidden=false; $("#bchStart").textContent="Empezar";
+  BM_M.say(tema==="sierras"?"¡Hola! En este tramo de la autovía aparecen pozos. Tocalos para taparlos antes de que llegue un auto. Tenés 5 vidas y 45 segundos.":"¡Hola! Esta es la avenida Vélez Sarsfield. Tocá los pozos para taparlos antes de que pase un auto. Tenés 5 vidas y 45 segundos.","tranquila"); }
+function bchStart(){ bchReset(); BCH.on=true; $("#bchStart").hidden=true; BM_M.say("¡Arrancamos! Los pozos aparecen solos: tocalos rápido.","feliz"); requestAnimationFrame(bchLoop); }
+function bchLlega(l,y){ // segundos hasta que el próximo auto del carril l llegue a la altura y
+  let m=99; BCH.cars.forEach(c=>{ if(c.l===l && c.y<y) m=Math.min(m,(y-c.y)/c.v); }); return m; }
 function bchLoop(now){
   if(!BCH.on) return;
   const dt=Math.min(0.05,(now-BCH.last)/1000); BCH.last=now; BCH.t+=dt;
-  const dif=Math.min(1,BCH.t/40);
-  BCH.nextCar-=dt; if(BCH.nextCar<=0){ BCH.cars.push({l:Math.floor(Math.random()*3),y:-60,v:BCH.h*(0.28+0.22*dif)*(0.9+Math.random()*0.25),c:["#E2464C","#009ADA","#FFFFFF","#F7BE2B","#32A430","#AF4178"][Math.floor(Math.random()*6)],hit:0}); BCH.nextCar=1.5-0.6*dif+Math.random()*0.5; }
-  BCH.nextPozo-=dt; if(BCH.nextPozo<=0){ const l=Math.floor(Math.random()*3), y=BCH.h*(0.25+Math.random()*0.55); if(!BCH.pozos.some(p=>!p.done&&p.l===l&&Math.abs(p.y-y)<70)) BCH.pozos.push({l,y,r:0,born:BCH.t,done:false,tap:0}); BCH.nextPozo=1.25-0.55*dif+Math.random()*0.4; }
+  const dif=Math.min(1,BCH.t/45), H=BCH.h;
+  BCH.nextCar-=dt; if(BCH.nextCar<=0){ const l=Math.floor(Math.random()*3); if(!BCH.cars.some(c=>c.l===l&&c.y<H*0.2)){ BCH.cars.push({l,y:-50,v:H*(0.17+0.08*dif),c:["#E2464C","#009ADA","#FFFFFF","#F7BE2B","#32A430","#AF4178"][Math.floor(Math.random()*6)],hit:0}); } BCH.nextCar=1.9-0.6*dif+Math.random()*0.6; }
+  BCH.nextPozo-=dt; if(BCH.nextPozo<=0){
+    const vivos=BCH.pozos.filter(p=>!p.done).length;
+    if(vivos<4){ for(let k=0;k<6;k++){ const l=Math.floor(Math.random()*3), y=H*(0.3+Math.random()*0.5);
+      if(!BCH.pozos.some(p=>!p.done&&p.l===l&&Math.abs(p.y-y)<80) && bchLlega(l,y)>2.4){ BCH.pozos.push({l,y,r:0,done:false,tap:0}); break; } } }
+    BCH.nextPozo=0.95-0.3*dif+Math.random()*0.35; }
   BCH.pozos.forEach(p=>{ p.r=Math.min(1,p.r+dt*3); if(p.done) p.tap+=dt; });
-  BCH.pozos=BCH.pozos.filter(p=>!(p.done&&p.tap>1.2));
+  BCH.pozos=BCH.pozos.filter(p=>!(p.done&&p.tap>1.0));
   BCH.cars.forEach(c=>{ c.y+=c.v*dt; c.hit=Math.max(0,c.hit-dt);
-    BCH.pozos.forEach(p=>{ if(!p.done && p.l===c.l && Math.abs(c.y-p.y)<20){ p.done=true; p.bad=true; c.hit=0.5; BCH.vidas--; BCH.flash=0.3; bchHud(); BM_M.say(BCH.vidas>0?"¡Uy! Ese auto cayó en un pozo. ¡Te quedan "+BCH.vidas+(BCH.vidas===1?" vida!":" vidas!"):"¡Ay, no!","triste"); } });
-    if(BCH.t-BCH.lastWarn>2.5) BCH.pozos.forEach(p=>{ if(!p.done && p.l===c.l && p.y-c.y>0 && p.y-c.y<BCH.h*0.22){ BCH.lastWarn=BCH.t; BM_M.say("¡Cuidado! Viene un auto hacia un pozo.","preocupada"); } });
+    BCH.pozos.forEach(p=>{ if(!p.done && p.l===c.l && c.y>p.y-12 && c.y<p.y+12){ p.done=true; p.bad=true; c.hit=0.5; BCH.vidas--; BCH.flash=0.25; bchHud(); BM_M.say(BCH.vidas>0?"¡Uy! Un auto pisó un pozo. ¡Te quedan "+BCH.vidas+(BCH.vidas===1?" vida!":" vidas!"):"¡Ay, no!","triste"); } });
+    if(BCH.t-BCH.lastWarn>3) BCH.pozos.forEach(p=>{ if(!p.done && p.l===c.l && p.y>c.y && (p.y-c.y)/c.v<1.2){ BCH.lastWarn=BCH.t; BM_M.say("¡Cuidado! Un auto va directo a un pozo.","preocupada"); } });
   });
-  BCH.cars=BCH.cars.filter(c=>c.y<BCH.h+80);
+  BCH.cars=BCH.cars.filter(c=>c.y<H+80);
   BCH.flash=Math.max(0,BCH.flash-dt);
   bchHud(); bchDraw();
   if(BCH.vidas<=0 || BCH.t>=45) return bchEnd();
@@ -1775,22 +1849,29 @@ function bchLoop(now){
 }
 function bchDraw(){
   const c=$("#bchCanvas"), x=c.getContext("2d"), W=BCH.w, H=BCH.h; x.setTransform(BCH.dpr,0,0,BCH.dpr,0,0);
-  x.fillStyle="#9DBF7A"; x.fillRect(0,0,W,H);
-  x.fillStyle="#D9D6CF"; x.fillRect(W*0.08,0,W*0.06,H); x.fillRect(W*0.86,0,W*0.06,H);
-  x.fillStyle="#4A4F57"; x.fillRect(W*0.14,0,W*0.72,H);
-  x.strokeStyle="rgba(255,255,255,.75)"; x.lineWidth=3; x.setLineDash([22,18]); x.lineDashOffset=-(BCH.t||0)*60;
-  [1,2].forEach(k=>{ const lx=W*0.14+W*0.72*k/3; x.beginPath(); x.moveTo(lx,0); x.lineTo(lx,H); x.stroke(); }); x.setLineDash([]);
-  BCH.pozos.forEach(p=>{ const px=bchLane(p.l), r=26*p.r;
-    if(p.done && !p.bad){ x.globalAlpha=Math.max(0,1-p.tap/1.2); x.fillStyle="#2E3238"; x.fillRect(px-r*1.2,p.y-r*0.9,r*2.4,r*1.8); x.fillStyle="#F7BE2B"; x.font="700 14px sans-serif"; x.textAlign="center"; x.fillText("¡+1!",px,p.y-r-6); x.globalAlpha=1; return; }
-    if(p.done && p.bad){ x.globalAlpha=Math.max(0,1-p.tap/1.2); }
-    x.fillStyle="#26282C"; x.beginPath(); x.ellipse(px,p.y,r*1.15,r*0.8,0,0,Math.PI*2); x.fill();
-    x.strokeStyle="#6E5A44"; x.lineWidth=3; x.stroke();
-    x.strokeStyle="#26282C"; x.lineWidth=2; x.beginPath(); x.moveTo(px+r,p.y); x.lineTo(px+r*1.6,p.y-r*0.4); x.moveTo(px-r,p.y+2); x.lineTo(px-r*1.5,p.y+r*0.5); x.stroke(); x.globalAlpha=1; });
-  BCH.cars.forEach(c=>{ const cx=bchLane(c.l)+(c.hit>0?Math.sin(c.hit*60)*4:0), w=34, h=58;
+  const sierras=BCH.tema==="sierras", off=((BCH.t||0)*40)%60;
+  if(sierras){ x.fillStyle="#A9C27D"; x.fillRect(0,0,W,H); x.fillStyle="#4FB0DC"; x.fillRect(0,0,W*0.1,H);
+    for(let i=-1;i<12;i++){ const y=i*60+off; [[W*0.13,"#4E8F3A"],[W*0.9,"#6FA34B"],[W*0.95,"#4E8F3A"]].forEach(([tx,col],k)=>{ x.fillStyle=col; x.beginPath(); x.arc(tx,y+k*20,9,0,Math.PI*2); x.fill(); }); }
+    x.fillStyle="#C9B48A"; x.fillRect(W*0.16,0,W*0.02,H); x.fillRect(W*0.82,0,W*0.02,H); }
+  else { x.fillStyle="#D9D6CF"; x.fillRect(0,0,W,H);
+    for(let i=-1;i<10;i++){ const y=i*80+off*1.333; [[0,W*0.12],[W*0.88,W*0.12]].forEach(([bx,bw],k)=>{ x.fillStyle=["#F2F4F6","#E2E8EE","#F7E9D2","#D6DEE6"][(i+k+20)%4]; x.fillRect(bx,y,bw,70); x.fillStyle="#8FB4CC"; x.fillRect(bx+bw*0.25,y+12,bw*0.5,10); x.fillRect(bx+bw*0.25,y+36,bw*0.5,10); }); }
+    x.fillStyle="#9DBF7A"; x.fillRect(W*0.13,0,W*0.04,H); x.fillRect(W*0.83,0,W*0.04,H); }
+  x.fillStyle="#4A4F57"; x.fillRect(W*0.18,0,W*0.64,H);
+  x.strokeStyle="rgba(255,255,255,.8)"; x.lineWidth=3; x.setLineDash([22,18]); x.lineDashOffset=-off*1.5;
+  [1,2].forEach(k=>{ const lx=W*0.18+W*0.64*k/3; x.beginPath(); x.moveTo(lx,0); x.lineTo(lx,H); x.stroke(); }); x.setLineDash([]);
+  if(!sierras){ x.fillStyle="rgba(255,255,255,.85)"; const cy=(H*0.92+off*1.5)%H; for(let k=0;k<8;k++) x.fillRect(W*0.2+k*W*0.075,cy,W*0.045,14); }
+  BCH.pozos.forEach(p=>{ const px=bchLane(p.l), r=24*p.r;
+    if(p.done && !p.bad){ x.globalAlpha=Math.max(0,1-p.tap); x.fillStyle="#2E3238"; x.fillRect(px-r*1.2,p.y-r*0.9,r*2.4,r*1.8); x.fillStyle="#F7BE2B"; x.font="800 16px sans-serif"; x.textAlign="center"; x.fillText("+1",px,p.y-r-6); x.globalAlpha=1; return; }
+    if(p.done && p.bad){ x.globalAlpha=Math.max(0,1-p.tap); }
+    // anillo que late para llamar la atención
+    if(!p.done){ x.strokeStyle="rgba(247,190,43,"+(0.5+0.5*Math.sin((BCH.t||0)*8))+")"; x.lineWidth=3; x.beginPath(); x.ellipse(px,p.y,r*1.6,r*1.2,0,0,Math.PI*2); x.stroke(); }
+    x.fillStyle="#1F2125"; x.beginPath(); x.ellipse(px,p.y,r*1.15,r*0.8,0,0,Math.PI*2); x.fill();
+    x.strokeStyle="#7A6248"; x.lineWidth=3; x.stroke(); x.globalAlpha=1; });
+  BCH.cars.forEach(c=>{ const cx=bchLane(c.l)+(c.hit>0?Math.sin(c.hit*60)*4:0), w=32, h=54;
     x.fillStyle="rgba(0,0,0,.25)"; x.fillRect(cx-w/2+3,c.y-h/2+4,w,h);
     x.fillStyle=c.c; x.beginPath(); x.roundRect?x.roundRect(cx-w/2,c.y-h/2,w,h,8):x.rect(cx-w/2,c.y-h/2,w,h); x.fill();
-    x.fillStyle="#BFD9E8"; x.fillRect(cx-w/2+5,c.y+h/2-20,w-10,10); x.fillRect(cx-w/2+5,c.y-h/2+8,w-10,8); });
-  if(BCH.flash>0){ x.fillStyle="rgba(226,70,76,"+(BCH.flash*1.5)+")"; x.fillRect(0,0,W,H); }
+    x.fillStyle="#BFD9E8"; x.fillRect(cx-w/2+5,c.y+h/2-19,w-10,9); x.fillRect(cx-w/2+5,c.y-h/2+8,w-10,8); });
+  if(BCH.flash>0){ x.fillStyle="rgba(226,70,76,"+(BCH.flash*1.4)+")"; x.fillRect(0,0,W,H); }
 }
 function bchEnd(){
   BCH.on=false; const rec=Player.juegos.bacheo||0;
@@ -1801,12 +1882,10 @@ function bchEnd(){
 $("#bchStage").addEventListener("pointerdown",e=>{
   if(!BCH.on) return; const r=$("#bchStage").getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
   let best=null, bd=1e9; BCH.pozos.forEach(p=>{ if(p.done) return; const d=Math.hypot(bchLane(p.l)-px,p.y-py); if(d<bd){ bd=d; best=p; } });
-  if(best && bd<55){ best.done=true; best.bad=false; BCH.pts++; bchHud(); if(BCH.pts%5===0) BM_M.say("¡"+BCH.pts+" baches tapados! ¡Seguí así!","feliz"); }
+  if(best && bd<60){ best.done=true; best.bad=false; BCH.pts++; bchHud(); if(BCH.pts%5===0) BM_M.say("¡"+BCH.pts+" baches tapados! ¡Seguí así!","feliz"); }
 });
 $("#bchStart").addEventListener("click",bchStart);
-$("#bchVolver").addEventListener("click",()=>go(""));
-$("#goBacheo").addEventListener("click",()=>go("bacheo"));
-window.addEventListener("resize",()=>{ if(!$("#v-bacheo").hidden){ bchSize(); bchDraw(); } });
+window.addEventListener("resize",()=>{ if(!$("#exBacheo").hidden && !BCH.on){ bchSize(); bchDraw(); } });
 
 /* ============ JUEGO: ¿DÓNDE VA CADA CAÑO? ============ */
 const CANOS=[
@@ -1817,14 +1896,15 @@ const CANOS=[
 ];
 const CN_M=Mascota($("#cnMasc"));
 const CN={sel:null,err:0,puestos:0};
-function cnOpen(){
-  CN.sel=null; CN.err=0; CN.puestos=0;
+function cnOpen(tema){
+  if(tema) CN.tema=tema; CN.sel=null; CN.err=0; CN.puestos=0;
+  $("#cnFachadas").replaceChildren(...Array.from({length:9},(_,i)=>el("i",{style:"height:"+(40+((i*37)%55))+"%;background:"+["#F4F1EC","#E2E8EE","#F7E9D2","#D6DEE6"][i%4]})));
   const corte=$("#cnCorte"); corte.querySelectorAll(".slot,.capa,.prof").forEach(n=>n.remove());
   [["Cerca de la superficie",28],["",44],["",62],["Lo más profundo",82]].forEach(([t,y])=>{ if(t) corte.append(el("span",{class:"prof",style:"top:"+(y-7.5)+"%",text:"↓ "+t})); });
   CANOS.forEach(cn=>{ const sl=el("div",{class:"slot",style:"top:"+cn.y+"%",role:"button",tabindex:"0","aria-label":"Lugar a "+cn.y+"% de profundidad",text:"?"}); sl.dataset.id=cn.id; sl.addEventListener("click",()=>cnPoner(sl)); sl.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); cnPoner(sl);} }); corte.append(sl); });
   const lista=[...CANOS].sort(()=>Math.random()-0.5);
   $("#cnCanos").replaceChildren(...lista.map(cn=>{ const b=el("button",{class:"cano",type:"button"},[el("i",{style:"background:"+cn.c}),document.createTextNode(cn.n)]); b.dataset.id=cn.id; b.addEventListener("click",()=>{ document.querySelectorAll(".cano").forEach(z=>z.classList.remove("sel")); b.classList.add("sel"); CN.sel=cn.id; CN_M.say("Ahora tocá el lugar debajo de la calle donde va: "+cn.n.toLowerCase()+".","tranquila"); }); return b; }));
-  CN_M.say("Debajo de cada calle hay caños y cables. Tocá un servicio y después el lugar donde va. ¡Ojo con la profundidad!","tranquila");
+  CN_M.say((CN.tema==="sanfrancisco"?"Estamos en una calle de San Francisco, donde llega el agua del acueducto. ":"Estamos en un barrio de Córdoba que manda sus cloacas a Bajo Grande. ")+"Debajo de la calle hay caños y cables: tocá un servicio y después el lugar donde va.","tranquila");
 }
 function cnPoner(sl){
   if(sl.classList.contains("lleno")) return;
@@ -1836,8 +1916,15 @@ function cnPoner(sl){
   } else { CN.err++; sl.animate([{transform:"translate(-50%,-50%)"},{transform:"translate(-46%,-50%)"},{transform:"translate(-54%,-50%)"},{transform:"translate(-50%,-50%)"}],{duration:300}); CN_M.say(cn.mal,"preocupada"); }
 }
 $("#cnReset").addEventListener("click",cnOpen);
-$("#cnVolver").addEventListener("click",()=>go(""));
-$("#goCanos").addEventListener("click",()=>go("canos"));
+
+const EXTRA={punilla:["bacheo","sierras","Bacheo exprés en la autovía"],altonivel:["bacheo","ciudad","Bacheo exprés en Vélez Sarsfield"],acueducto:["canos","sanfrancisco","¿Dónde va cada caño? En San Francisco"],"bajo-grande":["canos","cordoba","¿Dónde va cada caño? En un barrio de Córdoba"]};
+function renderExtra(o){
+  BCH.on=false; const e=EXTRA[o.id]; $("#oExtra").hidden=!e; if(!e) return;
+  $("#exTitulo").textContent=e[2]; $("#exBacheo").hidden=e[0]!=="bacheo"; $("#exCanos").hidden=e[0]!=="canos";
+  $("#exEyebrow").textContent="Juego extra · "+o.eje;
+  if(e[0]==="bacheo") requestAnimationFrame(()=>bchOpen(e[1])); else cnOpen(e[1]);
+  refreshChrome();
+}
 
 /* ============ RUTEO ============ */
 let mapCtx=null;
@@ -1845,9 +1932,8 @@ function go(id){ if(location.hash!=="#"+id) location.hash=id; else route(); }
 function route(){
   const h=location.hash.replace("#","");
   regStop(); bmStop();
-  ["v-home","v-obra","v-ranking","v-admin","v-bacheo","v-canos"].forEach(v=>$("#"+v).hidden=true); BCH.on=false;
+  ["v-home","v-obra","v-ranking","v-admin"].forEach(v=>$("#"+v).hidden=true); BCH.on=false;
   if(OB[h]){ $("#v-obra").hidden=false; openObra(h); }
-  else if(h==="bacheo"||h==="canos"){ $("#v-"+h).hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; window.scrollTo({top:0}); if(h==="bacheo") bchOpen(); else cnOpen(); }
   else if(h==="admin"){ $("#v-admin").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderAdmin(); }
   else if(h==="ranking"){ $("#v-ranking").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderRanking(); window.scrollTo({top:0}); }
   else { $("#v-home").hidden=false; if(!mapCtx) mapCtx=buildMap(); mount(mapCtx); refreshChrome(); }
