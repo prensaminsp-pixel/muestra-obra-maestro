@@ -788,8 +788,13 @@ const Store = {
     return {rows, meId};
   },
   queue:[],
-  track(e,o,v){ const d=new Date(); const doc={e,o:o||"",v:v==null?null:v,d:d.toISOString().slice(0,10),t:d.getTime()}; if(this.mode!=="shared"){ this.queue.push(doc); return; } try{ this.db.collection("metricas").add(doc).catch(()=>{}); }catch(e){} },
-  flush(){ const q=this.queue.splice(0); q.forEach(d=>{ try{ this.db.collection("metricas").add(d).catch(()=>{}); }catch(e){} }); },
+  met:null, metT:null,
+  track(e,o){ const k=e+(o?":"+o:""), d=new Date().toISOString().slice(0,10); this.queue.push([k,d]); if(this.mode==="shared") this.flush(); },
+  async flush(){
+    if(!this.met){ const m=await this.db.doc("metricas/"+this.uid).get().catch(()=>null); this.met=(m&&m.exists&&m.data())||{c:{},dias:{}}; this.met.c=this.met.c||{}; this.met.dias=this.met.dias||{}; }
+    this.queue.splice(0).forEach(([k,d])=>{ this.met.c[k]=(this.met.c[k]||0)+1; if(k==="visita"||k.startsWith("visita:")) this.met.dias[d]=(this.met.dias[d]||0)+1; });
+    clearTimeout(this.metT); this.metT=setTimeout(()=>{ try{ this.db.doc("metricas/"+this.uid).set(this.met).catch(()=>{}); }catch(e){} },1500);
+  },
   on(fn){ this.listeners.push(fn); }, emit(){ this.listeners.forEach(f=>f()); }
 };
 const NIVELES = n => n>=OBRAS.length ? "Ingeniero/a maestro/a" : n>=5 ? "Director/a de obra" : n>=3 ? "Ingeniero/a de obra" : n>=1 ? "Ayudante técnico" : "Aprendiz";
@@ -1679,16 +1684,17 @@ async function openAR(o){
 $("#arCerrar").addEventListener("click",()=>{ $("#mAR").hidden=true; $("#arVisor").replaceChildren(); });
 
 /* ============ ADMINISTRACIÓN (reinicio del ranking en GitHub) ============ */
-function tablaMetricas(rows){
-  const cnt=(e,o)=>rows.filter(r=>r.e===e&&(o==null||r.o===o)).length;
-  const hoy=new Date(), dias=[...Array(7)].map((_,k)=>{ const d=new Date(hoy.getTime()-k*864e5); return d.toISOString().slice(0,10); }).reverse();
+function tablaMetricas(docs){
+  const c={}, dias={}; docs.forEach(m=>{ Object.entries(m.c||{}).forEach(([k,v])=>c[k]=(c[k]||0)+v); Object.entries(m.dias||{}).forEach(([k,v])=>dias[k]=(dias[k]||0)+v); });
+  const sum=pre=>Object.entries(c).filter(([k])=>k===pre||k.startsWith(pre+":")).reduce((a,[,v])=>a+v,0);
+  const hoy=new Date(), ult=[...Array(7)].map((_,k)=>new Date(hoy.getTime()-k*864e5).toISOString().slice(0,10)).reverse();
   const wrap=el("div",{style:"display:grid;gap:14px"});
   wrap.append(el("h3",{text:"Métricas internas",style:"font-size:20px;text-transform:uppercase"}));
-  wrap.append(el("p",{class:"nota",text:"Visitas: "+cnt("visita")+" · Obras abiertas: "+cnt("obra_abierta")+" · Obras armadas: "+cnt("obra_armada")+" · Trivias jugadas: "+cnt("trivia")+" · Partidas de juegos extra: "+(cnt("juego_bacheo")+cnt("juego_canos"))}));
+  wrap.append(el("p",{class:"nota",text:"Personas: "+docs.length+" · Visitas: "+sum("visita")+" · Obras abiertas: "+sum("obra_abierta")+" · Obras armadas: "+sum("obra_armada")+" · Trivias: "+sum("trivia")+" · Juegos extra: "+(sum("juego_bacheo")+sum("juego_canos"))}));
   const t=el("dl",{class:"ficha"});
-  OBRAS.forEach(o=>{ const a=cnt("obra_abierta",o.id), h=cnt("obra_armada",o.id); t.append(el("div",{},[el("dt",{text:o.nombre}),el("dd",{text:a+" abiertas · "+h+" armadas"+(a?" ("+Math.round(h/a*100)+"%)":"")})])); });
+  OBRAS.forEach(o=>{ const a=c["obra_abierta:"+o.id]||0, h=c["obra_armada:"+o.id]||0; t.append(el("div",{},[el("dt",{text:o.nombre}),el("dd",{text:a+" abiertas · "+h+" armadas"+(a?" ("+Math.round(h/a*100)+"%)":"")})])); });
   wrap.append(t);
-  const d=el("dl",{class:"ficha"}); dias.forEach(x=>d.append(el("div",{},[el("dt",{text:x}),el("dd",{text:rows.filter(r=>r.e==="visita"&&r.d===x).length+" visitas"})]))); 
+  const d=el("dl",{class:"ficha"}); ult.forEach(x=>d.append(el("div",{},[el("dt",{text:x}),el("dd",{text:(dias[x]||0)+" visitas"})])));
   wrap.append(el("div",{class:"eyebrow",text:"Últimos 7 días"}),d);
   return wrap;
 }
