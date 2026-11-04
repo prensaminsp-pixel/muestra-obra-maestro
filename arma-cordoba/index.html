@@ -66,9 +66,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 .stage{position:relative;width:100%;height:min(64vh,560px);min-height:340px;background:linear-gradient(#DDE8F0,#EEF3F6);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
 .stage canvas{display:block;width:100%!important;height:100%!important}
-.pinlbl{position:absolute;left:0;top:0;transform:translate(-50%,-100%);pointer-events:auto;cursor:pointer;background:var(--papel);border:0;border-radius:10px;padding:6px 10px 6px 8px;box-shadow:0 4px 14px rgba(11,36,64,.18);display:flex;align-items:center;gap:7px;white-space:nowrap;font-size:12.5px;font-weight:600;color:var(--tinta)}
-.pinlbl i{width:10px;height:10px;border-radius:3px;display:block;flex:none}
-.pinlbl.done::after{content:"✓";color:var(--verde);font-weight:800}
+.pinlbl{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;border:2px solid #fff;border-radius:50%;width:30px;height:30px;padding:0;display:grid;place-items:center;box-shadow:0 3px 10px rgba(11,36,64,.3);font-family:var(--f-display);font-size:16px;font-weight:800;color:#fff}
+.pinlbl.done{box-shadow:0 0 0 3px var(--amarillo),0 3px 10px rgba(11,36,64,.3)}
+.num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;color:#fff;font-family:var(--f-display);font-weight:800;font-size:13px;margin-right:6px;vertical-align:middle}
 .maplbl{position:absolute;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(11,36,64,.55);white-space:nowrap}
 .maplbl.agua{color:#1D6E99;font-style:italic;letter-spacing:.06em}
 .hint3d{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(11,36,64,.78);color:#fff;font-size:12px;padding:6px 12px;border-radius:999px;pointer-events:none;white-space:nowrap}
@@ -133,6 +133,19 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .resultado b{font-family:var(--f-display);font-size:22px;text-transform:uppercase}
 .resultado.ok{background:rgba(50,164,48,.25)}
 .resultado.mal{background:rgba(226,70,76,.25)}
+.dia{position:relative;display:flex;height:16px;border-radius:6px;overflow:hidden}
+.dia i{flex:1;display:block}
+.dia .cursor{position:absolute;top:-3px;bottom:-3px;width:3px;background:#fff;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.3)}
+.modos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.modo-b{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;border-radius:12px;padding:12px 6px;font-weight:700;font-size:13px;cursor:pointer;line-height:1.2}
+.modo-b.on[data-m="pump"]{background:var(--celeste);border-color:var(--celeste)}
+.modo-b.on[data-m="stop"]{background:#5A6B7A;border-color:#5A6B7A}
+.modo-b.on[data-m="gen"]{background:var(--amarillo);border-color:var(--amarillo);color:var(--tinta)}
+.ar-caja{max-width:560px}
+.ar-visor{position:relative;height:min(58vh,460px);border-radius:12px;background:var(--suelo);overflow:hidden}
+.ar-visor model-viewer{width:100%;height:100%;--poster-color:transparent}
+.ar-go{position:absolute;left:50%;bottom:14px;transform:translateX(-50%)}
+.adm{display:grid;gap:12px;padding-block:24px 40px}
 body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
 .btn-sec{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer}
 
@@ -246,7 +259,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       <h1>Las obras de Córdoba, <em>armadas por vos</em></h1>
       <p>Girá el mapa, elegí una obra y construila pieza por pieza. Cada obra que terminás suma en el ranking de ingenieros de la muestra.</p>
     </div>
-    <div class="stage" id="mapStage"><div class="hint3d" id="mapHint">Arrastrá para girar · Tocá una obra</div></div>
+    <div class="stage" id="mapStage"><div class="hint3d" id="mapHint">Arrastrá para girar · Tocá un número</div></div>
     <div class="wrap lista" id="lista"></div>
     <footer class="wrap">Prototipo para la muestra del Ministerio. Datos tomados de comunicaciones oficiales y medios; a validar por cada área antes de la versión final.</footer>
   </section>
@@ -286,6 +299,22 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
           </div>
           <div class="resultado" id="rRes" hidden><b id="rResT"></b><span id="rResD"></span><div class="fila"><button class="btn amar" id="rRetry" type="button">Probar de nuevo</button></div></div>
         </div>
+        <div class="regula" id="jBombeo" hidden>
+          <div class="reg-top"><b id="bHora">12:00</b><span id="bFranja"></span><em id="bDia"></em></div>
+          <div class="dia" id="bDiaBar" aria-hidden="true"><i class="cursor" id="bCursor"></i></div>
+          <div class="meds">
+            <div class="med"><span>Lago superior</span><div class="track"><i class="fill" id="bSup"></i></div><small id="bSupTxt"></small></div>
+            <div class="med"><span>Picos cubiertos</span><b id="bCob">–</b><div class="track"><i class="fill e" id="bCobBar"></i></div><small>meta 75%</small></div>
+            <div class="med"><span>Red eléctrica</span><b id="bRed">Estable</b><div class="track"><i class="fill" id="bRedBar" style="background:#E2464C"></i></div><small>riesgo de apagón</small></div>
+          </div>
+          <div class="modos" role="group" aria-label="Modo de la central">
+            <button class="modo-b" type="button" data-m="pump">Bombear agua arriba</button>
+            <button class="modo-b" type="button" data-m="stop">Parar</button>
+            <button class="modo-b" type="button" data-m="gen">Generar energía</button>
+          </div>
+          <div class="fila"><button class="btn amar" id="bStart" type="button">Empezar</button></div>
+          <div class="resultado" id="bRes" hidden><b id="bResT"></b><span id="bResD"></span><div class="fila"><button class="btn amar" id="bRetry" type="button">Probar de nuevo</button></div></div>
+        </div>
       </div>
     </div>
     <div class="wrap bloques">
@@ -323,7 +352,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
           </div>
           <div>
             <h2 style="font-size:20px">Ver la maqueta en tu mesa</h2>
-            <p class="nota" style="margin-top:4px">En la versión publicada, este botón abre la cámara y apoya la obra en 3D sobre la mesa o el piso. Funciona en iPhone y Android sin instalar nada.</p>
+            <p class="nota" style="margin-top:4px">Abre la cámara del celular y apoya la maqueta en 3D sobre una mesa o el piso. Funciona en iPhone y Android, sin instalar nada.</p>
           </div>
         </div>
         <div class="fila"><button class="btn blanco" id="arBtn">Ver en tu espacio</button></div>
@@ -347,6 +376,15 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       </article>
 
       <button class="siguiente" id="oNext"><span><small>Siguiente obra</small><b id="oNextName"></b></span><span aria-hidden="true" style="font-size:24px">→</span></button>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section class="view" id="v-admin" hidden>
+    <div class="wrap adm">
+      <div class="eyebrow">Administración</div>
+      <h1 style="font-size:34px;text-transform:uppercase">Ranking de la muestra</h1>
+      <div id="admBox" class="bloque"></div>
     </div>
   </section>
 
@@ -374,7 +412,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
   <form class="caja" id="regForm" autocomplete="off">
     <svg class="casco" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 44h48v6H8z" fill="#004582"/><path d="M12 44a20 20 0 0 1 40 0z" fill="#F7BE2B"/><path d="M28 18h8v26h-8z" fill="#EB7F27"/></svg>
     <h2>Bienvenido/a, ingeniero/a</h2>
-    <p>Elegí un nombre para el ranking de la muestra. Solo el nombre: no pedimos mail ni teléfono.</p>
+    <p>Elegí un nombre para el ranking de la muestra.</p>
     <div style="display:grid;gap:6px">
       <label for="alias">Tu nombre de ingeniero/a</label>
       <input id="alias" name="alias" maxlength="18" placeholder="Ej: Caro de Cosquín" required>
@@ -397,6 +435,14 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
   </div>
 </div>
 
+<div class="modal" id="mAR" hidden>
+  <div class="caja ar-caja">
+    <div class="fila" style="justify-content:space-between"><h2 id="arTit" style="font-size:22px">Tu maqueta</h2><button class="btn blanco" id="arCerrar" type="button">Cerrar</button></div>
+    <div class="ar-visor" id="arVisor"></div>
+    <p class="nota" id="arNota"></p>
+  </div>
+</div>
+
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
@@ -408,7 +454,7 @@ const GEO = {"outline":[[-65.772,-31.045],[-65.521,-30.485],[-65.423,-30.12],[-6
 /* ============ DATOS DE OBRAS ============ */
 const OBRAS = [
 {
-  id:"punilla", lblDx:-6, lblAlign:"left", nombre:"Autovía de Punilla", eje:"Vialidad", color:"#EB7F27",
+  id:"punilla", pin:[-16,-14], lblDx:-6, lblAlign:"left", nombre:"Autovía de Punilla", eje:"Vialidad", color:"#EB7F27",
   lugar:"Comuna San Roque · Bialet Massé · Santa María de Punilla · Cosquín · Molinari",
   estado:"Habilitada en noviembre de 2024", lon:-64.47, lat:-31.24,
   dato:{n:"21,8", u:"km", t:"de autovía de cuatro carriles que sacan el tránsito pasante de los centros urbanos del valle."},
@@ -431,7 +477,30 @@ const OBRAS = [
   fuente:"Fuentes: comunicaciones del Gobierno de Córdoba recogidas por La Voz de San Justo, Hoy Día Córdoba e InfoNegocios."
 },
 {
-  id:"san-roque", lblDx:-6, lblBajo:true, lblAlign:"left", nombre:"Dique San Roque", eje:"Infraestructura Hídrica", color:"#004582",
+  id:"altonivel", pin:[22,18], lblDx:6, lblBajo:true, lblAlign:"right", corto:"Altonivel Vélez Sarsfield", nombre:"Altonivel de Av. Vélez Sarsfield", eje:"Vialidad", color:"#E2464C",
+  lugar:"Ciudad de Córdoba, de calle Posadas a Av. Circunvalación",
+  estado:"En ejecución", lon:-64.197, lat:-31.475,
+  dato:{n:"600", u:"m", t:"de viaducto que separan el tránsito que va hacia la autovía Córdoba–Río Cuarto del tránsito del barrio."},
+  juego:{tipo:"secuencia", titulo:"Armá el altonivel", consigna:"Un viaducto se arma desde el suelo hacia arriba. Tocá las piezas en el orden de la obra.",
+    piezas:[
+      {n:"Pilotes", c:"#6B6F75", d:"Columnas de hormigón enterradas en el suelo que sostienen todo el viaducto."},
+      {n:"Columnas", c:"#C9CED3", d:"Se levantan sobre los pilotes, en el cantero central de la avenida."},
+      {n:"Vigas", c:"#E7EAEE", d:"Las vigas unen las columnas y forman el esqueleto del puente."},
+      {n:"Tablero", c:"#B9BFC6", d:"La losa sobre las vigas: el piso por donde van a circular los autos."},
+      {n:"Rampas de acceso", c:"#A47C55", d:"Las rampas suben el tránsito pasante al viaducto y lo bajan del otro lado."},
+      {n:"Carpeta y defensas New Jersey", c:"#3B3F46", d:"Asfalto, separador central y defensas. Arriba pasa el tránsito rápido; abajo, el del barrio."}
+    ],
+    mal:"Esa pieza todavía no tiene dónde apoyarse. ¿Qué va debajo?"},
+  escala:[
+    {n:"6", t:"canchas de fútbol en fila: el largo del viaducto", s:"600 m ÷ 105 m de una cancha"},
+    {n:"2", t:"niveles de tránsito: arriba el pasante, abajo el del barrio", s:"Dos carriles por sentido en cada nivel"},
+    {n:"300", t:"puestos de trabajo directos e indirectos", s:"Estimación oficial al licitar la obra"}
+  ],
+  ficha:[["Largo del altonivel","600 m"],["Tramo","De calle Posadas a Av. Circunvalación"],["Viaducto","2 carriles por sentido, separador New Jersey y banquinas"],["Nivel calle","2 carriles por sentido y cantero central de 3 m"],["Inversión","$ 48.642 millones"],["Avance","35% (enero de 2026)"],["Ejecuta","Caminos de las Sierras"]],
+  fuente:"Fuentes: InfoNegocios y El Cronista."
+},
+{
+  id:"san-roque", pin:[-24,4], lblDx:-6, lblBajo:true, lblAlign:"left", nombre:"Dique San Roque", eje:"Infraestructura Hídrica", color:"#004582",
   lugar:"Valle de Punilla, a unos 29 km de la ciudad de Córdoba",
   estado:"En funcionamiento", lon:-64.47, lat:-31.37,
   dato:{n:"1.600", u:"ha", t:"de lago que regulan las crecidas del río Suquía, dan agua potable a la Capital y mueven una central hidroeléctrica."},
@@ -453,6 +522,50 @@ const OBRAS = [
   fuente:"Fuentes: La Voz, Editores (revista técnica), Los Andes y Vía País. La simulación del juego es didáctica y no usa caudales reales."
 },
 {
+  id:"los-molinos", pin:[-20,0], lblDx:-6, lblBajo:true, lblAlign:"left", corto:"Dique Los Molinos", nombre:"Dique Los Molinos", eje:"Infraestructura Hídrica", color:"#009ADA",
+  lugar:"Valle de Calamuchita, sobre el río Los Molinos",
+  estado:"En funcionamiento", lon:-64.52, lat:-31.82,
+  dato:{n:"399", u:"hm³", t:"de agua guardados en uno de los grandes embalses de Córdoba, que además mueven una central de 52 MW."},
+  juego:{tipo:"dique", titulo:"Armá y manejá el dique", consigna:"Primero armá el dique. Después manejalo durante un año: energía para la red sin inundar el valle.",
+    piezas:[
+      {n:"Fundación sobre la roca", c:"#8E8A84", d:"La presa se apoya en la roca firme del fondo del valle."},
+      {n:"Paredón de 60 metros", c:"#D5D9DD", d:"Un muro tan alto como un edificio de 20 pisos cierra el valle."},
+      {n:"Vertedero", c:"#009ADA", d:"Un canal escalonado al costado del paredón: por ahí sale el agua cuando el lago se llena."},
+      {n:"Central hidroeléctrica", c:"#F7BE2B", d:"Cuatro turbinas de 13 MW transforman la caída del agua en electricidad."},
+      {n:"Línea eléctrica", c:"#EB7F27", d:"La energía sale hacia la red provincial. Ahora te toca manejar el dique."}
+    ],
+    mal:"Todavía no. ¿Qué tiene que estar antes para que esa pieza funcione?"},
+  escala:[
+    {n:"160.000", t:"piletas olímpicas de agua", s:"399 millones de m³ ÷ 2.500 m³ de una pileta"},
+    {n:"3.430", t:"canchas de fútbol entran en la superficie del lago", s:"24,5 km² ÷ 0,71 ha de una cancha"},
+    {n:"20", t:"pisos de altura tiene el paredón", s:"60 m ÷ 3 m por piso"}
+  ],
+  ficha:[["Inauguración","1953"],["Central hidroeléctrica","1956 · 52 MW (4 turbinas de 13 MW)"],["Altura de la presa","60 m"],["Largo de la presa","240 m"],["Capacidad","399 hm³"],["Superficie del lago","24,5 km²"],["Funciones","Regulación, energía, agua potable y control de crecidas"]],
+  fuente:"Fuente: Wikipedia (Los Molinos Dam). La simulación del juego es didáctica y no usa caudales reales."
+},
+{
+  id:"rio-grande", pin:[-16,0], lblDx:-6, lblBajo:true, lblAlign:"left", corto:"Complejo Río Grande", nombre:"Complejo Hidroeléctrico Río Grande", eje:"Infraestructura Eléctrica", color:"#AF4178",
+  lugar:"Valle de Calamuchita, presas Cerro Pelado y Arroyo Corto",
+  estado:"En funcionamiento · en recuperación", lon:-64.64, lat:-32.26,
+  dato:{n:"750", u:"MW", t:"de potencia. Es una central de bombeo: guarda energía de noche y la devuelve en las horas de mayor consumo."},
+  juego:{tipo:"bombeo", titulo:"Armá la central de bombeo", consigna:"Primero armá el complejo. Después vas a manejar la central durante dos días.",
+    piezas:[
+      {n:"Presa Cerro Pelado", c:"#D5D9DD", d:"La presa de arriba, de 104 m de altura, forma el lago superior."},
+      {n:"Presa Arroyo Corto", c:"#C4CACF", d:"La presa de abajo, de 50 m, forma el lago inferior que recibe el agua turbinada."},
+      {n:"Conductos forzados", c:"#8A939B", d:"Túneles que bajan el agua 185 metros hasta la sala de máquinas."},
+      {n:"Caverna con turbinas reversibles", c:"#F7BE2B", d:"Cuatro turbinas de 187,5 MW, a unos 180 m bajo tierra. Generan o bombean según la hora."},
+      {n:"Conexión a la red", c:"#EB7F27", d:"La energía sale a la red nacional. Ahora te toca manejar la central."}
+    ],
+    mal:"Todavía no. ¿Qué tiene que existir antes para que esa pieza sirva?"},
+  escala:[
+    {n:"60", t:"pisos bajo tierra: a esa profundidad está la sala de máquinas, «La Catedral»", s:"Unos 180 m ÷ 3 m por piso"},
+    {n:"5", t:"días podría abastecer a pleno con la energía que guarda", s:"Unos 100 GWh almacenados ÷ 750 MW"},
+    {n:"2,7", t:"Obeliscos apilados: el desnivel entre los dos lagos", s:"185 m ÷ 67,5 m del Obelisco"}
+  ],
+  ficha:[["Potencia","750 MW"],["Turbinas","4 reversibles de 187,5 MW"],["Sala de máquinas","En caverna, a unos 180 m de profundidad"],["Presa Cerro Pelado","104 m de altura (lago superior)"],["Presa Arroyo Corto","50 m de altura (lago inferior)"],["Salto","185 m"],["Habilitación","1986"],["Recuperación","Unos US$ 100 millones para volver a la potencia plena"]],
+  fuente:"Fuentes: Hoy Día Córdoba y Wikipedia (Río Grande Hydroelectric Complex). La simulación es didáctica."
+},
+{
   id:"acueducto", nombre:"Acueducto Santa Fe – Córdoba", eje:"Infraestructura Hídrica", color:"#009ADA",
   lugar:"Etapa I: de Coronda (Santa Fe) a San Francisco (Córdoba)",
   estado:"En ejecución", lon:-62.08, lat:-31.43,
@@ -467,7 +580,7 @@ const OBRAS = [
   fuente:"Fuentes: Gobierno de Santa Fe, Cadena 3 y La Voz de San Justo."
 },
 {
-  id:"bajo-grande", lblDx:6, lblBajo:true, lblAlign:"right", nombre:"Planta Depuradora Bajo Grande", eje:"Saneamiento", color:"#32A430",
+  id:"bajo-grande", pin:[22,-12], lblDx:6, lblAlign:"right", nombre:"Planta Depuradora Bajo Grande", eje:"Saneamiento", color:"#32A430",
   lugar:"Ciudad de Córdoba, a orillas del río Suquía",
   estado:"En funcionamiento", lon:-64.10, lat:-31.40,
   dato:{n:"1,9", u:"millones", t:"de personas tienen sus líquidos cloacales tratados antes de volver al río Suquía."},
@@ -502,31 +615,61 @@ const LS = { get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse
 
 /* ============ JUGADOR Y RANKING ============ */
 const Player = LS.get("arma.player", {alias:"", obras:{}});
+/* Ranking compartido.
+   - Dentro de Claude: base de datos del artifact.
+   - En GitHub: Firebase (pegar la configuración web en FIREBASE_CONFIG).
+   - Sin ninguna de las dos: se guarda solo en este dispositivo.
+   "temporada" permite reiniciar el ranking a 0: si cambia en el servidor, cada celular borra su avance local. */
+const FIREBASE_CONFIG = null;
+const ADMIN_EMAIL = "prensa.minsp@gmail.com";
+const EN_CLAUDE = !!(window.claude && window.claude.use);
+function loadScript(src,module){ return new Promise((ok,err)=>{ const sc=document.createElement("script"); if(module) sc.type="module"; sc.src=src; sc.onload=ok; sc.onerror=err; document.head.append(sc); }); }
 const Store = {
-  mode:"local", db:null, uid:null, rows:[], listeners:[],
+  mode:"local", db:null, uid:null, rows:[], listeners:[], fb:null,
+  async connect(){
+    if(EN_CLAUDE){
+      const [db,user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+      if(!db || !user) return false;
+      const id = await user.id(); if(!id) return false;
+      this.db=db; this.uid=id; return true;
+    }
+    if(FIREBASE_CONFIG){
+      const v="10.12.2", b="https://www.gstatic.com/firebasejs/"+v+"/";
+      await loadScript(b+"firebase-app-compat.js"); await loadScript(b+"firebase-auth-compat.js"); await loadScript(b+"firebase-firestore-compat.js");
+      if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+      this.fb=firebase;
+      const auth=firebase.auth();
+      if(location.hash==="#admin") return false;
+      const cred = auth.currentUser ? {user:auth.currentUser} : await auth.signInAnonymously();
+      this.db=firebase.firestore(); this.uid=cred.user.uid; return true;
+    }
+    return false;
+  },
   async init(){
     try{
-      if(!window.claude || !window.claude.use) return;
-      const [db,user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
-      if(!db || !user) return;
-      const id = await user.id();
-      if(!id) return;
-      this.db=db; this.uid=id; this.mode="shared";
+      if(!(await this.connect())) { this.emit(); return; }
+      this.mode="shared";
+      const db=this.db, id=this.uid;
+      // temporada
+      const cfg = await db.doc("config/actual").get().catch(()=>null);
+      const temporada = cfg && cfg.exists ? ((cfg.data()||{}).temporada||1) : 1;
+      if(Player.temporada!==temporada){ Player.obras={}; Player.temporada=temporada; LS.set("arma.player",Player); refreshChrome(); }
       db.collection("ingenieros").onSnapshot(snap=>{
-        this.rows = snap.docs.map(d=>({id:d.id, ...d.data()})).filter(r=>r && r.alias);
+        this.rows = snap.docs.map(d=>({id:d.id, ...d.data()})).filter(r=>r && r.alias && (r.temporada||1)===temporada);
         this.emit();
       }, err=>{ this.mode="local"; this.emit(); });
       const mine = await db.doc("ingenieros/"+id).get().catch(()=>null);
       if(mine && mine.exists){
         const d=mine.data()||{};
-        if(!Player.alias && d.alias){ Player.alias=d.alias; }
-        (d.obras||[]).forEach(o=>{ if(!Player.obras[o]) Player.obras[o]=d.updatedAt||Date.now(); });
-        LS.set("arma.player",Player);
-        refreshChrome();
-        if(Player.alias) $("#mReg").hidden=true;
+        if((d.temporada||1)===temporada){
+          if(!Player.alias && d.alias) Player.alias=d.alias;
+          (d.obras||[]).forEach(o=>{ if(OB[o] && !Player.obras[o]) Player.obras[o]=d.updatedAt||Date.now(); });
+          LS.set("arma.player",Player); refreshChrome();
+          if(Player.alias) $("#mReg").hidden=true;
+        }
       }
-      if(Player.alias) this.save();
-    }catch(e){ this.mode="local"; }
+      if(Player.alias && Object.keys(Player.obras).length) this.save();
+    }catch(e){ console.warn(e); this.mode="local"; }
     this.emit();
   },
   async save(){
@@ -534,7 +677,7 @@ const Store = {
     if(this.mode!=="shared") { this.emit(); return; }
     const obras=Object.keys(Player.obras);
     try{
-      await this.db.doc("ingenieros/"+this.uid).set({alias:Player.alias, obras, count:obras.length, updatedAt: Math.max(0,...Object.values(Player.obras), 0) || Date.now()});
+      await this.db.doc("ingenieros/"+this.uid).set({alias:Player.alias, obras, count:obras.length, temporada:Player.temporada||1, updatedAt: Math.max(0,...Object.values(Player.obras)) || Date.now()});
     }catch(e){ toast("No se pudo guardar en el ranking compartido. Tu avance queda en este celular."); }
   },
   list(){
@@ -549,7 +692,7 @@ const Store = {
   },
   on(fn){ this.listeners.push(fn); }, emit(){ this.listeners.forEach(f=>f()); }
 };
-const NIVELES = n => n>=OBRAS.length ? "Jefe/a de obra" : n>=2 ? "Ingeniero/a de obra" : n===1 ? "Ayudante técnico" : "Aprendiz";
+const NIVELES = n => n>=OBRAS.length ? "Ingeniero/a maestro/a" : n>=5 ? "Director/a de obra" : n>=3 ? "Ingeniero/a de obra" : n>=1 ? "Ayudante técnico" : "Aprendiz";
 const PROHIBIDAS = ["puto","puta","boludo","pelotudo","forro","concha","verga","pija","mierda","choto","trolo","nazi","hdp","cagon","pajero","sorete"];
 function aliasOk(a){
   const n=a.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
@@ -593,6 +736,7 @@ function loop(){
   if(active.controls) active.controls.update();
   if(active.update) active.update(dt,t);
   if(Reg.on && cur && active===cur.ctx) regTick(dt);
+  if(BM.on && cur && active===cur.ctx) bmTick(dt);
   renderer.render(active.scene, active.camera);
   if(active.labels) placeLabels(active);
 }
@@ -602,7 +746,7 @@ function placeLabels(ctx){
     v.copy(L.pos).project(ctx.camera);
     const vis = v.z<1 && v.x>-1.2 && v.x<1.2 && v.y>-1.2 && v.y<1.2;
     L.el.style.display = vis?"":"none";
-    let px=(v.x+1)/2*w+(L.dx||0), py=(1-v.y)/2*h; const ax=L.align==="left"?1:L.align==="right"?0:0.5; if(!L.center){ const ow=L.el.offsetWidth; let left=px-ow*ax; left=Math.max(6,Math.min(w-ow-6,left)); px=left+ow*ax; } L.el.style.transform = `translate(${px}px,${py}px) translate(${-ax*100}%,${L.center?"-50%":L.bajo?"40%":"-115%"})`;
+    let px=(v.x+1)/2*w+(L.dx||0), py=(1-v.y)/2*h+(L.dy||0); const ax=L.align==="left"?1:L.align==="right"?0:0.5; if(!L.center){ const ow=L.el.offsetWidth; let left=px-ow*ax; left=Math.max(6,Math.min(w-ow-6,left)); px=left+ow*ax; } L.el.style.transform = `translate(${px}px,${py}px) translate(${-ax*100}%,${L.center?"-50%":L.bajo?"40%":"-115%"})`;
   });
 }
 /* Detecta toque (no arrastre) sobre el canvas */
@@ -705,9 +849,9 @@ function buildMap(){
     const head=new THREE.Mesh(new THREE.OctahedronGeometry(0.11,0),mat); head.position.y=0.58; pin.add(head);
     const ring=new THREE.Mesh(new THREE.RingGeometry(0.06,0.09,32),new THREE.MeshBasicMaterial({color:o.color,transparent:true,opacity:0.8,side:THREE.DoubleSide})); ring.rotation.x=-Math.PI/2; ring.position.y=0.01; pin.add(ring);
     pin.userData={id:o.id,head,ring}; g.add(pin); pins.push(pin);
-    const lb=el("button",{class:"pinlbl"},[el("i",{style:"background:"+o.color}), document.createTextNode(o.nombre.replace("Planta Depuradora ","Planta "))]);
+    const lb=el("button",{class:"pinlbl",style:"background:"+o.color,"aria-label":o.nombre,title:o.nombre,text:String(OBRAS.indexOf(o)+1)});
     lb.dataset.id=o.id; lb.addEventListener("click",()=>go(o.id)); stage.append(lb);
-    labels.push({el:lb,pos:new THREE.Vector3(p.x,o.lblBajo?h:h+0.72,p.z),id:o.id,dx:o.lblDx||0,bajo:!!o.lblBajo,align:o.lblAlign||""});
+    labels.push({el:lb,pos:new THREE.Vector3(p.x,h+0.72,p.z),id:o.id,dx:(o.pin||[0,0])[0],dy:(o.pin||[0,0])[1]});
   });
   [["Ciudad de Córdoba",-64.18,-31.42,false],["Mar de Ansenuza",-62.62,-30.73,true],["Sierras Grandes",-64.95,-31.55,false],["Río Cuarto",-64.35,-33.12,false],["Villa María",-63.24,-32.41,false],["San Francisco",-62.08,-31.43,false]].forEach(([n,lo,la,ag])=>{
     if(n==="San Francisco"||n==="Ciudad de Córdoba") return;
@@ -918,14 +1062,16 @@ function buildAcueducto(){
 }
 
 /* --- Dique San Roque: armar + regular --- */
-function buildSanRoque(){
-  seed=57;
+function buildSanRoque(){ return buildDique({seed:57}); }
+function buildLosMolinos(){ return buildDique({seed:91,escalonado:true,lad:[0xB7B07E,0xC4A97F,0xA3B27A]}); }
+function buildDique(opt){
+  seed=opt.seed;
   const {scene,camera}=baseScene();
   camera.position.set(6.5,8.8,8.6);
   const tierra=M(0xB8A27F), pasto=M(0xC9DBA8);
   const base=new THREE.Mesh(new THREE.BoxGeometry(16,0.4,9.6),[tierra,tierra,pasto,tierra,tierra,tierra]); base.position.y=-0.2; scene.add(base);
   // laderas del valle
-  const lad=[M(0xA9C27D),M(0xB9AE86),M(0x9DB874)];
+  const lad=(opt.lad||[0xA9C27D,0xB9AE86,0x9DB874]).map(c=>M(c));
   [-1,1].forEach(sg=>{
     const wh=sg>0?2.0:2.5; const w=new THREE.Mesh(new THREE.BoxGeometry(16,wh,1.9),[tierra,tierra,pasto,tierra,tierra,tierra]); w.position.set(0,wh/2,sg*3.75); scene.add(w);
     if(sg>0) return;
@@ -954,10 +1100,15 @@ function buildSanRoque(){
     for(let z=-2.4;z<=2.4;z+=0.8){ const c=new THREE.Mesh(new THREE.BoxGeometry(0.3,1.9,0.12),M(0xC4CACF)); c.position.set(0.42,0.95,z); g.add(c); }
     scene.add(part(g)); parts.push(g); }
   const embudoAgua=new THREE.Mesh(new THREE.RingGeometry(0.12,0.4,24),new THREE.MeshBasicMaterial({color:0xE8F6FF,side:THREE.DoubleSide,transparent:true,opacity:0}));
-  { const g=new THREE.Group(); const t=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.3,1.7,24,1,true),M(0xE7EAEE)); t.material.side=THREE.DoubleSide; t.position.set(-0.95,0.85+0.03,1.7); g.add(t);
+  if(!opt.escalonado){ const g=new THREE.Group(); const t=new THREE.Mesh(new THREE.CylinderGeometry(0.46,0.3,1.7,24,1,true),M(0xE7EAEE)); t.material.side=THREE.DoubleSide; t.position.set(-0.95,0.85+0.03,1.7); g.add(t);
     const rim=new THREE.Mesh(new THREE.TorusGeometry(0.46,0.05,6,24),M(0x009ADA)); rim.rotation.x=Math.PI/2; rim.position.set(-0.95,1.72,1.7); g.add(rim);
     embudoAgua.rotation.x=-Math.PI/2; embudoAgua.position.set(-0.95,1.7,1.7); g.add(embudoAgua);
     const sal=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,1.6,10),M(0xBFC5CB)); sal.rotation.z=Math.PI/2; sal.position.set(0.6,0.2,1.7); g.add(sal);
+    scene.add(part(g)); parts.push(g); }
+  else { const g=new THREE.Group();
+    for(let k=0;k<7;k++){ const st=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.12,0.8),M(k%2?0xCBD1D6:0xDDE1E5)); st.position.set(0.36+k*0.3,1.72-k*0.27,2.15); g.add(st); }
+    const lat=new THREE.Mesh(new THREE.BoxGeometry(2.3,0.3,0.06),M(0xBFC5CB)); lat.position.set(1.3,1.0,2.58); lat.rotation.z=-0.72; g.add(lat);
+    const ch=new THREE.Mesh(new THREE.BoxGeometry(2.6,0.04,0.66),embudoAgua.material); ch.position.set(1.3,0.98,2.15); ch.rotation.z=-0.72; g.add(ch);
     scene.add(part(g)); parts.push(g); }
   const turbM=new THREE.MeshLambertMaterial({color:0x2C3A47,emissive:0x000000}); const rotores=[];
   { const g=new THREE.Group(); const cs=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.6,1.3),M(0xF2E9D8)); cs.position.set(1.05,0.3,-1.5); g.add(cs);
@@ -975,7 +1126,7 @@ function buildSanRoque(){
     const top=LT(st.L); lago.scale.y=top; lago.position.y=top/2;
     rio.scale.z=Math.min(4,0.5+st.D*0.45); rio.material.color.set(st.D>3.6?0x6E8FA6:0x4FB0DC);
     inund.visible=st.flood>0.02; inund.scale.y=Math.max(0.001,st.flood*0.18); inund.position.y=inund.scale.y/2;
-    embudoAgua.material.opacity=st.spill>0?0.95:0; embudoAgua.position.y=Math.min(1.72,top-0.01);
+    embudoAgua.material.opacity=st.spill>0?0.95:0; if(!opt.escalonado) embudoAgua.position.y=Math.min(1.72,top-0.01);
     const g=Math.min(1,st.P/1.2); turbM.emissive.setRGB(g*0.9,g*0.6,0); ventM.emissive.setRGB(g*1.0,g*0.82,g*0.3);
   }
   apply();
@@ -987,8 +1138,127 @@ function buildSanRoque(){
   };
 }
 
+/* --- Altonivel de Av. Vélez Sarsfield --- */
+function buildAltonivel(){
+  seed=73;
+  const {scene,camera}=baseScene();
+  camera.position.set(7.5,6.4,8.5);
+  const g0=new THREE.Mesh(new THREE.BoxGeometry(17,0.4,10),[M(0xB8A27F),M(0xB8A27F),M(0xC9DBA8),M(0xB8A27F),M(0xB8A27F),M(0xB8A27F)]); g0.position.y=-0.2; scene.add(g0);
+  const av=new THREE.Mesh(new THREE.BoxGeometry(17,0.04,3.4),M(0x555A61)); av.position.y=0.02; scene.add(av);
+  const cant=new THREE.Mesh(new THREE.BoxGeometry(17,0.06,0.5),M(0x9DBF7A)); cant.position.y=0.05; scene.add(cant);
+  const wM=new THREE.MeshBasicMaterial({color:0xffffff});
+  for(let x=-8.2;x<8.4;x+=0.8) [-1.0,1.0].forEach(z=>{ const d=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.01,0.05),wM); d.position.set(x,0.045,z); scene.add(d); });
+  const vered=M(0xDCDDDA);
+  [-1,1].forEach(sg=>{ const v=new THREE.Mesh(new THREE.BoxGeometry(17,0.08,0.6),vered); v.position.set(0,0.04,sg*2.0); scene.add(v);
+    for(let i=0;i<13;i++){ const h=0.4+rnd()*1.8, w=0.8+rnd()*0.5; const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,1.1),M([0xF2F4F6,0xE2E8EE,0xF7E9D2,0xD6DEE6][i%4])); b.position.set(-7.6+i*1.27,h/2,sg*3.0); scene.add(b); } });
+  // semáforo
+  const semM=new THREE.MeshBasicMaterial({color:0xE2464C});
+  const poste=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.9,6),M(0x4B5560)); poste.position.set(0,0.45,1.75); scene.add(poste);
+  const luz=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.12,0.12),semM); luz.position.set(0,0.95,1.75); scene.add(luz);
+  const parts=[], H=1.58, xs=[]; for(let x=-4.4;x<=4.41;x+=1.1) xs.push(x);
+  { const g=new THREE.Group(); xs.forEach(x=>{ const p=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.17,0.3,10),M(0x6B6F75)); p.position.set(x,0.15,0); g.add(p); }); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group(); xs.forEach(x=>{ const c=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.13,1.12,10),M(0xC9CED3)); c.position.set(x,0.86,0); g.add(c); const cab=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.14,1.5),M(0xC9CED3)); cab.position.set(x,1.43,0); g.add(cab); }); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group(); for(let i=0;i<xs.length-1;i++) [-0.5,0,0.5].forEach(z=>{ const v=new THREE.Mesh(new THREE.BoxGeometry(1.1,0.14,0.16),M(0xE7EAEE)); v.position.set((xs[i]+xs[i+1])/2,1.43,z); g.add(v); }); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group(); const t=new THREE.Mesh(new THREE.BoxGeometry(9.9,0.1,2.0),M(0xB9BFC6)); t.position.set(0,1.53,0); g.add(t); scene.add(part(g)); parts.push(g); }
+  const RL=Math.hypot(2.95,H-0.05), RA=Math.atan2(H-0.05,2.95);
+  { const g=new THREE.Group(); [-1,1].forEach(sg=>{ const r=new THREE.Mesh(new THREE.BoxGeometry(RL,0.12,2.0),M(0xA47C55)); r.position.set(sg*6.43,(H+0.05)/2-0.02,0); r.rotation.z=-sg*RA; g.add(r); }); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group(); const asf=M(0x3B3F46), nj=M(0xF1F2F3);
+    const top=new THREE.Mesh(new THREE.BoxGeometry(9.9,0.02,1.9),asf); top.position.set(0,H+0.01,0); g.add(top);
+    [-1,1].forEach(sg=>{ const r=new THREE.Mesh(new THREE.BoxGeometry(RL,0.02,1.9),asf); r.position.set(sg*6.43,(H+0.05)/2+0.05,0); r.rotation.z=-sg*RA; g.add(r);
+      [-0.93,0,0.93].forEach(z=>{ const w=new THREE.Mesh(new THREE.BoxGeometry(RL,0.1,0.06),nj); w.position.set(sg*6.43,(H+0.05)/2+0.1,z); w.rotation.z=-sg*RA; g.add(w); }); });
+    [-0.93,0,0.93].forEach(z=>{ const w=new THREE.Mesh(new THREE.BoxGeometry(9.9,0.1,0.06),nj); w.position.set(0,H+0.06,z); g.add(w); });
+    scene.add(part(g)); parts.push(g); }
+  const yUp=x=>{ const a=Math.abs(x); return a<4.95?H+0.02 : a<7.9? H+0.02-(a-4.95)/2.95*(H-0.05) : 0.05; };
+  const carCols=[0xE2464C,0x009ADA,0xffffff,0xF7BE2B,0x004582,0xAF4178,0x32A430];
+  const mkCar=(c,bus)=>{ const g=new THREE.Group(); const b=new THREE.Mesh(new THREE.BoxGeometry(bus?0.8:0.42,bus?0.22:0.13,0.22),M(c)); b.position.y=bus?0.12:0.07; g.add(b); if(!bus){ const cab=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.1,0.18),M(0xDDE6EE)); cab.position.set(-0.02,0.18,0); g.add(cab);} scene.add(g); return g; };
+  const low=[], up=[];
+  for(let i=0;i<12;i++){ const dir=i%2?1:-1; const c=mkCar(carCols[i%7],i%5===0); c.userData={dir,x:-8+i*1.4,v:1.2+rnd()*0.4,z:dir>0?(i%4<2?0.75:1.3):(i%4<2?-0.75:-1.3)}; low.push(c); }
+  for(let i=0;i<6;i++){ const dir=i%2?1:-1; const c=mkCar(carCols[(i+3)%7],false); c.userData={dir,x:-8+i*2.8,v:2.2+rnd()*0.5,z:dir>0?0.47:-0.47}; c.visible=false; up.push(c); }
+  let done=false;
+  return {scene,camera,parts,halfW:6.2,halfH:4,target:new THREE.Vector3(0,0.6,0),
+    setDone(on){ done=on; up.forEach(c=>c.visible=on); },
+    update(dt,t){ stepAnims(parts,dt);
+      const red=(t%6)<3; semM.color.set(red?0xE2464C:0x32A430);
+      low.forEach(c=>{ const u=c.userData; const stopX=u.dir>0?-0.6:0.6; const ahead=(u.dir>0? stopX-u.x : u.x-stopX);
+        let v=u.v; if(red && ahead>0 && ahead<0.5) v=0; u.x+=v*dt*u.dir; if(u.x>8.3)u.x=-8.3; if(u.x<-8.3)u.x=8.3; c.position.set(u.x,0.04,u.z); c.rotation.y=u.dir>0?0:Math.PI; });
+      if(done) up.forEach(c=>{ const u=c.userData; u.x+=u.v*dt*u.dir; if(u.x>8.3)u.x=-8.3; if(u.x<-8.3)u.x=8.3; const y=yUp(u.x); c.position.set(u.x,y,u.z); const a=Math.abs(u.x); const sl=(a>4.95&&a<7.9)?RA*Math.sign(u.x)*-1:0; c.rotation.set(0,u.dir>0?0:Math.PI,u.dir>0?sl:-sl); });
+    }
+  };
+}
+
+/* --- Complejo Hidroeléctrico Río Grande: central de bombeo --- */
+function buildRioGrande(){
+  seed=101;
+  const {scene,camera}=baseScene();
+  camera.position.set(2.2,6.2,10.5);
+  const luces=scene.children.filter(o=>o.isLight);
+  const roca=M(0x9A8A78), pasto=M(0xBFD39A), rocaO=M(0x8A7B6A);
+  const box=(w,h,d,x,y,z,mat)=>{ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat); m.position.set(x,y,z); scene.add(m); return m; };
+  const cap=[roca,roca,pasto,roca,roca,roca];
+  box(16,2.3,4,0,-2.05,-1,roca);                 // bloque profundo
+  box(10.0,0.9,4,-3.0,-0.45,-1,cap);             // capa superficial izquierda (x -8..2)
+  box(1.8,0.9,4,7.1,-0.45,-1,cap);               // derecha (x 6.2..8)
+  box(3.8,0.9,0.4,4.3,-0.45,-2.8,cap); box(3.8,0.9,0.4,4.3,-0.45,0.8,cap);
+  box(0.4,0.9,4,2.2,-0.45,-1,rocaO);             // hueco donde va la presa inferior
+  // meseta del lago superior
+  box(1.6,2.4,4,-7.2,1.2,-1,cap); box(3.8,2.4,0.4,-4.5,1.2,-2.8,cap); box(3.8,2.4,0.4,-4.5,1.2,0.8,cap); box(3.8,1.0,3.2,-4.5,0.5,-1,roca);
+  box(1.2,1.1,4,-1.6,0.55,-1,cap);
+  const conos=[M(0xA9C27D),M(0xB9AE86)]; [[-7,2.4,-2.4,0.8,1.2],[-6.6,2.4,0.4,0.6,0.8],[7.2,0,-2.6,0.7,1.0]].forEach(([x,y,z,r,h],i)=>{ const c=new THREE.Mesh(new THREE.ConeGeometry(r,h,6),conos[i%2]); c.position.set(x,y+h/2,z); scene.add(c); });
+  const aguaM=new THREE.MeshLambertMaterial({color:0x3FA0D2,transparent:true,opacity:0.88});
+  const sup=box(3.8,1,3.2,-4.5,1,-1,aguaM), inf=box(3.8,1,3.2,4.3,-0.9,-1,aguaM.clone());
+  // ciudad
+  const ventM=new THREE.MeshLambertMaterial({color:0x4A5866,emissive:0x000000});
+  for(let i=0;i<8;i++){ const h=0.4+rnd()*1.1; box(0.34,h,0.34,6.6+(i%3)*0.45,h/2,-2.6+Math.floor(i/3)*0.5,M(0xE4E9EE)); const v=box(0.2,h*0.7,0.005,6.6+(i%3)*0.45,h*0.45,-2.6+Math.floor(i/3)*0.5+0.173,ventM); }
+  const parts=[], conc=M(0xD5D9DD), Z=1.1;
+  { const g=new THREE.Group(); const w=new THREE.Mesh(new THREE.BoxGeometry(0.4,1.5,3.6),conc); w.position.set(-2.4,1.75,-1); g.add(w); scene.add(part(g)); parts.push(g); }
+  { const g=new THREE.Group(); const w=new THREE.Mesh(new THREE.BoxGeometry(0.4,1.2,3.6),M(0xC4CACF)); w.position.set(2.2,-0.3,-1); g.add(w); scene.add(part(g)); parts.push(g); }
+  const tub=M(0x8A939B);
+  { const g=new THREE.Group(); const seg=(x0,y0,x1,y1)=>{ const L=Math.hypot(x1-x0,y1-y0); const m=new THREE.Mesh(new THREE.BoxGeometry(L,0.16,0.1),tub); m.position.set((x0+x1)/2,(y0+y1)/2,Z); m.rotation.z=Math.atan2(y1-y0,x1-x0); g.add(m); };
+    seg(-3.0,1.05,-3.0,-2.3); seg(-3.0,-2.3,-0.9,-2.3); seg(1.1,-2.3,2.9,-2.3); seg(2.9,-2.3,2.9,-0.85); scene.add(part(g)); parts.push(g); }
+  const turbM=new THREE.MeshLambertMaterial({color:0x2C3A47,emissive:0x000000}); const rotores=[];
+  { const g=new THREE.Group(); const cav=new THREE.Mesh(new THREE.BoxGeometry(2.1,0.95,0.12),M(0x3A3F47)); cav.position.set(0.1,-2.3,Z-0.02); g.add(cav);
+    const piso=new THREE.Mesh(new THREE.BoxGeometry(2.0,0.08,0.14),M(0xF7BE2B)); piso.position.set(0.1,-2.72,Z); g.add(piso);
+    for(let k=0;k<4;k++){ const r=new THREE.Group(); const d=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.17,0.06,12),turbM); d.rotation.x=Math.PI/2; r.add(d); const a=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.05,0.07),M(0xF7BE2B)); a.position.z=0.04; r.add(a); r.position.set(-0.55+k*0.43,-2.33,Z+0.03); g.add(r); rotores.push(r); }
+    scene.add(part(g)); parts.push(g); }
+  const pulsosE=[];
+  { const g=new THREE.Group(); box; const sub=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.35,0.5),M(0xF2E9D8)); sub.position.set(0.1,0.17,-0.6); g.add(sub);
+    const pozo=new THREE.Mesh(new THREE.BoxGeometry(0.08,2.3,0.08),M(0x6B7682)); pozo.position.set(0.1,-1.05,Z); g.add(pozo);
+    [1.8,3.9,6.0].forEach(x=>{ const t=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.07,1.2,4),M(0x6B7682)); t.position.set(x,0.6,-0.6); g.add(t); });
+    const cab=new THREE.Mesh(new THREE.BoxGeometry(5.9,0.015,0.015),new THREE.MeshBasicMaterial({color:0x33404D})); cab.position.set(3.15,1.18,-0.6); g.add(cab);
+    for(let k=0;k<6;k++){ const p=new THREE.Mesh(new THREE.SphereGeometry(0.06,8,6),new THREE.MeshBasicMaterial({color:0xFFD84A})); p.visible=false; p.position.set(0.3+k,1.18,-0.6); g.add(p); pulsosE.push(p); }
+    scene.add(part(g)); parts.push(g); }
+  // partículas de agua por los conductos
+  const path=[[-3.0,1.0],[-3.0,-2.3],[-0.9,-2.3],[1.1,-2.3],[2.9,-2.3],[2.9,-0.85]];
+  const segL=[]; let tot=0; for(let i=0;i<path.length-1;i++){ const L=Math.hypot(path[i+1][0]-path[i][0],path[i+1][1]-path[i][1]); segL.push(L); tot+=L; }
+  const at=u=>{ let d=u*tot; for(let i=0;i<segL.length;i++){ if(d<=segL[i]){ const k=d/segL[i]; return [path[i][0]+(path[i+1][0]-path[i][0])*k, path[i][1]+(path[i+1][1]-path[i][1])*k]; } d-=segL[i]; } return path[path.length-1]; };
+  const gotas=[]; const gM=new THREE.MeshBasicMaterial({color:0x7FD3F5});
+  for(let i=0;i<16;i++){ const m=new THREE.Mesh(new THREE.SphereGeometry(0.07,8,6),gM); m.userData.u=i/16; m.visible=false; m.position.z=Z+0.08; scene.add(m); gotas.push(m); }
+  const st={U:0,mode:"stop",h:12,built:false};
+  const cDia=new THREE.Color(0xDDE8F0), cNoche=new THREE.Color(0x1E2C48);
+  function apply(){
+    const hs=0.03+st.U/100*1.3; sup.scale.y=hs; sup.position.y=1.0+hs/2;
+    const hl=st.built?0.03+(100-st.U)/100*0.8:0.03; inf.scale.y=hl; inf.position.y=-0.9+hl/2;
+    const noche=st.h<6.5||st.h>=20 ? 1 : (st.h<8? (8-st.h)/1.5 : st.h>18.5? (st.h-18.5)/1.5 : 0);
+    scene.background=cDia.clone().lerp(cNoche,Math.min(1,noche)*0.85);
+    luces.forEach(l=>l.intensity=(l.isHemisphereLight?0.62:0.55)*(1-0.45*Math.min(1,noche)));
+    const gen=st.mode==="gen"?1:0; turbM.emissive.setRGB(gen*0.9,gen*0.6,st.mode==="pump"?0.6:0);
+    ventM.emissive.setRGB(0.15+0.85*gen, (0.15+0.85*gen)*0.85, 0.3*gen);
+  }
+  apply();
+  return {scene,camera,parts,halfW:6.2,halfH:4.4,target:new THREE.Vector3(0,-0.4,-0.3),bombeo:true,
+    setDone(on){ st.built=on; st.U=on?55:0; st.mode="stop"; st.h=12; apply(); },
+    set(U,mode,h){ st.U=U; st.mode=mode; st.h=h; apply(); },
+    update(dt,t){ stepAnims(parts,dt);
+      const dir=st.mode==="gen"?1:st.mode==="pump"?-1:0;
+      rotores.forEach(r=>r.rotation.z+=dt*dir*10);
+      gotas.forEach(g=>{ g.visible=dir!==0 && parts[2].visible; if(!g.visible) return; g.userData.u=(g.userData.u+dir*dt*0.18+1)%1; const [x,y]=at(g.userData.u); g.position.x=x; g.position.y=y; });
+      pulsosE.forEach((p,k)=>{ p.visible=parts[4].visible && dir!==0; p.position.x=0.3+((t*1.4*(dir||1)+k*1.0)%6+6)%6; });
+    }
+  };
+}
+
 /* ============ CONTROLADOR DE OBRA ============ */
-const BUILDERS={punilla:buildPunilla,"san-roque":buildSanRoque,acueducto:buildAcueducto,"bajo-grande":buildBajoGrande};
+const BUILDERS={punilla:buildPunilla,"san-roque":buildSanRoque,"los-molinos":buildLosMolinos,"rio-grande":buildRioGrande,altonivel:buildAltonivel,acueducto:buildAcueducto,"bajo-grande":buildBajoGrande};
 const CTX={};
 let cur=null; // {o, sc, ctx, n, order}
 function getCtx(id){
@@ -1046,7 +1316,7 @@ function openObra(id){
 }
 function resetJuego(modo){
   const o=cur.o, sc=cur.ctx.sc;
-  regStop(); $("#jRegula").hidden=true; $("#jBandeja").hidden=false; $("#jTitulo").textContent=o.juego.titulo;
+  regStop(); bmStop(); $("#jRegula").hidden=true; $("#jBombeo").hidden=true; $("#jBandeja").hidden=false; $("#jTitulo").textContent=o.juego.titulo;
   cur.n=0; cur.moves=0; cur.solved=false;
   if(sc.puzzle){
     sc.reset(); $("#jBandeja").replaceChildren(); $("#jPaso").textContent="0 giros"; setProg(0);
@@ -1070,7 +1340,7 @@ function elegir(p,btn){
   if(sc.onProgress) sc.onProgress(cur.n);
   $("#jPaso").textContent=cur.n+" de "+total; setProg(cur.n/total);
   $("#obraHint").style.opacity=0;
-  if(cur.n>=total){ consigna(p.d,"ok"); setTimeout(()=>{ if(sc.dique){ regPrepare(); } else { sc.setDone(true); completar(); } },800); }
+  if(cur.n>=total){ consigna(p.d,"ok"); setTimeout(()=>{ if(sc.dique){ regPrepare(); } else if(sc.bombeo){ bmPrepare(); } else { sc.setDone(true); completar(); } },800); }
   else consigna(p.d,"ok");
 }
 $("#jReset").addEventListener("click",()=>cur&&resetJuego("nuevo"));
@@ -1143,6 +1413,102 @@ $("#rRetry").addEventListener("click",()=>{ regReset(); cur.ctx.sc.set(Reg.L,1,0
 $("#rValv").addEventListener("click",()=>{ Reg.valv=!Reg.valv; $("#rValv").classList.toggle("on",Reg.valv); $("#rValv").textContent=Reg.valv?"Cerrar válvulas de descarga":"Abrir válvulas de descarga"; });
 $("#rTurb").addEventListener("input",()=>{ $("#rTurbTxt").textContent=$("#rTurb").value+"%"; });
 
+/* ============ SIMULACIÓN CENTRAL DE BOMBEO ============ */
+const DIA=25, BM={on:false};
+const franja=h=> (h>=8&&h<12)||(h>=19&&h<23) ? "pico" : (h<7||(h>=13&&h<17)) ? "valle" : "media";
+const FR_TXT={pico:"Hora pico: la ciudad consume mucho",valle:"Valle: sobra energía en la red",media:"Consumo medio"};
+(function(){ const bar=$("#bDiaBar"); for(let h=0;h<24;h++){ const f=franja(h); bar.insertBefore(el("i",{style:"background:"+(f==="pico"?"#E2464C":f==="valle"?"#2E6FA8":"#5A6B7A")}),$("#bCursor")); } })();
+function bmSetMode(m){ BM.mode=m; document.querySelectorAll(".modo-b").forEach(b=>b.classList.toggle("on",b.dataset.m===m)); }
+document.querySelectorAll(".modo-b").forEach(b=>b.addEventListener("click",()=>bmSetMode(b.dataset.m)));
+function bmReset(){ Object.assign(BM,{on:false,t:0,U:55,R:0,pico:0,picoOk:0,ended:false,lastMsg:""}); bmSetMode("stop"); $("#bRes").hidden=true; $("#bStart").hidden=false; bmUI(12); }
+function bmPrepare(){
+  $("#jBandeja").hidden=true; $("#jBombeo").hidden=false; document.body.classList.add("regulando"); resize();
+  cur.ctx.sc.setDone(true); bmReset(); setProg(0); $("#jTitulo").textContent="Manejá la central"; $("#jPaso").textContent="Dos días en 50 segundos";
+  consigna("En las horas pico poné a generar: el agua baja y mueve las turbinas. De noche y en la siesta sobra energía: usala para bombear el agua de vuelta arriba.","ok");
+  $("#jBombeo").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function bmStop(){ BM.on=false; document.body.classList.remove("regulando"); }
+function bmMsg(t,cls){ if(BM.lastMsg===t) return; BM.lastMsg=t; consigna(t,cls); }
+function bmUI(h){
+  const hh=Math.floor(h), mm=Math.floor((h-hh)*60/15)*15;
+  $("#bHora").textContent=String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
+  $("#bFranja").textContent=FR_TXT[franja(h)]; $("#bDia").textContent="Día "+Math.min(2,Math.floor(BM.t/DIA)+1)+" de 2";
+  $("#bCursor").style.left="calc("+(h/24*100)+"% - 1px)";
+  $("#bSup").style.width=BM.U.toFixed(1)+"%"; $("#bSupTxt").textContent=Math.round(BM.U)+"% · "+(BM.U<=0.5?"vacío":BM.U>=99.5?"lleno":"con agua");
+  const cob=BM.pico>0?BM.picoOk/BM.pico:0; $("#bCob").textContent=BM.pico>0?Math.round(cob*100)+"%":"–"; $("#bCobBar").style.width=Math.round(cob*100)+"%";
+  $("#bRedBar").style.width=Math.min(100,BM.R)+"%"; $("#bRed").textContent=BM.R>70?"En riesgo":BM.R>30?"Exigida":"Estable";
+  setProg(Math.min(1,BM.t/(2*DIA)));
+}
+function bmTick(dt){
+  BM.t+=dt; const h=(BM.t/DIA*24)%24, f=franja(h);
+  let modo="stop";
+  if(BM.mode==="gen" && BM.U>0){ BM.U=Math.max(0,BM.U-4*dt); modo="gen"; }
+  else if(BM.mode==="pump" && BM.U<100){ BM.U=Math.min(100,BM.U+3*dt); modo="pump"; }
+  if(f==="pico"){ BM.pico+=dt; if(modo==="gen") BM.picoOk+=dt; else BM.R+=(modo==="pump"?28:12)*dt; } else BM.R=Math.max(0,BM.R-4*dt);
+  cur.ctx.sc.set(BM.U,modo,h); bmUI(h);
+  if(f==="pico" && modo==="pump") bmMsg("¡No bombees en hora pico! Estás gastando energía justo cuando más falta.","err");
+  else if(f==="pico" && BM.mode==="gen" && BM.U<=0) bmMsg("Se vació el lago de arriba: no queda agua para generar. Había que bombear antes.","err");
+  else if(f==="pico" && modo!=="gen") bmMsg("¡Hora pico! La ciudad necesita energía: poné la central a generar.","err");
+  else if(f==="valle" && modo==="gen") bmMsg("En el valle sobra energía. Generar ahora gasta el agua que vas a necesitar en el pico.","");
+  else if(f==="valle" && BM.U<99 && modo!=="pump") bmMsg("Sobra energía en la red: aprovechá para bombear agua al lago de arriba.","");
+  else if(modo==="pump") bmMsg("Bombeando: las turbinas giran al revés y suben el agua 185 metros.","ok");
+  else if(modo==="gen") bmMsg("Generando: el agua baja por los conductos y mueve las turbinas.","ok");
+  else if(f==="media" && (franja((h+1)%24)==="pico")) bmMsg("¡Se viene la hora pico! Preparate para generar.","err");
+  else bmMsg("Consumo medio. Prepará el lago para el próximo pico.","");
+  if(BM.R>=100) return bmEnd("mal","Apagón en la red","En la hora pico faltó energía. Tené agua arriba antes de cada pico y generá justo en esas horas.");
+  if(BM.t>=2*DIA){ const cob=BM.picoOk/BM.pico; return cob>=0.75 ? bmEnd("ok","¡Dos días sin cortes!","Cubriste el "+Math.round(cob*100)+"% de las horas pico.") : bmEnd("mal","Faltó cubrir los picos","Cubriste el "+Math.round(cob*100)+"% de las horas pico y la meta es 75%."); }
+}
+function bmEnd(cls,t,d){
+  BM.on=false; BM.ended=true; const r=$("#bRes"); r.className="resultado "+cls; r.hidden=false; $("#bResT").textContent=t; $("#bResD").textContent=d; $("#bStart").hidden=true;
+  if(cls==="ok"){ setProg(1); setTimeout(completar,700); }
+}
+$("#bStart").addEventListener("click",()=>{ if(BM.ended) bmReset(); BM.on=true; $("#bStart").hidden=true; });
+$("#bRetry").addEventListener("click",()=>{ bmReset(); cur.ctx.sc.set(BM.U,"stop",12); BM.on=true; $("#bStart").hidden=true; });
+
+/* ============ REALIDAD AUMENTADA ============ */
+async function openAR(o){
+  $("#mAR").hidden=false; $("#arTit").textContent=o.nombre; $("#arNota").textContent="";
+  const box=$("#arVisor"); box.replaceChildren(el("p",{class:"nota",text:"Cargando la maqueta…",style:"padding:16px"}));
+  try{ if(!customElements.get("model-viewer")) await loadScript("https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js",true); await customElements.whenDefined("model-viewer"); }
+  catch(e){ box.replaceChildren(el("p",{class:"nota",text:"No se pudo cargar el visor 3D. Revisá la conexión a internet.",style:"padding:16px"})); return; }
+  const mv=document.createElement("model-viewer");
+  [["src","models/"+o.id+".glb"],["ar",""],["ar-modes","webxr scene-viewer quick-look"],["ar-placement","floor"],["ar-scale","auto"],["camera-controls",""],["touch-action","pan-y"],["auto-rotate",""],["shadow-intensity","1"],["exposure","1.1"],["alt","Maqueta 3D de "+o.nombre]].forEach(([k,v])=>mv.setAttribute(k,v));
+  const b=el("button",{class:"btn amar ar-go",slot:"ar-button",type:"button",text:"Ponerla en mi mesa"}); mv.append(b);
+  box.replaceChildren(mv);
+  mv.addEventListener("load",()=>{ $("#arNota").textContent = mv.canActivateAR ? "Tocá «Ponerla en mi mesa», apuntá el celular a una mesa o al piso y movela con el dedo." : "Para verla sobre tu mesa, abrí esta página desde un celular. Acá podés girarla con el mouse."; });
+  mv.addEventListener("error",()=>{ $("#arNota").textContent="No se pudo cargar la maqueta de esta obra."; });
+  mv.addEventListener("ar-status",e=>{ if(e.detail && e.detail.status==="failed") $("#arNota").textContent="Este celular no pudo abrir la realidad aumentada. Probá desde Chrome (Android) o Safari (iPhone)."; });
+}
+$("#arCerrar").addEventListener("click",()=>{ $("#mAR").hidden=true; $("#arVisor").replaceChildren(); });
+
+/* ============ ADMINISTRACIÓN (reinicio del ranking en GitHub) ============ */
+async function renderAdmin(){
+  const box=$("#admBox"); const p=t=>el("p",{text:t,style:"margin:0"});
+  if(EN_CLAUDE){ box.replaceChildren(p("En esta versión el ranking lo reinicia Claude desde el chat.")); return; }
+  if(!FIREBASE_CONFIG){ box.replaceChildren(p("El ranking compartido todavía no está configurado.")); return; }
+  try{ const v="10.12.2", b="https://www.gstatic.com/firebasejs/"+v+"/"; if(!window.firebase){ await loadScript(b+"firebase-app-compat.js"); await loadScript(b+"firebase-auth-compat.js"); await loadScript(b+"firebase-firestore-compat.js"); } if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG); }catch(e){ box.replaceChildren(p("No se pudo conectar con la base de datos.")); return; }
+  const auth=firebase.auth(), db=firebase.firestore(), u=auth.currentUser;
+  if(!u || u.isAnonymous || u.email!==ADMIN_EMAIL){
+    const btn=el("button",{class:"btn",type:"button",text:"Entrar con Google"});
+    btn.addEventListener("click",async()=>{ try{ await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); renderAdmin(); }catch(e){ toast("No se pudo iniciar sesión."); } });
+    box.replaceChildren(p("Entrá con la cuenta "+ADMIN_EMAIL+" para administrar el ranking."), el("div",{class:"fila"},[btn])); return;
+  }
+  const snap=await db.collection("ingenieros").get(); const cfg=await db.doc("config/actual").get(); const temp=cfg.exists?(cfg.data().temporada||1):1;
+  const info=p("Hay "+snap.size+" ingenieros registrados en la temporada "+temp+".");
+  const borrar=el("button",{class:"btn",type:"button",text:"Dejar el ranking en 0",style:"background:#E2464C"});
+  const fila=el("div",{class:"fila"},[borrar]);
+  borrar.addEventListener("click",()=>{
+    const si=el("button",{class:"btn",type:"button",text:"Sí, borrar todo",style:"background:#E2464C"}), no=el("button",{class:"btn blanco",type:"button",text:"Cancelar"});
+    fila.replaceChildren(p("Se borran todos los nombres y obras. ¿Confirmás?"),si,no);
+    no.addEventListener("click",renderAdmin);
+    si.addEventListener("click",async()=>{ si.disabled=true;
+      try{ let docs=snap.docs; while(docs.length){ const lote=db.batch(); docs.slice(0,400).forEach(d=>lote.delete(d.ref)); await lote.commit(); docs=docs.slice(400); }
+        await db.doc("config/actual").set({temporada:temp+1}); toast("Listo: el ranking quedó en 0."); renderAdmin(); }
+      catch(e){ toast("No se pudo borrar: revisá los permisos."); si.disabled=false; } });
+  });
+  box.replaceChildren(p("Sesión iniciada como "+u.email+"."), info, fila);
+}
+
 /* ============ COMPLETAR, TARJETA, FESTEJO ============ */
 function completar(){
   const o=cur.o, nueva=!Player.obras[o.id];
@@ -1201,7 +1567,7 @@ $("#shareSave").addEventListener("click",async()=>{
     msg.textContent = e&&e.code==="declined" ? "Cancelaste la descarga." : "Mantené presionada la tarjeta para guardarla en tu galería.";
   }
 });
-$("#arBtn").addEventListener("click",()=>toast("La realidad aumentada se activa en la versión publicada en GitHub, con permiso de cámara."));
+$("#arBtn").addEventListener("click",()=>{ if(EN_CLAUDE) toast("La realidad aumentada funciona en la versión publicada en GitHub."); else openAR(cur.o); });
 
 /* Antes / después */
 function setAD(v){ $("#adDespues").style.clipPath=`inset(0 0 0 ${v}%)`; $("#adMango").style.left=v+"%"; $("#adRange").value=v; }
@@ -1213,7 +1579,7 @@ function refreshChrome(){
   $("#chipName").textContent=Player.alias?("Ing. "+Player.alias):"Ranking";
   $("#lista").replaceChildren(...OBRAS.map(o=>{
     const ok=!!Player.obras[o.id];
-    const b=el("button",{class:"obra-card",type:"button"},[el("span",{class:"cinta",style:"background:"+o.color}), el("div",{},[el("div",{class:"eyebrow",text:o.eje,style:"color:"+o.color}),el("h3",{text:o.nombre}),el("p",{text:o.lugar})]), el("span",{class:"estado"+(ok?" ok":""),text:ok?"Armada":"Para armar"})]);
+    const b=el("button",{class:"obra-card",type:"button"},[el("span",{class:"cinta",style:"background:"+o.color}), el("div",{},[el("div",{class:"eyebrow",style:"color:"+o.color},[el("span",{class:"num",style:"background:"+o.color,text:String(OBRAS.indexOf(o)+1)}),document.createTextNode(o.eje)]),el("h3",{text:o.nombre}),el("p",{text:o.lugar})]), el("span",{class:"estado"+(ok?" ok":""),text:ok?"Armada":"Para armar"})]);
     b.addEventListener("click",()=>go(o.id)); return b;
   }));
   document.querySelectorAll(".pinlbl").forEach(p=>p.classList.toggle("done",!!Player.obras[p.dataset.id]));
@@ -1242,9 +1608,10 @@ let mapCtx=null;
 function go(id){ if(location.hash!=="#"+id) location.hash=id; else route(); }
 function route(){
   const h=location.hash.replace("#","");
-  regStop();
-  ["v-home","v-obra","v-ranking"].forEach(v=>$("#"+v).hidden=true);
+  regStop(); bmStop();
+  ["v-home","v-obra","v-ranking","v-admin"].forEach(v=>$("#"+v).hidden=true);
   if(OB[h]){ $("#v-obra").hidden=false; openObra(h); }
+  else if(h==="admin"){ $("#v-admin").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderAdmin(); }
   else if(h==="ranking"){ $("#v-ranking").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderRanking(); window.scrollTo({top:0}); }
   else { $("#v-home").hidden=false; if(!mapCtx) mapCtx=buildMap(); mount(mapCtx); refreshChrome(); }
 }
