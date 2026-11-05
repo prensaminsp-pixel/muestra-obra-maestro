@@ -50,9 +50,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .marca b span{color:var(--amarillo)}
 .marca small{font-size:10.5px;opacity:.82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chip-user{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 12px 6px 8px;cursor:pointer;color:#fff;white-space:nowrap}
-.dots{display:flex;gap:4px}
-.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.3);display:block}
-.dots i.on{background:var(--amarillo)}
+.cuenta{font-family:var(--f-display);font-weight:800;font-size:15px;color:var(--amarillo);font-variant-numeric:tabular-nums;white-space:nowrap}
 .chip-user span{font-weight:600;font-size:13px;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 .barra{display:flex;height:4px}
 .barra i{flex:1}
@@ -294,9 +292,25 @@ body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
 .como-dots{display:flex;gap:6px}
 .como-dots i{width:9px;height:9px;border-radius:50%;background:var(--linea);display:block}
 .como-dots i.on{background:var(--azul)}
-#oComo .burbuja{font-size:15px;min-height:5.2em}
+.como-texto{background:#FFF8E1;border:2px solid var(--amarillo);border-radius:14px;padding:12px 14px}
+.como-texto .quien{display:block;font-family:var(--f-display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--tenue)}
+.como-texto p{margin:4px 0 0;font-size:15.5px;line-height:1.45;min-height:4.4em}
 .voz{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;flex:none}
 .voz[aria-pressed="true"]{background:var(--amarillo);color:var(--tinta);border-color:var(--amarillo)}
+.pop{position:fixed;left:0;top:0;z-index:25;width:min(300px,calc(100vw - 20px));grid-template-columns:72px minmax(0,1fr);align-items:end;touch-action:none;filter:drop-shadow(0 8px 18px rgba(11,36,64,.28));will-change:transform}
+.pop canvas.rita{width:72px;height:72px;cursor:grab;touch-action:none}
+.pop.arrastrando canvas.rita{cursor:grabbing}
+.pop .burbuja{font-size:13.5px;max-height:40vh;overflow:auto;transition:opacity .25s}
+.pop.der{grid-template-columns:minmax(0,1fr) 72px}
+.pop.der canvas.rita{order:2}
+.pop.der .burbuja{border-radius:14px 14px 4px 14px}
+.pop.min{width:72px;grid-template-columns:72px}
+.pop.min .burbuja{display:none}
+.pop .cerrar{position:absolute;top:-10px;width:26px;height:26px;border-radius:50%;border:0;background:var(--tinta);color:#fff;font-weight:800;font-size:14px;line-height:1;cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.pop:not(.der) .cerrar{right:-6px}.pop.der .cerrar{left:-6px}
+.pop.min .cerrar{display:none}
+.pop.min.nuevo canvas.rita{animation:salto .6s ease-in-out infinite}
+.pop .tip{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--tenue);pointer-events:none;white-space:nowrap}
 footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:420px){.dato b{font-size:46px}.tarjeta-prev{grid-template-columns:110px 1fr}.marca small{display:none}}
@@ -310,7 +324,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
     </button>
     <button class="voz" id="vozBtn" type="button" aria-pressed="false" aria-label="Voz de Rita" title="Voz de Rita"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="vozOnda" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
     <button class="chip-user" id="goRanking" aria-label="Ver ranking de ingenieros">
-      <div class="dots" id="dots"></div>
+      <span class="cuenta" id="cuenta" aria-label="Obras armadas"></span>
       <span id="chipName">Ranking</span>
     </button>
   </div>
@@ -346,7 +360,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
           <div class="fila"><span class="paso" id="jPaso"></span><button class="btn-sec" id="jReset">Empezar de nuevo</button></div>
         </div>
         <div class="barra-prog"><i id="jProg"></i></div>
-        <div class="masc tranquila" id="jMasc" aria-live="polite"></div>
+        
         <div class="bandeja" id="jBandeja"></div>
         <div class="regula" id="jRegula" hidden>
           <div class="reg-top"><b id="rMes">Verano</b><span id="rClima"></span><em id="rTiempo"></em></div>
@@ -361,6 +375,20 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
           </div>
           <div class="fila"><button class="btn amar" id="rStart" type="button">Empezar</button></div>
           <div class="resultado" id="rRes" hidden><b id="rResT"></b><span id="rResD"></span><div class="fila"><button class="btn amar" id="rRetry" type="button">Probar de nuevo</button></div></div>
+        </div>
+        <div class="regula" id="jSolar" hidden>
+          <div class="reg-top"><b id="sHora">07:00</b><span id="sClima">Amanece</span><em id="sTiempo"></em></div>
+          <div class="meds">
+            <div class="med"><span>Paneles al sol</span><b id="sEf">–</b><div class="track"><i class="fill" id="sEfBar" style="background:#8BB91A"></i></div><small>qué tan de frente miran</small></div>
+            <div class="med"><span>Limpieza</span><b id="sPolvo">Limpios</b><div class="track"><i class="fill" id="sPolvoBar" style="background:#4FB8E8"></i></div><small>el polvo baja la energía</small></div>
+            <div class="med"><span>Energía del día</span><b id="sEn">0</b><div class="track"><i class="fill e" id="sEnBar"></i></div><small>kWh · meta 1.250</small></div>
+          </div>
+          <div class="ctrl">
+            <label for="sTilt"><span>← Este · Paneles · Oeste →</span><span id="sTiltTxt">0°</span></label>
+            <input type="range" id="sTilt" min="-60" max="60" value="0">
+          </div>
+          <div class="fila"><button class="btn-sec" id="sLimpiar" type="button">Limpiar paneles</button><button class="btn amar" id="sStart" type="button">Empezar el día</button></div>
+          <div class="resultado" id="sRes" hidden><b id="sResT"></b><span id="sResD"></span><div class="fila"><button class="btn amar" id="sRetry" type="button">Probar de nuevo</button></div></div>
         </div>
         <div class="regula" id="jBombeo" hidden>
           <div class="reg-top"><b id="bHora">12:00</b><span id="bFranja"></span><em id="bDia"></em></div>
@@ -384,7 +412,7 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
       <article class="bloque" id="oComo">
         <div class="eyebrow">Rita te explica</div>
         <h2>¿Cómo funciona?</h2>
-        <div class="masc tranquila sobre-claro" id="comoMasc"></div>
+        <div class="como-texto" id="comoMasc"><b class="quien">Rita, la retro, te cuenta:</b><p id="comoTxt"></p></div>
         <div class="como-pie">
           <div class="como-dots" id="comoDots" aria-hidden="true"></div>
           <div class="fila"><button class="btn blanco" id="comoAnt" type="button">Anterior</button><button class="btn" id="comoSig" type="button">Siguiente</button></div>
@@ -409,12 +437,12 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
         <h2 id="exTitulo"></h2>
         <div id="exBacheo" class="extra" hidden>
           <div class="mini-stage" id="bchStage"><canvas id="bchCanvas"></canvas><div class="mini-hud"><span id="bchVidas"></span><span id="bchPts">0</span><span id="bchT">45</span></div></div>
-          <div class="masc tranquila sobre-claro" id="bchMasc"></div>
+          <p class="nota" id="bchIntro" style="font-size:14px"></p>
           <div class="fila"><button class="btn amar" id="bchStart" type="button">Empezar</button><small class="nota" id="recBacheo"></small></div>
         </div>
         <div id="exCanos" class="extra" hidden>
           <div class="corte" id="cnCorte"><div class="fachadas" id="cnFachadas"></div><div class="vereda"></div><div class="calle"></div></div>
-          <div class="masc tranquila sobre-claro" id="cnMasc"></div>
+          <p class="nota" id="cnIntro" style="font-size:14px"></p>
           <div class="canos" id="cnCanos"></div>
           <div class="fila"><button class="btn blanco" id="cnReset" type="button">Empezar de nuevo</button><small class="nota" id="recCanos"></small></div>
         </div>
@@ -528,6 +556,8 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
     </div>
   </div>
 </div>
+
+<div class="masc tranquila pop" id="ritaPop" hidden aria-live="polite"></div>
 
 <div class="modal" id="mAR" hidden>
   <div class="caja ar-caja">
@@ -658,6 +688,28 @@ const OBRAS = [
   ],
   ficha:[["Potencia","750 MW"],["Turbinas","4 reversibles de 187,5 MW"],["Sala de máquinas","En caverna, a unos 180 m de profundidad"],["Presa Cerro Pelado","104 m de altura (lago superior)"],["Presa Arroyo Corto","50 m de altura (lago inferior)"],["Salto","185 m"],["Habilitación","1986"],["Recuperación","Unos US$ 100 millones para volver a la potencia plena"]],
   fuente:"Fuentes: Hoy Día Córdoba y Wikipedia (Río Grande Hydroelectric Complex). La simulación es didáctica."
+},
+{
+  id:"parque-solar", pin:[18,0], corto:"Parque Solar Río IV", nombre:"Parque Solar Fotovoltaico Río Cuarto", eje:"Planificación y Transición Energética", color:"#8BB91A",
+  lugar:"Río Cuarto · Parque Solar Comunitario Virtual",
+  estado:"En construcción · primera etapa en 2026", lon:-64.35, lat:-33.12,
+  dato:{n:"1.484", u:"MWh", t:"de energía limpia por año, generada solo con la luz del sol."},
+  juego:{tipo:"solar", titulo:"Armá el parque solar", consigna:"Primero armá el parque. Después vas a hacerlo rendir durante un día de sol.",
+    piezas:[
+      {n:"Nivelación del terreno", c:"#C9B48A", d:"Se limpia y se nivela el campo donde van a ir las filas de paneles."},
+      {n:"Estructuras de soporte", c:"#9AA4AD", d:"Postes clavados en el suelo sostienen los paneles en filas ordenadas."},
+      {n:"Paneles solares", c:"#2A4E8C", d:"Los paneles captan la luz del sol y la transforman en electricidad."},
+      {n:"Inversores", c:"#F7BE2B", d:"Convierten la corriente continua de los paneles en corriente alterna, la que usamos en casa."},
+      {n:"Transformador y conexión a la red", c:"#EB7F27", d:"Sube la tensión y manda la energía a la red. ¡Ahora te toca hacerlo rendir!"}
+    ],
+    mal:"Todavía no: esa pieza necesita algo que va antes."},
+  escala:[
+    {n:"99", t:"millones de cargas de celular por año, aproximadamente", s:"1.484 MWh ÷ 15 Wh por carga"},
+    {n:"2.100", t:"paneles solares, aproximadamente", s:"1.150 kWp ÷ 550 W por panel (estimado)"},
+    {n:"12.152", t:"toneladas de CO₂ que se evitan en toda su vida útil", s:"Estimación del proyecto"}
+  ],
+  ficha:[["Potencia instalada","1.150 kWp"],["Potencia de acople","1.200 kW"],["Generación estimada","1.484 MWh por año"],["CO₂ evitado","12.152 t en su vida útil"],["Modelo","Generación distribuida comunitaria virtual"],["Estado","En construcción · primera etapa en 2026"]],
+  fuente:"Fuente: ficha del proyecto Parque Solar Comunitario Virtual Río IV. La simulación del juego es didáctica."
 },
 {
   id:"acueducto", nombre:"Acueducto Santa Fe – Córdoba", eje:"Infraestructura Hídrica", color:"#009ADA",
@@ -877,7 +929,7 @@ const RITA=(()=>{
   function frame(){
     requestAnimationFrame(frame); if(document.hidden) return;
     const t=performance.now()/1000, vh=window.innerHeight;
-    insts.forEach(I=>{ if(!I.box.isConnected || !I.box.offsetParent) return; const rc=I.cv.getBoundingClientRect(); if(rc.bottom<0||rc.top>vh) return;
+    insts.forEach(I=>{ if(!I.box.isConnected || I.box.hidden || I.box.closest('[hidden]') || (!I.box.offsetParent && getComputedStyle(I.box).position!=='fixed')) return; const rc=I.cv.getBoundingClientRect(); if(rc.bottom<0||rc.top>vh) return;
       pose(I.mood,t+I.seed,t-I.since); r.render(scene,cam); I.ctx.clearRect(0,0,168,168); I.ctx.drawImage(r.domElement,0,0); });
   }
   requestAnimationFrame(frame);
@@ -890,14 +942,33 @@ function elegirVoz(){ try{ const vs=speechSynthesis.getVoices(); VOZ.voice=vs.fi
 if("speechSynthesis" in window){ elegirVoz(); speechSynthesis.onvoiceschanged=elegirVoz; }
 function hablar(t){ if(!VOZ.on || !("speechSynthesis" in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang=VOZ.voice?VOZ.voice.lang:"es-AR"; if(VOZ.voice) u.voice=VOZ.voice; u.rate=1.02; u.pitch=1.35; speechSynthesis.speak(u); }catch(e){} }
 function vozUI(){ const b=$("#vozBtn"); b.setAttribute("aria-pressed",VOZ.on?"true":"false"); b.title=VOZ.on?"Silenciar a Rita":"Activar la voz de Rita"; $("#vozOnda").style.display=VOZ.on?"":"none"; }
-function enPantalla(box){ if(!box.isConnected||!box.offsetParent) return false; const r=box.getBoundingClientRect(); return r.bottom>0 && r.top<window.innerHeight && !box.closest(".modal[hidden]"); }
+function enPantalla(box){ if(!box.isConnected||box.closest('[hidden]')||(!box.offsetParent&&getComputedStyle(box).position!=='fixed')) return false; const r=box.getBoundingClientRect(); return r.bottom>0 && r.top<window.innerHeight && !box.closest(".modal[hidden]"); }
 function Mascota(box){
   box.innerHTML=MASC_SVG+'<div class="burbuja"><b class="quien">Rita, la retro</b><span class="txt"></span></div>';
   const I=RITA?RITA.add(box):null;
   const txt=box.querySelector(".txt"); let last="";
   return { say(t,mood="tranquila",voz=true){ if(t===last && box.classList.contains(mood)) return; last=t; txt.textContent=t; box.classList.remove("tranquila","feliz","preocupada","triste"); void box.offsetWidth; box.classList.add(mood); if(I){ I.mood=mood; I.since=performance.now()/1000; } if(voz && enPantalla(box)) hablar(t); } };
 }
-const JM=Mascota($("#jMasc")), REGM=Mascota($("#regMasc")), FINM=Mascota($("#finMasc"));
+const POPBOX=$("#ritaPop"); const JM=Mascota(POPBOX), REGM=Mascota($("#regMasc")), FINM=Mascota($("#finMasc"));
+/* Rita flotante: se arrastra, se minimiza y siempre acompaña */
+(function(){
+  const pop=POPBOX, cv=pop.querySelector("canvas.rita")||pop.querySelector("svg");
+  const x=el("button",{class:"cerrar",type:"button","aria-label":"Achicar a Rita",text:"–"}); pop.append(x);
+  let pos=LS.get("arma.ritapos",null), drag=null;
+  const W=()=>pop.offsetWidth, H=()=>pop.offsetHeight;
+  function place(){ const vw=innerWidth, vh=innerHeight; if(!pos) pos={x:12,y:vh-H()-16};
+    pos.x=Math.max(6,Math.min(vw-W()-6,pos.x)); pos.y=Math.max(70,Math.min(vh-H()-8,pos.y));
+    pop.style.transform="translate("+pos.x+"px,"+pos.y+"px)"; pop.classList.toggle("der", pos.x+W()/2>vw/2 && !pop.classList.contains("min")); }
+  POPBOX.place=place;
+  const grab=e=>{ drag={sx:e.clientX,sy:e.clientY,px:pos?pos.x:0,py:pos?pos.y:0,moved:false}; pop.classList.add("arrastrando"); try{cv.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); };
+  cv.addEventListener("pointerdown",grab);
+  cv.addEventListener("pointermove",e=>{ if(!drag) return; const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy; if(Math.abs(dx)+Math.abs(dy)>6) drag.moved=true; if(drag.moved){ pos={x:drag.px+dx,y:drag.py+dy}; place(); } });
+  cv.addEventListener("pointerup",()=>{ if(!drag) return; pop.classList.remove("arrastrando"); if(!drag.moved){ pop.classList.toggle("min"); pop.classList.remove("nuevo"); place(); } else LS.set("arma.ritapos",pos); drag=null; });
+  x.addEventListener("click",()=>{ pop.classList.add("min"); place(); });
+  addEventListener("resize",place);
+  const obs=new MutationObserver(()=>{ if(pop.classList.contains("min")) pop.classList.add("nuevo"); requestAnimationFrame(place); });
+  obs.observe(pop.querySelector(".txt"),{childList:true,characterData:true,subtree:true});
+})();
 REGM.say("¡Hola! Soy Rita, la retro. Te voy a acompañar en cada obra. ¿Cómo querés que te llame?","feliz");
 
 /* ============ THREE: RENDERER ÚNICO ============ */
@@ -936,6 +1007,7 @@ function loop(){
   if(active.update) active.update(dt,t);
   if(Reg.on && cur && active===cur.ctx) regTick(dt);
   if(BM.on && cur && active===cur.ctx) bmTick(dt);
+  if(SOL.on && cur && active===cur.ctx) solTick(dt);
   renderer.render(active.scene, active.camera);
   if(active.labels) placeLabels(active);
 }
@@ -1052,7 +1124,7 @@ function buildMap(){
     lb.dataset.id=o.id; lb.addEventListener("click",()=>go(o.id)); stage.append(lb);
     labels.push({el:lb,pos:new THREE.Vector3(p.x,h+0.72,p.z),id:o.id,dx:(o.pin||[0,0])[0],dy:(o.pin||[0,0])[1]});
   });
-  [["Ciudad de Córdoba",-64.18,-31.42,false],["Mar de Ansenuza",-62.62,-30.73,true],["Sierras Grandes",-64.95,-31.55,false],["Río Cuarto",-64.35,-33.12,false],["Villa María",-63.24,-32.41,false],["San Francisco",-62.08,-31.43,false]].forEach(([n,lo,la,ag])=>{
+  [["Ciudad de Córdoba",-64.18,-31.42,false],["Mar de Ansenuza",-62.62,-30.73,true],["Sierras Grandes",-64.95,-31.55,false],["Villa María",-63.24,-32.41,false],["San Francisco",-62.08,-31.43,false]].forEach(([n,lo,la,ag])=>{
     if(n==="San Francisco"||n==="Ciudad de Córdoba") return;
     const p=P(lo,la); const d=el("div",{class:"maplbl"+(ag?" agua":""),text:n}); stage.append(d);
     labels.push({el:d,pos:new THREE.Vector3(p.x,hWorld(lo,la)+0.03,p.z),center:true});
@@ -1467,8 +1539,59 @@ function buildRioGrande(){
   };
 }
 
+/* --- Parque Solar Río Cuarto --- */
+function buildSolar(){
+  seed=131;
+  const {scene,camera}=baseScene();
+  camera.position.set(5.5,7.2,9.5);
+  const luces=scene.children.filter(o=>o.isLight); const dirL=luces.find(l=>l.isDirectionalLight);
+  const g0=new THREE.Mesh(new THREE.BoxGeometry(16,0.4,10),[M(0xB8A27F),M(0xB8A27F),M(0xC9DBA8),M(0xB8A27F),M(0xB8A27F),M(0xB8A27F)]); g0.position.y=-0.2; scene.add(g0);
+  trees(scene,24,[15,9.5],(x,z)=>Math.abs(x)<5.2&&Math.abs(z)<3.6||x>4.3);
+  const sol=new THREE.Mesh(new THREE.SphereGeometry(0.45,20,14),new THREE.MeshBasicMaterial({color:0xFFD54A})); scene.add(sol);
+  const halo=new THREE.Mesh(new THREE.SphereGeometry(0.7,20,14),new THREE.MeshBasicMaterial({color:0xFFE9A0,transparent:true,opacity:0.35})); sol.add(halo);
+  const parts=[];
+  { const g=new THREE.Group(); const p=new THREE.Mesh(new THREE.BoxGeometry(9.6,0.04,6.8),M(0xD9CBA6)); p.position.set(-0.4,0.03,-0.3); g.add(p); scene.add(part(g)); parts.push(g); }
+  const filas=[-2.8,-1.4,0,1.4], cols=[]; for(let x=-4.2;x<=3.41;x+=1.27) cols.push(x);
+  { const g=new THREE.Group(); filas.forEach(z=>cols.forEach(x=>{ const p=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.55,6),M(0x9AA4AD)); p.position.set(x,0.3,z); g.add(p); })); filas.forEach(z=>{ const e=new THREE.Mesh(new THREE.BoxGeometry(8.4,0.05,0.06),M(0x8A939B)); e.position.set(-0.4,0.58,z); g.add(e); }); scene.add(part(g)); parts.push(g); }
+  const panelM=new THREE.MeshLambertMaterial({color:0x2A4E8C,emissive:0x000000}), marcoM=M(0xDDE3E8), paneles=[];
+  { const g=new THREE.Group(); filas.forEach(z=>cols.forEach(x=>{ const pv=new THREE.Group(); pv.position.set(x,0.62,z);
+      const m=new THREE.Mesh(new THREE.BoxGeometry(1.15,0.05,0.95),panelM); pv.add(m);
+      const lineas=new THREE.Mesh(new THREE.BoxGeometry(1.17,0.02,0.04),marcoM); lineas.position.y=0.03; pv.add(lineas);
+      const l2=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.02,0.97),marcoM); l2.position.y=0.03; pv.add(l2);
+      g.add(pv); paneles.push(pv); })); scene.add(part(g)); parts.push(g); }
+  const invM=new THREE.MeshLambertMaterial({color:0xF2E9D8,emissive:0x000000});
+  { const g=new THREE.Group(); [-2.1,0.7].forEach(z=>{ const b=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.55,0.5),invM); b.position.set(4.8,0.28,z); g.add(b); const t=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.08,0.52),M(0xF7BE2B)); t.position.set(4.8,0.58,z); g.add(t); }); scene.add(part(g)); parts.push(g); }
+  const pulsos=[];
+  { const g=new THREE.Group(); const tr=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.7,0.8),M(0xB9BFC6)); tr.position.set(6.2,0.35,-0.7); g.add(tr);
+    [[-0.3],[0],[0.3]].forEach(([z])=>{ const a=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.35,6),M(0xEB7F27)); a.position.set(6.2,0.85,-0.7+z); g.add(a); });
+    [6.9,7.6].forEach(x=>{ const t=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.06,1.4,4),M(0x6B7682)); t.position.set(x,0.7,-0.7); g.add(t); });
+    for(let k=0;k<4;k++){ const p=new THREE.Mesh(new THREE.SphereGeometry(0.06,8,6),new THREE.MeshBasicMaterial({color:0xFFD84A})); p.visible=false; p.position.set(6.3,1.35,-0.7); g.add(p); pulsos.push(p); }
+    scene.add(part(g)); parts.push(g); }
+  const st={sa:-30,tilt:-30,eff:0.8,dust:1,cloud:1,demo:false};
+  const nube=new THREE.Group(); [[0,0,0,0.6],[0.6,0.1,0,0.5],[-0.6,0.05,0,0.45]].forEach(([x,y,z,r])=>{ const m=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),new THREE.MeshLambertMaterial({color:0xFFFFFF,transparent:true,opacity:0.92})); m.position.set(x,y,z); nube.add(m); }); nube.visible=false; scene.add(nube);
+  const cielo=new THREE.Color(), cDia=new THREE.Color(0xDDE8F0), cAlba=new THREE.Color(0xF6D7B0);
+  const limpio=new THREE.Color(0x2A4E8C), sucio=new THREE.Color(0x8C7A5C);
+  function apply(){
+    const r=st.sa*Math.PI/180; sol.position.set(Math.sin(r)*6.2,Math.cos(r)*4.6+0.8,-3.6);
+    if(dirL){ dirL.position.copy(sol.position).add(new THREE.Vector3(0,2,4)); }
+    const alt=Math.cos(r); cielo.copy(cAlba).lerp(cDia,Math.min(1,Math.max(0,(alt-0.35)/0.5))); scene.background=cielo;
+    paneles.forEach(p=>p.rotation.z=-st.tilt*Math.PI/180);
+    panelM.color.copy(limpio).lerp(sucio,(1-st.dust)/0.55*0.9);
+    const e=st.eff*st.cloud*st.dust; panelM.emissive.setRGB(e*0.05,e*0.18,e*0.35); invM.emissive.setRGB(e*0.5,e*0.4,0);
+    nube.visible=st.cloud<1; nube.position.set(sol.position.x,sol.position.y-0.2,sol.position.z+0.9);
+  }
+  apply();
+  return {scene,camera,parts,halfW:6.6,halfH:4.4,target:new THREE.Vector3(0.6,0.6,-0.5),solar:true,state:st,
+    setDone(on){ st.demo=on; st.dust=1; st.cloud=1; st.sa=-30; st.tilt=on?-30:0; st.eff=0.9; apply(); },
+    set(sa,tilt,eff,dust,cloud){ st.demo=false; Object.assign(st,{sa,tilt,eff,dust,cloud}); apply(); },
+    update(dt,t){ stepAnims(parts,dt);
+      if(st.demo){ st.sa=Math.sin(t*0.35)*60; st.tilt=st.sa; st.eff=1; apply(); }
+      const n=Math.round(Math.min(1,st.eff*st.cloud*st.dust)*4); pulsos.forEach((p,k)=>{ p.visible=parts[4].visible && k<n; p.position.x=6.3+((t*1.2+k*0.35)%1.4); }); }
+  };
+}
+
 /* ============ CONTROLADOR DE OBRA ============ */
-const BUILDERS={punilla:buildPunilla,"san-roque":buildSanRoque,"los-molinos":buildLosMolinos,"rio-grande":buildRioGrande,altonivel:buildAltonivel,acueducto:buildAcueducto,"bajo-grande":buildBajoGrande};
+const BUILDERS={"parque-solar":buildSolar,punilla:buildPunilla,"san-roque":buildSanRoque,"los-molinos":buildLosMolinos,"rio-grande":buildRioGrande,altonivel:buildAltonivel,acueducto:buildAcueducto,"bajo-grande":buildBajoGrande};
 const CTX={};
 let cur=null; // {o, sc, ctx, n, order}
 function getCtx(id){
@@ -1526,7 +1649,7 @@ function openObra(id){
 }
 function resetJuego(modo){
   const o=cur.o, sc=cur.ctx.sc;
-  regStop(); bmStop(); $("#jRegula").hidden=true; $("#jBombeo").hidden=true; $("#jBandeja").hidden=false; $("#jTitulo").textContent=o.juego.titulo;
+  regStop(); bmStop(); solStop(); $("#jRegula").hidden=true; $("#jBombeo").hidden=true; $("#jSolar").hidden=true; $("#jBandeja").hidden=false; $("#jTitulo").textContent=o.juego.titulo;
   cur.n=0; cur.moves=0; cur.solved=false;
   if(sc.puzzle){
     sc.reset(); $("#jBandeja").replaceChildren(); $("#jPaso").textContent="0 giros"; setProg(0);
@@ -1550,7 +1673,7 @@ function elegir(p,btn){
   if(sc.onProgress) sc.onProgress(cur.n);
   $("#jPaso").textContent=cur.n+" de "+total; setProg(cur.n/total);
   $("#obraHint").style.opacity=0;
-  if(cur.n>=total){ consigna(p.d,"ok"); const o0=cur.o; setTimeout(()=>{ if(!cur||cur.o!==o0) return; if(sc.dique){ regPrepare(); } else if(sc.bombeo){ bmPrepare(); } else { sc.setDone(true); completar(); } },800); }
+  if(cur.n>=total){ consigna(p.d,"ok"); const o0=cur.o; setTimeout(()=>{ if(!cur||cur.o!==o0) return; if(sc.dique){ regPrepare(); } else if(sc.bombeo){ bmPrepare(); } else if(sc.solar){ solPrepare(); } else { sc.setDone(true); completar(); } },800); }
   else consigna(p.d,"ok");
 }
 $("#jReset").addEventListener("click",()=>cur&&resetJuego("nuevo"));
@@ -1730,6 +1853,52 @@ async function renderAdmin(){
   box.replaceChildren(p("Sesión iniciada como "+u.email+"."), info, fila, met?tablaMetricas(met.docs.map(d=>d.data())):p("Sin métricas todavía."));
 }
 
+/* ============ SIMULACIÓN PARQUE SOLAR ============ */
+const SOL={on:false}, SOL_DUR=30, SOL_META=12.5;
+function solReset(){ Object.assign(SOL,{on:false,t:0,E:0,dust:1,cloud:1,cl:0,nextCl:5+Math.random()*4,ended:false,lastMsg:"",polvo:[10,20]}); $("#sTilt").value=-45; $("#sRes").hidden=true; $("#sStart").hidden=false; solUI(-70,-45,0); }
+function solPrepare(){
+  $("#jBandeja").hidden=true; $("#jSolar").hidden=false; document.body.classList.add("regulando"); resize();
+  cur.ctx.sc.setDone(true); solReset(); cur.ctx.sc.set(-70,-45,0.8,1,1); setProg(0); $("#jTitulo").textContent="Seguí al sol"; $("#jPaso").textContent="Un día en 30 segundos";
+  consigna("El sol va a cruzar el cielo de este a oeste. Mové los paneles para que lo miren de frente. Si se llenan de polvo, tocá «Limpiar paneles».","ok");
+  $("#jSolar").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function solStop(){ SOL.on=false; }
+function solMsg(t,c){ if(SOL.lastMsg===t) return; SOL.lastMsg=t; consigna(t,c); }
+function solUI(sa,tilt,eff){
+  const h=6+13*Math.min(1,SOL.t/SOL_DUR), hh=Math.floor(h), mm=Math.floor((h-hh)*4)*15;
+  $("#sHora").textContent=String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
+  $("#sClima").textContent=SOL.cloud<1?"Pasa una nube":SOL.t<4?"Amanece":SOL.t>26?"Atardece":"Día de sol";
+  $("#sTiempo").textContent=Math.max(0,Math.ceil(SOL_DUR-SOL.t))+" s";
+  $("#sEf").textContent=Math.round(eff*100)+"%"; $("#sEfBar").style.width=Math.round(eff*100)+"%";
+  $("#sPolvo").textContent=SOL.dust>0.95?"Limpios":SOL.dust>0.75?"Algo de polvo":"¡Sucios!"; $("#sPolvoBar").style.width=Math.round((SOL.dust-0.45)/0.55*100)+"%";
+  $("#sEn").textContent=Math.round(SOL.E*100).toLocaleString("es-AR"); $("#sEnBar").style.width=Math.min(100,SOL.E/SOL_META*100)+"%";
+  $("#sTiltTxt").textContent=(tilt<0?"Este ":tilt>0?"Oeste ":"")+Math.abs(tilt)+"°";
+  setProg(Math.min(1,SOL.t/SOL_DUR));
+}
+function solTick(dt){
+  SOL.t+=dt; const sa=-70+140*Math.min(1,SOL.t/SOL_DUR), luz=Math.sin(Math.PI*Math.min(1,SOL.t/SOL_DUR));
+  if(SOL.t>=SOL.nextCl && SOL.cl<=0){ SOL.cl=2.5; SOL.nextCl=SOL.t+6+Math.random()*4; }
+  if(SOL.cl>0){ SOL.cl-=dt; SOL.cloud=0.35; } else SOL.cloud=1;
+  if(SOL.polvo.length && SOL.t>=SOL.polvo[0]){ SOL.polvo.shift(); SOL.dust=Math.min(SOL.dust,0.99); }
+  if(SOL.dust<1) SOL.dust=Math.max(0.45,SOL.dust-dt*0.15);
+  const tilt=+$("#sTilt").value, d=(sa-tilt)*Math.PI/180, eff=Math.max(0,Math.cos(d))**2;
+  SOL.E+=eff*luz*SOL.cloud*SOL.dust*dt;
+  cur.ctx.sc.set(sa,tilt,eff,SOL.dust,SOL.cloud); solUI(sa,tilt,eff);
+  if(SOL.dust<0.85) solMsg("¡Los paneles se llenaron de polvo y generan menos! Tocá «Limpiar paneles».","err");
+  else if(SOL.cloud<1) solMsg("Pasa una nube: por un ratito llega menos luz. Ya pasa.","");
+  else if(eff<0.6) solMsg("Los paneles no miran al sol. Movelos hacia "+(sa>tilt?"el oeste →":"← el este")+".","err");
+  else if(eff>0.9) solMsg("¡Perfecto! Los paneles miran de frente al sol.","ok");
+  else solMsg("Bien. Seguí al sol a medida que se mueve por el cielo.","");
+  if(SOL.t>=SOL_DUR){ SOL.on=false; SOL.ended=true; const ok=SOL.E>=SOL_META, kwh=Math.round(SOL.E*100).toLocaleString("es-AR");
+    const r=$("#sRes"); r.className="resultado "+(ok?"ok":"mal"); r.hidden=false; $("#sResT").textContent=ok?"¡Día perfecto!":"Faltó un poco"; $("#sResD").textContent=ok?"Generaste "+kwh+" kWh con la luz del sol.":"Generaste "+kwh+" kWh y la meta es 1.250. Seguí al sol y limpiá los paneles cuando se ensucien.";
+    $("#sStart").hidden=true; consigna(ok?"¡Lo lograste! Así rinde un parque solar bien cuidado.":"¡Casi! Probá de nuevo: seguí al sol y no te olvides de limpiar.",ok?"ok":"triste");
+    if(ok){ setProg(1); const o=cur.o; setTimeout(()=>{ if(cur&&cur.o===o) completar(); },700); } }
+}
+$("#sStart").addEventListener("click",()=>{ if(SOL.ended) solReset(); SOL.on=true; $("#sStart").hidden=true; });
+$("#sRetry").addEventListener("click",()=>{ solReset(); SOL.on=true; $("#sStart").hidden=true; });
+$("#sLimpiar").addEventListener("click",()=>{ if(SOL.dust<1){ SOL.dust=1; if(SOL.on) solMsg("¡Paneles limpios! Ahora rinden al máximo.","ok"); } });
+$("#sTilt").addEventListener("input",()=>{ const v=+$("#sTilt").value; $("#sTiltTxt").textContent=(v<0?"Este ":v>0?"Oeste ":"")+Math.abs(v)+"°"; if(!SOL.on && cur && cur.ctx.sc.solar && !$("#jSolar").hidden) cur.ctx.sc.set(-70,v,0.8,1,1); });
+
 /* ============ COMPLETAR, TARJETA, FESTEJO ============ */
 function completar(){
   const o=cur.o, nueva=!Player.obras[o.id]; Store.track("obra_armada",o.id);
@@ -1797,7 +1966,7 @@ $("#adRange").addEventListener("input",e=>setAD(+e.target.value));
 
 /* ============ HOME: LISTA Y CHROME ============ */
 function refreshChrome(){
-  $("#dots").replaceChildren(...OBRAS.map(o=>el("i",{class:Player.obras[o.id]?"on":""})));
+  $("#cuenta").textContent=Object.keys(Player.obras).filter(k=>OB[k]).length+"/"+OBRAS.length;
   $("#chipName").textContent=Player.alias?(Player.alias+" · "+puntos()+" pts"):"Ranking";
   $("#recBacheo").textContent=Player.juegos.bacheo?"Tu récord: "+Player.juegos.bacheo+" baches":""; $("#recCanos").textContent=Player.juegos.canos?"Tu mejor: "+Player.juegos.canos+" pts":"";
   $("#lista").replaceChildren(...OBRAS.map(o=>{
@@ -1830,6 +1999,12 @@ Store.on(()=>{ if(!$("#v-ranking").hidden) renderRanking(); });
 
 /* ============ RITA TE EXPLICA ============ */
 const COMO={
+  "parque-solar":["Un parque solar convierte la luz del sol en electricidad, sin humo y sin ruido.",
+    "Cada panel tiene celdas de silicio. Cuando la luz las toca, mueve pequeñas partículas llamadas electrones y se genera corriente eléctrica. Eso se llama efecto fotovoltaico.",
+    "Los paneles producen corriente continua. Los inversores la transforman en corriente alterna, que es la que usamos en casa.",
+    "Un transformador sube la tensión y la energía sale a la red eléctrica, para que la usen hogares, comercios e industrias.",
+    "Los paneles rinden más cuando miran de frente al sol y están limpios. El polvo y las nubes hacen que generen menos.",
+    "Este parque es comunitario y virtual: varias empresas comparten la energía que produce y se la descuentan de su factura de luz."],
   punilla:["Una autovía es una ruta con dos calzadas separadas: los autos que van y los que vienen nunca se cruzan de frente. Por eso es mucho más segura.",
     "Antes de asfaltar se prepara el suelo: se nivela y se compacta la subrasante, para que el piso no se hunda con el peso.",
     "Arriba van capas de ripio y material firme, la sub-base y la base. Reparten el peso de los camiones y dejan escurrir el agua de lluvia.",
@@ -1871,7 +2046,7 @@ const COMO={
     "En los tanques de aireación se le mete aire al agua, y unas bacterias buenas se comen la suciedad que todavía queda.",
     "Al final, el agua tratada vuelve al río Suquía, que sigue hasta la laguna Mar de Ansenuza. Así se cuida el río y la salud de todos."]
 };
-const COMOM=Mascota($("#comoMasc")); const CM={i:0,o:null};
+const COMOM={ say(t,m,h=true){ $("#comoTxt").textContent=t; if(h) hablar(t); } }; const CM={i:0,o:null};
 function renderComo(o){ CM.o=o; CM.i=0; comoPaso(false); }
 function comoPaso(hablar=true){
   const ps=COMO[CM.o.id]; if(!ps){ $("#oComo").hidden=true; return; } $("#oComo").hidden=false;
@@ -1884,6 +2059,7 @@ $("#comoAnt").addEventListener("click",()=>{ if(CM.i>0){ CM.i--; comoPaso(); } }
 
 /* ============ TRIVIA RELÁMPAGO ============ */
 const TRIVIA={
+  "parque-solar":[["¿Qué transforma un panel solar?",["La luz del sol en electricidad","El viento en electricidad","El agua en electricidad"]],["¿Qué hace el inversor?",["Convierte la corriente continua en alterna","Limpia los paneles","Guarda la energía en agua"]],["¿Cuándo generan más energía los paneles?",["Cuando miran al sol y están limpios","De noche","Cuando tienen mucho polvo"]]],
   punilla:[["¿Cuántos kilómetros tiene la Autovía de Punilla?",["21,8 km","5 km","120 km"]],["¿Sobre qué lago pasa su puente más largo?",["San Roque","Los Molinos","Mar de Ansenuza"]],["¿Qué capa va arriba de todo en una ruta?",["Carpeta asfáltica","Subrasante","Sub-base de ripio"]]],
   altonivel:[["¿Para qué sirve el altonivel?",["Para separar el tránsito rápido del tránsito del barrio","Para cruzar un río","Para estacionar camiones"]],["¿Cuánto mide el viaducto?",["600 metros","60 metros","6 kilómetros"]],["¿Qué se pone primero, enterrado en el suelo?",["Los pilotes","Las vigas","El asfalto"]]],
   "san-roque":[["¿Cómo es el vertedero del dique San Roque?",["Tiene forma de embudo","Tiene ventanas","Es una escalera"]],["¿Qué río regula el dique San Roque?",["El Suquía","El Paraná","El Uruguay"]],["¿Qué pasa si el lago se llena demasiado y no sale agua?",["Puede desbordar","Se congela","Se evapora en un día"]]],
@@ -1894,11 +2070,11 @@ const TRIVIA={
 };
 function renderTrivia(o){
   const box=$("#oTrivia"); const qs=TRIVIA[o.id]; if(!qs){ box.closest(".bloque").hidden=true; return; } box.closest(".bloque").hidden=false;
-  const mBox=el("div",{class:"masc tranquila sobre-claro"}), M=Mascota(mBox), q=el("p",{style:"margin:0;font-weight:700;font-size:16px"}), ops=el("div",{class:"opciones"}), pie=el("div",{class:"fila"});
-  box.replaceChildren(mBox,q,ops,pie);
+  const M=JM, intro=el("p",{class:"nota",style:"margin:0;font-size:14px"}), q=el("p",{style:"margin:0;font-weight:700;font-size:16px"}), ops=el("div",{class:"opciones"}), pie=el("div",{class:"fila"});
+  box.replaceChildren(intro,q,ops,pie);
   let i=0, ok=0;
   const prev=Player.trivia[o.id]||0;
-  M.say(prev? "Ya hiciste esta trivia y acertaste "+prev+" de 3. ¡Podés mejorar tu marca!" : "¡Tres preguntas rápidas! Cada respuesta correcta suma 20 puntos.","tranquila");
+  intro.textContent=prev? "Ya hiciste esta trivia y acertaste "+prev+" de 3. ¡Podés mejorar tu marca!" : "Tres preguntas rápidas. Cada respuesta correcta suma 20 puntos.";
   const show=()=>{
     const [preg,opts]=qs[i]; q.textContent=(i+1)+" de 3 · "+preg;
     const orden=opts.map((t,k)=>({t,k})).sort(()=>Math.random()-0.5);
@@ -1918,18 +2094,18 @@ function renderTrivia(o){
     const again=el("button",{class:"btn blanco",type:"button",text:"Jugar otra vez"}); again.addEventListener("click",()=>renderTrivia(o)); pie.replaceChildren(again);
   };
   const start=el("button",{class:"btn",type:"button",text:"Empezar trivia"}); pie.replaceChildren(start);
-  start.addEventListener("click",()=>{ pie.replaceChildren(); show(); });
+  start.addEventListener("click",()=>{ pie.replaceChildren(); intro.textContent=""; M.say("¡Vamos con la trivia! Leé bien cada pregunta.","feliz"); show(); });
 }
 
 /* ============ JUEGO: BACHEO EXPRÉS ============ */
 const BCH={on:false};
-const BM_M=Mascota($("#bchMasc"));
+const BM_M=JM;
 function bchSize(){ const c=$("#bchCanvas"), st=$("#bchStage"), dpr=Math.min(2,window.devicePixelRatio||1); c.width=st.clientWidth*dpr; c.height=st.clientHeight*dpr; BCH.w=st.clientWidth; BCH.h=st.clientHeight; BCH.dpr=dpr; }
 function bchReset(){ bchSize(); Object.assign(BCH,{on:false,t:0,pts:0,VMAX:5,vidas:5,cars:[],pozos:[],nextCar:2.5,nextPozo:0.4,flash:0,last:performance.now(),lastWarn:0}); bchHud(); bchDraw(); }
 function bchLane(l){ const x0=BCH.w*0.18, w=BCH.w*0.64; return x0+w*(l+0.5)/3; }
 function bchHud(){ $("#bchVidas").textContent="♥".repeat(Math.max(0,BCH.vidas))+"♡".repeat(Math.max(0,BCH.VMAX-BCH.vidas)); $("#bchPts").textContent=BCH.pts+" baches"; $("#bchT").textContent=Math.max(0,Math.ceil(45-BCH.t))+" s"; }
 function bchOpen(tema){ BCH.tema=tema; bchReset(); BCH.on=false; $("#bchStart").hidden=false; $("#bchStart").textContent="Empezar";
-  BM_M.say(tema==="sierras"?"¡Hola! En este tramo de la autovía aparecen pozos. Tocalos para taparlos antes de que llegue un auto. Tenés 5 vidas y 45 segundos.":"¡Hola! Esta es la avenida Vélez Sarsfield. Tocá los pozos para taparlos antes de que pase un auto. Tenés 5 vidas y 45 segundos.","tranquila"); }
+  $("#bchIntro").textContent=(tema==="sierras"?"¡Hola! En este tramo de la autovía aparecen pozos. Tocalos para taparlos antes de que llegue un auto. Tenés 5 vidas y 45 segundos.":"¡Hola! Esta es la avenida Vélez Sarsfield. Tocá los pozos para taparlos antes de que pase un auto. Tenés 5 vidas y 45 segundos."); }
 function bchStart(){ bchReset(); BCH.on=true; $("#bchStart").hidden=true; BM_M.say("¡Arrancamos! Los pozos aparecen solos: tocalos rápido.","feliz"); requestAnimationFrame(bchLoop); }
 function bchLlega(l,y){ // segundos hasta que el próximo auto del carril l llegue a la altura y
   let m=99; BCH.cars.forEach(c=>{ if(c.l===l && c.y<y) m=Math.min(m,(y-c.y)/c.v); }); return m; }
@@ -2002,7 +2178,7 @@ const CANOS=[
   {id:"agua",n:"Agua potable",c:"#009ADA",y:62,ok:"¡Exacto! El agua potable va arriba de la cloaca, así nunca se puede contaminar.",mal:"El agua potable siempre tiene que ir más arriba que la cloaca, para no contaminarse."},
   {id:"cloaca",n:"Cloaca",c:"#8A6A4A",y:82,ok:"¡Perfecto! La cloaca va lo más profundo: el líquido baja solo por la pendiente.",mal:"La cloaca va más abajo: el agua usada baja sola por la pendiente, hasta la planta."}
 ];
-const CN_M=Mascota($("#cnMasc"));
+const CN_M=JM;
 const CN={sel:null,err:0,puestos:0};
 function cnOpen(tema){
   if(tema) CN.tema=tema; CN.sel=null; CN.err=0; CN.puestos=0;
@@ -2012,7 +2188,7 @@ function cnOpen(tema){
   CANOS.forEach(cn=>{ const sl=el("div",{class:"slot",style:"top:"+cn.y+"%",role:"button",tabindex:"0","aria-label":"Lugar a "+cn.y+"% de profundidad",text:"?"}); sl.dataset.id=cn.id; sl.addEventListener("click",()=>cnPoner(sl)); sl.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); cnPoner(sl);} }); corte.append(sl); });
   const lista=[...CANOS].sort(()=>Math.random()-0.5);
   $("#cnCanos").replaceChildren(...lista.map(cn=>{ const b=el("button",{class:"cano",type:"button"},[el("i",{style:"background:"+cn.c}),document.createTextNode(cn.n)]); b.dataset.id=cn.id; b.addEventListener("click",()=>{ document.querySelectorAll(".cano").forEach(z=>z.classList.remove("sel")); b.classList.add("sel"); CN.sel=cn.id; CN_M.say("Ahora tocá el lugar debajo de la calle donde va: "+cn.n.toLowerCase()+".","tranquila"); }); return b; }));
-  CN_M.say((CN.tema==="sanfrancisco"?"Estamos en una calle de San Francisco, donde llega el agua del acueducto. ":"Estamos en un barrio de Córdoba que manda sus cloacas a Bajo Grande. ")+"Debajo de la calle hay caños y cables: tocá un servicio y después el lugar donde va.","tranquila");
+  $("#cnIntro").textContent=(CN.tema==="sanfrancisco"?"Estamos en una calle de San Francisco, donde llega el agua del acueducto. ":"Estamos en un barrio de Córdoba que manda sus cloacas a Bajo Grande. ")+"Debajo de la calle hay caños y cables: tocá un servicio y después el lugar donde va.";
 }
 function cnPoner(sl){
   if(sl.classList.contains("lleno")) return;
@@ -2039,9 +2215,10 @@ let mapCtx=null;
 function go(id){ if(location.hash!=="#"+id) location.hash=id; else route(); }
 function route(){
   const h=location.hash.replace("#","");
-  regStop(); bmStop();
+  regStop(); bmStop(); solStop();
   ["v-home","v-obra","v-ranking","v-admin"].forEach(v=>$("#"+v).hidden=true); BCH.on=false;
-  if(OB[h]){ $("#v-obra").hidden=false; openObra(h); }
+  POPBOX.hidden=!OB[h];
+  if(OB[h]){ $("#v-obra").hidden=false; openObra(h); requestAnimationFrame(()=>POPBOX.place()); }
   else if(h==="admin"){ $("#v-admin").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderAdmin(); }
   else if(h==="ranking"){ $("#v-ranking").hidden=false; if(active&&active.controls) active.controls.enabled=false; active=null; renderRanking(); window.scrollTo({top:0}); }
   else { $("#v-home").hidden=false; if(!mapCtx) mapCtx=buildMap(); mount(mapCtx); refreshChrome(); }
