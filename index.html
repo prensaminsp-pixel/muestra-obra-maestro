@@ -184,6 +184,9 @@ footer .franja span:last-child{width:38%}
 .modal-box{max-width:1120px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;display:grid;grid-template-columns:3fr 2fr}
 .modal-photo{min-height:560px;background:var(--tinta);color:#a9bccd;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;text-align:center}
 .modal-side{display:flex;flex-direction:column;min-width:0}
+.modal-photo a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.modal-photo img{display:block;max-width:100%;max-height:min(84vh,900px);object-fit:contain;cursor:zoom-in}
+.card-img{display:block;width:100%;max-width:100%;aspect-ratio:4/5;object-fit:cover;border-bottom:1px solid var(--borde)}
 .modal-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--borde)}
 .modal-bar .ph-label{color:var(--tinta-suave);font-variant-numeric:tabular-nums}
 .modal-bar .row{gap:8px;flex-wrap:nowrap}
@@ -450,9 +453,12 @@ footer .franja span:last-child{width:38%}
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden>
   <div class="modal-box">
     <div class="modal-photo">
-      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
-      <span class="ph-label" id="mPhoto">Foto 01 en alta</span>
-      <span style="font-size:13px">Acá va la fotografía de la muestra</span>
+      <a id="mImgLink" href="#" target="_blank" rel="noopener" hidden><img id="mImg" src="" alt=""></a>
+      <div id="mPh" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
+        <span class="ph-label" id="mPhoto">Foto 01 en alta</span>
+        <span style="font-size:13px">Próximamente</span>
+      </div>
     </div>
     <div class="modal-side">
       <div class="modal-bar">
@@ -488,8 +494,8 @@ footer .franja span:last-child{width:38%}
           <p class="desc" id="mDesc">[Breve descripción de la obra: qué es, para qué sirve y a quiénes beneficia. 3 o 4 líneas.]</p>
         </div>
         <div class="row" style="padding-top:4px">
-          <button class="btn btn-primary" data-soon><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Descargar en alta</button>
-          <button class="btn btn-ghost" data-soon><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>Compartir</button>
+          <a class="btn btn-primary" id="mDownload" href="#" download data-soon><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Descargar en alta</a>
+          <button class="btn btn-ghost" id="mShare"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>Compartir</button>
         </div>
       </div>
     </div>
@@ -506,6 +512,12 @@ footer .franja span:last-child{width:38%}
     ['05','Planificación Energética'],['06','Biocombustibles'],['07','Arquitectura'],['08','Infraestructura Eléctrica'],
     ['09','Hídrico'],['10','Vialidad'],['11','Saneamiento'],['12','Infraestructura Eléctrica']
   ].map(function(r){ return {n:r[0], cat:r[1], nombre:'[Nombre de la obra]', loc:'[Localidad] · [Departamento]', fecha:'[Día] de [mes] de [año]', autor:'[Nombre de quien tomó la foto]', desc:'[Breve descripción de la obra: qué es, para qué sirve y a quiénes beneficia. 3 o 4 líneas.]'}; });
+  // Fotos ya cargadas (reemplazan al marcador del mismo número)
+  var CARGADAS = {
+    '01': {cat:'Hídrico', nombre:'Embalse de Río Tercero', loc:'Embalse · Departamento Calamuchita', fecha:'A confirmar', autor:'A confirmar', img:'fotos/01-embalse-rio-tercero.jpg',
+      desc:'Oficialmente Embalse Ministro Pistarini, es el espejo de agua artificial más grande de Córdoba: cubre unas 5.400 hectáreas y almacena cerca de 735 hm³. Lo alimentan los ríos Santa Rosa, Grande, Amboy, Quillinzo y La Cruz, y su paredón de 50 metros de altura da origen al río Ctalamochita. Abastece un sistema de tres centrales hidroeléctricas, está vinculado a la Central Nuclear Embalse y es uno de los grandes polos turísticos del Valle de Calamuchita.'}
+  };
+  OBRAS = OBRAS.map(function(o){ var c=CARGADAS[o.n]; if(!c) return o; c.n=o.n; return c; });
   var CATS = ['Todas','Vialidad','Hídrico','Infraestructura Eléctrica','Planificación Energética','Biocombustibles','Saneamiento','Arquitectura'];
   var HERO = [
     {label:'Foto emblemática 1 de 3', hint:'Próximamente: la gran obra de gas de Córdoba'},
@@ -542,7 +554,8 @@ footer .franja span:last-child{width:38%}
     if(st.page>max) st.page=max;
     $('chips').innerHTML=CATS.map(function(c){ return '<button class="chip" data-c="'+esc(c)+'" aria-pressed="'+(c===st.filter)+'">'+esc(c)+'</button>'; }).join('');
     $('obrasGrid').innerHTML=list.slice(st.page*PER,st.page*PER+PER).map(function(o){
-      return '<button class="card" data-n="'+o.n+'" aria-label="Abrir foto '+o.n+'"><div class="ph">'+ICON_IMG+'<span class="ph-label">Foto '+o.n+'</span></div><div class="card-body"><span class="card-cat">'+esc(o.cat)+'</span><span class="card-title">'+esc(o.nombre)+'</span><span class="card-loc">'+esc(o.loc)+'</span></div></button>';
+      var media = o.img ? '<img class="card-img" src="'+esc(o.img)+'" alt="'+esc(o.nombre)+'" loading="lazy">' : '<div class="ph">'+ICON_IMG+'<span class="ph-label">Foto '+o.n+'</span></div>';
+      return '<button class="card" data-n="'+o.n+'" aria-label="Abrir foto '+o.n+': '+esc(o.nombre)+'">'+media+'<div class="card-body"><span class="card-cat">'+esc(o.cat)+'</span><span class="card-title">'+esc(o.nombre)+'</span><span class="card-loc">'+esc(o.loc)+'</span></div></button>';
     }).join('');
     $('obrasCount').textContent=list.length+(list.length===1?' foto':' fotos')+' · '+(st.page+1)+' de '+(max+1);
     $('obrasPrev').disabled=st.page===0; $('obrasNext').disabled=st.page>=max;
@@ -584,6 +597,14 @@ footer .franja span:last-child{width:38%}
     $('mPos').textContent=(g==='cubo' ? 'Cubo '+o.n : 'Foto '+o.n)+' · '+(i+1)+' de '+list.length;
     $('mCat').textContent=o.cat; $('mTitle').textContent=o.nombre; $('mLoc').textContent=o.loc;
     $('mDate').textContent=o.fecha; $('mAuthor').textContent=o.autor; $('mDesc').textContent=o.desc;
+    var dl=$('mDownload');
+    if(o.img){
+      $('mImg').src=o.img; $('mImg').alt=o.nombre; $('mImgLink').href=o.img; $('mImgLink').hidden=false; $('mPh').hidden=true;
+      dl.href=o.img; dl.setAttribute('download', o.img.split('/').pop()); dl.removeAttribute('data-soon');
+    } else {
+      $('mImg').removeAttribute('src'); $('mImgLink').hidden=true; $('mPh').hidden=false;
+      dl.href='#'; dl.setAttribute('data-soon','');
+    }
     if(modal.hidden){ lastFocus=document.activeElement; modal.hidden=false; document.body.style.overflow='hidden'; $('mClose').focus(); }
     modal.scrollTop=0;
   }
@@ -604,6 +625,14 @@ footer .franja span:last-child{width:38%}
 
   // Acciones que se habilitan con el contenido final
   var toast=$('toast'), tt;
+  function say(msg){ toast.textContent=msg; toast.hidden=false; clearTimeout(tt); tt=setTimeout(function(){ toast.hidden=true; },2600); }
+  // Compartir: usa el menú del celular; en computadora copia el enlace de la foto
+  $('mShare').addEventListener('click',function(){
+    var url=location.href, title=$('mTitle').textContent+' · Obra, Maestro';
+    if(navigator.share){ navigator.share({title:title, url:url}).catch(function(){}); return; }
+    if(navigator.clipboard){ navigator.clipboard.writeText(url).then(function(){ say('Enlace copiado. Ya podés pegarlo donde quieras.'); }, function(){ say(url); }); }
+    else say(url);
+  });
   document.addEventListener('click',function(e){
     var b=e.target.closest('[data-soon]'); if(!b) return; e.preventDefault();
     toast.textContent='Disponible cuando carguemos el contenido final de la muestra.'; toast.hidden=false;
