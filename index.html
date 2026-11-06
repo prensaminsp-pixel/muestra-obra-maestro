@@ -514,10 +514,12 @@ footer .franja span:last-child{width:38%}
   ].map(function(r){ return {n:r[0], cat:r[1], nombre:'[Nombre de la obra]', loc:'[Localidad] · [Departamento]', fecha:'[Día] de [mes] de [año]', autor:'[Nombre de quien tomó la foto]', desc:'[Breve descripción de la obra: qué es, para qué sirve y a quiénes beneficia. 3 o 4 líneas.]'}; });
   // Fotos ya cargadas (reemplazan al marcador del mismo número)
   var CARGADAS = {
-    '01': {cat:'Hídrico', nombre:'Embalse de Río Tercero', loc:'Embalse · Departamento Calamuchita', fecha:'A confirmar', autor:'A confirmar', img:'fotos/01-embalse-rio-tercero.jpg',
+    '01': {cat:'Hídrico', nombre:'Embalse de Río Tercero', loc:'Embalse · Departamento Calamuchita', fecha:'1936', autor:'A confirmar', img:'fotos/01-embalse-rio-tercero.jpg',
       desc:'Oficialmente Embalse Ministro Pistarini, es el espejo de agua artificial más grande de Córdoba: cubre unas 5.400 hectáreas y almacena cerca de 735 hm³. Lo alimentan los ríos Santa Rosa, Grande, Amboy, Quillinzo y La Cruz, y su paredón de 50 metros de altura da origen al río Ctalamochita. Abastece un sistema de tres centrales hidroeléctricas, está vinculado a la Central Nuclear Embalse y es uno de los grandes polos turísticos del Valle de Calamuchita.'}
   };
   OBRAS = OBRAS.map(function(o){ var c=CARGADAS[o.n]; if(!c) return o; c.n=o.n; return c; });
+  // Copias livianas para mostrar (fotos/web/…-800.jpg y -1600.jpg); el original se usa solo para descargar
+  function webv(path,size){ var f=path.split('/').pop().replace(/\.jpg$/i,''); return 'fotos/web/'+f+'-'+size+'.jpg'; }
   var CATS = ['Todas','Vialidad','Hídrico','Infraestructura Eléctrica','Planificación Energética','Biocombustibles','Saneamiento','Arquitectura'];
   var HERO = [
     {label:'Foto emblemática 1 de 3', hint:'Próximamente: la gran obra de gas de Córdoba'},
@@ -554,7 +556,7 @@ footer .franja span:last-child{width:38%}
     if(st.page>max) st.page=max;
     $('chips').innerHTML=CATS.map(function(c){ return '<button class="chip" data-c="'+esc(c)+'" aria-pressed="'+(c===st.filter)+'">'+esc(c)+'</button>'; }).join('');
     $('obrasGrid').innerHTML=list.slice(st.page*PER,st.page*PER+PER).map(function(o){
-      var media = o.img ? '<img class="card-img" src="'+esc(o.img)+'" alt="'+esc(o.nombre)+'" loading="lazy">' : '<div class="ph">'+ICON_IMG+'<span class="ph-label">Foto '+o.n+'</span></div>';
+      var media = o.img ? '<img class="card-img" src="'+esc(webv(o.img,800))+'" alt="'+esc(o.nombre)+'" loading="lazy" decoding="async">' : '<div class="ph">'+ICON_IMG+'<span class="ph-label">Foto '+o.n+'</span></div>';
       return '<button class="card" data-n="'+o.n+'" aria-label="Abrir foto '+o.n+': '+esc(o.nombre)+'">'+media+'<div class="card-body"><span class="card-cat">'+esc(o.cat)+'</span><span class="card-title">'+esc(o.nombre)+'</span><span class="card-loc">'+esc(o.loc)+'</span></div></button>';
     }).join('');
     $('obrasCount').textContent=list.length+(list.length===1?' foto':' fotos')+' · '+(st.page+1)+' de '+(max+1);
@@ -599,7 +601,11 @@ footer .franja span:last-child{width:38%}
     $('mDate').textContent=o.fecha; $('mAuthor').textContent=o.autor; $('mDesc').textContent=o.desc;
     var dl=$('mDownload');
     if(o.img){
-      $('mImg').src=o.img; $('mImg').alt=o.nombre; $('mImgLink').href=o.img; $('mImgLink').hidden=false; $('mPh').hidden=true;
+      // Muestra primero la copia chica (ya cargada en la galería) y la cambia por la de 1600 px cuando llega
+      var img=$('mImg'), big=webv(o.img,1600), small=webv(o.img,800);
+      img.src=small; img.alt=o.nombre; img.dataset.want=big;
+      var pre=new Image(); pre.onload=function(){ if(img.dataset.want===big) img.src=big; }; pre.src=big;
+      $('mImgLink').href=o.img; $('mImgLink').hidden=false; $('mPh').hidden=true;
       dl.href=o.img; dl.setAttribute('download', o.img.split('/').pop()); dl.removeAttribute('data-soon');
     } else {
       $('mImg').removeAttribute('src'); $('mImgLink').hidden=true; $('mPh').hidden=false;
