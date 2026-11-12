@@ -803,7 +803,7 @@ const Store = {
       // temporada
       const cfg = await db.doc("config/actual").get().catch(()=>null);
       const temporada = cfg && cfg.exists ? ((cfg.data()||{}).temporada||1) : 1;
-      if(Player.temporada!==temporada){ Player.obras={}; Player.trivia={}; Player.juegos={}; Player.temporada=temporada; LS.set("arma.player",Player); refreshChrome(); }
+      if(Player.temporada!==temporada){ Player.alias=""; Player.obras={}; Player.trivia={}; Player.juegos={}; Player.temporada=temporada; LS.set("arma.player",Player); refreshChrome(); $("#mReg").hidden=false; }
       db.collection("ingenieros").onSnapshot(snap=>{
         this.rows = snap.docs.map(d=>({id:d.id, ...d.data()})).filter(r=>r && r.alias && (r.temporada||1)===temporada);
         this.emit();
