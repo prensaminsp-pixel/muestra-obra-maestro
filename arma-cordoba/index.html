@@ -296,6 +296,7 @@ body.regulando #obraStage{height:min(44vh,420px);min-height:260px}
 .corte .slot.lleno{border-style:solid;color:#fff}
 .corte .prof{position:absolute;left:50%;transform:translate(-50%,-50%);font-size:11px;color:#fff;font-weight:700;opacity:.95;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
 .canos{display:flex;flex-wrap:wrap;gap:8px}
+.rp-stage{height:min(60vh,460px);min-height:380px;border-radius:0 0 12px 12px;background:#CFE3A8}
 .rp-mapa{background:#E3F1F8;border:2px solid #009ADA;border-top:0;border-radius:0 0 12px 12px;padding:0 8px 10px}
 .rp-troncal{height:30px;margin:0 -8px;background:repeating-linear-gradient(90deg,#009ADA 0 18px,#36B3E6 18px 36px);background-size:36px 100%;animation:rpFlu 1s linear infinite;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;letter-spacing:.02em}
 @keyframes rpFlu{to{background-position:36px 0}}
@@ -498,11 +499,8 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
         </div>
         <div id="exReparto" class="extra" hidden>
           <div class="gd-hud"><span id="rpVidas"></span><span id="rpOk">Todos con agua</span><span id="rpT">45 s</span></div>
-          <div class="rp-mapa">
-            <div class="rp-troncal" id="rpTroncal"><span>Caño troncal · agua del río Paraná →</span></div>
-            <div class="rp-pueblos" id="rpPueblos"></div>
-          </div>
-          <p class="gd-ayuda">Tocá una válvula para abrirla o cerrarla. El agua del troncal se reparte entre las válvulas abiertas.</p>
+          <div class="mini-stage rp-stage" id="rpStage"><canvas id="rpCanvas"></canvas></div>
+          <p class="gd-ayuda">Tocá un pueblo (o su válvula) para abrirle o cerrarle el agua. El agua del troncal se reparte entre las válvulas abiertas.</p>
           <p class="nota" id="rpIntro" style="font-size:14px"></p>
           <div class="fila"><button class="btn amar" id="rpStart" type="button">Empezar</button><small class="nota" id="recReparto"></small></div>
         </div>
@@ -2636,18 +2634,82 @@ const RP_M=JM, RP_DUR=45, RP_Q=10.5;
 const RP_PUEBLOS=[{n:"San Francisco",c:4.2},{n:"Pueblo de campo",c:2.6},{n:"Pueblo con escuela",c:3.0},{n:"Pueblo con fábrica",c:3.4}];
 const RP={on:false};
 function rpReset(){ Object.assign(RP,{on:false,t:0,vidas:3,ok:0,ev:null,evT:6,last:performance.now(),ab:[false,false,false,false],L:[70,55,60,50],x:[1,1,1,1],avisoLleno:0}); rpDibujar(true); rpHud(); }
-function rpDibujar(nuevo){
-  const box=$("#rpPueblos");
-  if(nuevo){ box.replaceChildren(...RP_PUEBLOS.map((p,i)=>{ const d=el("div",{class:"rp-p"});
-    const v=el("button",{class:"rp-val",type:"button","aria-label":"Válvula de "+p.n,text:"⊘"}); v.addEventListener("click",()=>{ RP.ab[i]=!RP.ab[i]; rpDibujar(); });
-    d.append(el("div",{class:"rp-cano"}),v,el("div",{class:"rp-tanque"},[el("i"),el("b")]),el("small",{text:p.n}),el("em")); return d; })); }
-  [...box.children].forEach((d,i)=>{ d.classList.toggle("abierta",RP.ab[i]); d.querySelector(".rp-val").textContent=RP.ab[i]?"💧":"⊘";
-    d.querySelector(".rp-tanque i").style.height=Math.max(0,Math.min(100,RP.L[i]))+"%"; d.querySelector(".rp-tanque b").textContent=Math.round(Math.max(0,RP.L[i]))+"%";
-    d.querySelector(".rp-tanque").classList.toggle("bajo",RP.L[i]<20); d.querySelector("em").textContent=RP.x[i]>1?"¡Consume más!":""; });
+const RP_POS=[{x:0.17,y:0.50,tipo:"ciudad"},{x:0.30,y:0.16,tipo:"campo"},{x:0.53,y:0.84,tipo:"escuela"},{x:0.70,y:0.16,tipo:"fabrica"}];
+const RP_TRONCAL_Y=0.50;
+function rpGeo(){ const st=$("#rpStage"), W=st.clientWidth, H=st.clientHeight;
+  return RP_POS.map((p,i)=>{ const tx=i===0? W*0.25 : W*p.x, ty=H*RP_TRONCAL_Y, px=W*p.x, py=H*p.y;
+    const vx=i===0? W*0.30 : px, vy=i===0? ty : (ty+py)/2; return {px,py,tx,ty,vx,vy}; }); }
+function rpSize(){ const c=$("#rpCanvas"), st=$("#rpStage"), dpr=Math.min(2,window.devicePixelRatio||1); c.width=st.clientWidth*dpr; c.height=st.clientHeight*dpr; RP.dpr=dpr; }
+function rpDibujar(nuevo){ if(nuevo) rpSize(); rpDraw(); }
+function rpCara(x,cx,cy,r,animo,t){ // animo: 1 feliz, 0 normal, -1 enojado
+  const sh=animo<0?Math.sin(t*30)*2:0, hop=animo>0?-Math.abs(Math.sin(t*6))*4:0; cx+=sh; cy+=hop;
+  x.fillStyle=animo<0?"#FF8A80":animo>0?"#FFE066":"#FFE9A8"; x.strokeStyle="#5A4632"; x.lineWidth=2;
+  x.beginPath(); x.arc(cx,cy,r,0,Math.PI*2); x.fill(); x.stroke();
+  x.fillStyle="#3A2A1A"; const ey=cy-r*0.15;
+  if(animo>0){ x.lineWidth=2.2; [-1,1].forEach(s=>{ x.beginPath(); x.arc(cx+s*r*0.35,ey+2,r*0.14,Math.PI,0); x.stroke(); }); }
+  else { [-1,1].forEach(s=>{ x.beginPath(); x.arc(cx+s*r*0.35,ey,r*0.11,0,Math.PI*2); x.fill(); }); }
+  if(animo<0){ x.lineWidth=2.2; [-1,1].forEach(s=>{ x.beginPath(); x.moveTo(cx+s*r*0.55,ey-r*0.32); x.lineTo(cx+s*r*0.18,ey-r*0.18); x.stroke(); }); }
+  x.lineWidth=2.4; x.beginPath();
+  if(animo>0) x.arc(cx,cy+r*0.08,r*0.45,0.15*Math.PI,0.85*Math.PI); else if(animo<0) x.arc(cx,cy+r*0.62,r*0.38,1.15*Math.PI,1.85*Math.PI); else { x.moveTo(cx-r*0.3,cy+r*0.38); x.lineTo(cx+r*0.3,cy+r*0.38); }
+  x.stroke();
+  if(animo<0){ x.fillStyle="#4FB8E8"; x.beginPath(); x.ellipse(cx+r*0.85,cy-r*0.35+((t*40)%8),r*0.14,r*0.22,0,0,Math.PI*2); x.fill(); }
+}
+function rpGlobo(x,cx,cy,txt,col){ x.font="800 12px sans-serif"; const w=x.measureText(txt).width+14, h=22; const bx=Math.max(4,Math.min(x.canvas.width/RP.dpr-w-4,cx-w/2));
+  x.fillStyle=col; x.beginPath(); x.roundRect?x.roundRect(bx,cy-h,w,h,10):x.rect(bx,cy-h,w,h); x.fill(); x.beginPath(); x.moveTo(cx-5,cy); x.lineTo(cx+5,cy); x.lineTo(cx,cy+7); x.fill();
+  x.fillStyle="#fff"; x.textAlign="center"; x.textBaseline="middle"; x.fillText(txt,bx+w/2,cy-h/2); x.textBaseline="alphabetic"; }
+function rpDraw(){
+  const c=$("#rpCanvas"); if(!c) return; const x=c.getContext("2d"), st=$("#rpStage"), W=st.clientWidth, H=st.clientHeight, t=performance.now()/1000; x.setTransform(RP.dpr||1,0,0,RP.dpr||1,0,0);
+  // campo (parcelas)
+  x.fillStyle="#CFE3A8"; x.fillRect(0,0,W,H);
+  const cols=["#C3DB96","#D8E8B4","#BFD68C","#E2DDA8"]; for(let i=0;i<9;i++) for(let j=0;j<6;j++){ x.fillStyle=cols[(i*3+j*5)%4]; x.fillRect(i*W/9+2,j*H/6+2,W/9-4,H/6-4); }
+  // camino rural
+  x.fillStyle="#E8DCC0"; x.fillRect(0,H*0.30,W*0.88,6); x.fillRect(W*0.62,0,6,H);
+  // río Paraná
+  const rx=W*0.9; x.fillStyle="#4FB0DC"; x.beginPath(); x.moveTo(rx,0); for(let yy=0;yy<=H;yy+=20) x.lineTo(rx+Math.sin(yy/40)*8,yy); x.lineTo(W,H); x.lineTo(W,0); x.fill();
+  x.fillStyle="rgba(255,255,255,.5)"; for(let k=0;k<6;k++){ const yy=((t*30+k*70)%(H+40))-20; x.fillRect(rx+18,yy,10,2); }
+  x.save(); x.translate(W*0.955,H*0.5); x.rotate(-Math.PI/2); x.fillStyle="#fff"; x.font="800 12px sans-serif"; x.textAlign="center"; x.fillText("Río Paraná",0,4); x.restore();
+  const g=rpGeo(), ty=H*RP_TRONCAL_Y;
+  // toma de agua
+  x.fillStyle="#6B7682"; x.fillRect(rx-34,ty-16,30,32); x.fillStyle="#fff"; x.font="800 9px sans-serif"; x.textAlign="center"; x.fillText("TOMA",rx-19,ty+3);
+  // troncal (subterráneo: línea gruesa con borde punteado)
+  const tubo=(x1,y1,x2,y2,agua,ancho)=>{ x.lineCap="round"; x.strokeStyle="#7A6A55"; x.lineWidth=ancho+6; x.beginPath(); x.moveTo(x1,y1); x.lineTo(x2,y2); x.stroke();
+    x.strokeStyle=agua?"#2E9BD6":"#B9C3CC"; x.lineWidth=ancho; x.beginPath(); x.moveTo(x1,y1); x.lineTo(x2,y2); x.stroke();
+    if(agua){ const L=Math.hypot(x2-x1,y2-y1), ux=(x2-x1)/L, uy=(y2-y1)/L; x.fillStyle="rgba(255,255,255,.85)"; for(let d=(t*70)%22; d<L; d+=22){ x.beginPath(); x.arc(x1+ux*d,y1+uy*d,ancho*0.28,0,Math.PI*2); x.fill(); } } };
+  tubo(rx-34,ty,g[0].tx,ty,true,12);
+  x.fillStyle="#5A4632"; x.font="700 10px sans-serif"; x.textAlign="center"; x.fillText("Troncal (bajo tierra)",W*0.50,ty-13);
+  // ramales y pueblos
+  g.forEach((p,i)=>{ const ab=RP.ab[i], lvl=Math.max(0,Math.min(100,RP.L[i]));
+    if(i===0) tubo(g[0].tx,ty,p.px+34,p.py,ab,8); else tubo(p.tx,ty,p.px,p.py+(p.py<ty?26:-26),ab,8);
+    // casitas (vista desde arriba)
+    const casas = i===0?9:6; for(let k=0;k<casas;k++){ const a=k/casas*Math.PI*2+i, rr=i===0?40:30; const hx=p.px+Math.cos(a)*rr, hy=p.py+Math.sin(a)*rr*0.75;
+      x.fillStyle=["#F4F1EC","#F7E9D2","#E2E8EE"][k%3]; x.fillRect(hx-8,hy-7,16,14); x.fillStyle=["#C2593F","#B8763E","#9C4A3A"][k%3]; x.fillRect(hx-8,hy-7,16,6); }
+    if(i===0){ x.fillStyle="#D6DEE6"; x.fillRect(p.px-14,p.py-34,12,12); x.fillRect(p.px+4,p.py+22,14,12); }
+    if(p&&RP_POS[i].tipo==="escuela"){ x.fillStyle="#F2E9D8"; x.fillRect(p.px-56,p.py-10,26,18); x.fillStyle="#009ADA"; x.fillRect(p.px-56,p.py-26,2,16); x.fillRect(p.px-54,p.py-26,10,6); }
+    if(RP_POS[i].tipo==="fabrica"){ x.fillStyle="#9AA4AD"; x.fillRect(p.px-58,p.py-8,28,18); x.fillStyle="#6B7682"; x.fillRect(p.px-56,p.py-24,6,16); x.fillStyle="rgba(200,200,200,.6)"; x.beginPath(); x.arc(p.px-53+Math.sin(t*2)*3,p.py-30-((t*10)%10),5,0,Math.PI*2); x.fill(); }
+    if(RP_POS[i].tipo==="campo"){ x.fillStyle="#E7C76A"; x.fillRect(p.px-56,p.py-6,22,12); x.fillStyle="#C9A64A"; for(let k=0;k<4;k++) x.fillRect(p.px-55+k*5,p.py-6,2,12); }
+    // tanque (vista lateral, para ver el nivel)
+    const tankX= i===0? p.px-50 : p.px+26, tankY=p.py-20; x.fillStyle="#6B7682"; x.fillRect(tankX+4,tankY+30,3,10); x.fillRect(tankX+15,tankY+30,3,10);
+    x.fillStyle="#fff"; x.strokeStyle=lvl<20?"#E2464C":"#4B5560"; x.lineWidth=2.5; x.fillRect(tankX,tankY,22,30); x.strokeRect(tankX,tankY,22,30);
+    x.fillStyle="#2E9BD6"; x.fillRect(tankX+1.5,tankY+30-28*lvl/100-1,19,28*lvl/100);
+    x.fillStyle="#0B2545"; x.font="800 10px sans-serif"; x.textAlign="center"; x.fillText(Math.round(lvl)+"%",tankX+11,tankY+44+6);
+    // cara y globo
+    const animo = lvl<25?-1 : (lvl>55||(ab&&lvl>35))?1:0; rpCara(x,p.px,p.py,15,animo,t+i);
+    const ny=p.py<ty? p.py-48 : p.py+62;
+    x.fillStyle="#0B2545"; x.font="800 12px sans-serif"; if(i===0||p.py>ty){ x.textAlign="center"; x.fillText(RP_PUEBLOS[i].n,p.px,p.py+56); } else { x.textAlign="left"; const w=RP_PUEBLOS[i].n.split(" "); const l1=w.slice(0,2).join(" "), l2=w.slice(2).join(" "); x.fillText(l1,p.px+10,p.py+46); if(l2) x.fillText(l2,p.px+10,p.py+60); }
+    if(animo<0) rpGlobo(x,p.px,p.py-20,lvl<10?"¡No sale agua!":"¡Tenemos sed!","#E2464C");
+    else if(RP.x[i]>1) rpGlobo(x,p.px,p.py-20,"¡Usamos mucha agua!","#AF4178");
+    else if(animo>0 && ab) rpGlobo(x,p.px,p.py-20,"¡Gracias!","#32A430");
+    // válvula
+    const vx=p.vx, vy=p.vy, sug=RP.sug===i; if(sug){ x.strokeStyle="rgba(247,190,43,"+(0.5+0.5*Math.sin(t*8))+")"; x.lineWidth=5; x.beginPath(); x.arc(vx,vy,20,0,Math.PI*2); x.stroke(); }
+    x.fillStyle=ab?"#DDF2FB":"#fff"; x.strokeStyle=ab?"#009ADA":"#8A939B"; x.lineWidth=3; x.beginPath(); x.arc(vx,vy,14,0,Math.PI*2); x.fill(); x.stroke();
+    x.save(); x.translate(vx,vy); x.rotate(ab?Math.PI/2:0); x.fillStyle=ab?"#009ADA":"#E2464C"; x.fillRect(-10,-3,20,6); x.restore();
+    if(ab && lvl<100){ for(let k=0;k<3;k++){ const ph=(t*1.5+k/3)%1; x.fillStyle="rgba(79,184,232,"+(1-ph)+")"; x.beginPath(); x.arc(tankX+11+(k-1)*6,tankY-4-ph*12,2.5,0,Math.PI*2); x.fill(); } }
+  });
+  if(!RP.on && !RP.t){ x.fillStyle="rgba(11,37,69,.55)"; x.fillRect(0,H/2-24,W,48); x.fillStyle="#fff"; x.font="800 15px sans-serif"; x.textAlign="center"; x.fillText("Tocá «Empezar» y abrí las válvulas",W/2,H/2+5); }
 }
 function rpHud(){ $("#rpVidas").textContent="♥".repeat(Math.max(0,RP.vidas))+"♡".repeat(3-Math.max(0,RP.vidas)); $("#rpT").textContent=Math.max(0,Math.ceil(RP_DUR-RP.t))+" s";
   const todos=RP.L.every(l=>l>15); $("#rpOk").textContent=todos?"Todos con agua":"¡Falta agua!"; }
-function rpOpen(){ rpReset(); $("#rpStart").hidden=false; $("#rpStart").textContent="Empezar";
+function rpOpen(){ requestAnimationFrame(()=>{ rpSize(); rpDraw(); }); rpReset(); $("#rpStart").hidden=false; $("#rpStart").textContent="Empezar";
   $("#rpIntro").textContent="El acueducto trae agua del río Paraná por un caño troncal y la reparte a cada pueblo por ramales. Abrí y cerrá las válvulas para que ningún tanque se quede vacío durante 45 segundos. Truco: con dos válvulas abiertas a la vez, el agua llega con fuerza."; }
 function rpStart(){ rpReset(); RP.on=true; $("#rpStart").hidden=true; RP_M.say("¡Abrí las válvulas! Si abrís todas juntas, el agua no alcanza para llenar los tanques.","feliz"); requestAnimationFrame(rpLoop); }
 function rpLoop(now){
@@ -2660,17 +2722,21 @@ function rpLoop(now){
   if(RP.L.every(l=>l>15)) RP.ok+=dt;
   const orden=[0,1,2,3].sort((a,b)=>RP.L[a]-RP.L[b]), quiero=new Set(orden.slice(0,2)); let sug=-1;
   for(let i=0;i<4;i++){ if((quiero.has(i)&&!RP.ab[i]&&RP.L[i]<70)||(RP.ab[i]&&!quiero.has(i)&&RP.L[i]>55)||(RP.ab[i]&&RP.L[i]>95)){ sug=i; break; } }
-  document.querySelectorAll(".rp-val").forEach((b,i)=>b.classList.toggle("sug",i===sug));
+  RP.sug=sug;
   rpDibujar(); rpHud();
   if(RP.t>=RP_DUR) return rpFin();
   requestAnimationFrame(rpLoop);
 }
-function rpFin(){ RP.on=false; document.querySelectorAll(".rp-val").forEach(b=>b.classList.remove("sug"));
+function rpFin(){ RP.on=false; RP.sug=-1; rpDraw();
   const pts=Math.round(100*RP.ok/Math.max(1,RP.t)); Store.track("juego_reparto",cur?cur.o.id:"",pts); const rec=Player.juegos.reparto||0;
   if(pts>rec){ Player.juegos.reparto=pts; Store.save(); refreshChrome(); }
   RP_M.say((RP.vidas<=0?"Se quedaron sin agua varios pueblos. ":"¡Terminó el turno! ")+"Todos tuvieron agua el "+pts+"% del tiempo"+(pts>rec&&rec>0?": ¡nuevo récord!":".")+(pts>=70?" ¡Sos una gran repartidora de agua!":" ¿Lo intentamos otra vez?"), pts>=70?"feliz":"tranquila");
   $("#rpStart").hidden=false; $("#rpStart").textContent="Jugar otra vez"; }
 $("#rpStart").addEventListener("click",rpStart);
+$("#rpStage").addEventListener("pointerdown",e=>{ if(!RP.on) return; const r=$("#rpStage").getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top; const g=rpGeo(); let best=-1, bd=1e9;
+  g.forEach((q,i)=>{ const d=Math.min(Math.hypot(px-q.vx,py-q.vy), Math.hypot(px-q.px,py-q.py)*0.8, Math.hypot(px-(q.px-35),py-q.py)); if(d<bd){ bd=d; best=i; } });
+  if(best>=0 && bd<60){ RP.ab[best]=!RP.ab[best]; rpDraw(); } });
+window.addEventListener("resize",()=>{ if(!$("#exReparto").hidden){ rpSize(); rpDraw(); } });
 
 const EXTRA={"hospital-bell-ville":["guardia","bellville","Guardia a tiempo"],punilla:["bacheo","sierras","Bacheo exprés en la autovía"],altonivel:["puente","ciudad","Armá el altonivel: columnas, vigas y rampas"],acueducto:["reparto","","Repartí el agua"],"bajo-grande":["canos","cordoba","¿Dónde va cada caño? En un barrio de Córdoba"]};
 function renderExtra(o){
