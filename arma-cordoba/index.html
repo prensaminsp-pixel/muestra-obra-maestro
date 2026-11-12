@@ -439,19 +439,6 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
         </div>
       </article>
 
-      <article class="bloque">
-        <div class="eyebrow">Antes y después</div>
-        <h2>Deslizá para comparar</h2>
-        <div class="ad" id="adBox">
-          <img id="adAntes" alt="La zona antes de la obra">
-          <img id="adDespues" class="despues" alt="La zona con la obra terminada">
-          <div class="mango" id="adMango"></div>
-          <span class="et a">Antes</span><span class="et d">Después</span>
-          <input type="range" id="adRange" min="0" max="100" value="50" aria-label="Comparar antes y después">
-        </div>
-        <p class="nota">En el prototipo se muestran las maquetas. En la versión final van las fotos de archivo y tomas de dron de la obra.</p>
-      </article>
-
       <article class="bloque" id="oExtra" hidden>
         <div class="eyebrow" id="exEyebrow">Juego extra</div>
         <h2 id="exTitulo"></h2>
@@ -1768,8 +1755,6 @@ function openObra(id){
   $("#jTitulo").textContent=o.juego.titulo;
   mount(ctx);
   resetJuego(Player.obras[id]?"ya":"nuevo");
-  // antes y después
-  requestAnimationFrame(()=>{ $("#adAntes").src=snapshot(ctx,false); $("#adDespues").src=ctx._after||(ctx._after=snapshot(ctx,true)); setAD(50); });
   renderShare(); renderTrivia(o); renderExtra(o); renderComo(o);
   window.scrollTo({top:0});
 }
@@ -2086,8 +2071,6 @@ $("#shareSave").addEventListener("click",async()=>{
 $("#arBtn").addEventListener("click",()=>{ if(EN_CLAUDE) toast("«Ponela en tu mesa» funciona en la versión publicada en GitHub."); else openAR(cur.o); });
 
 /* Antes / después */
-function setAD(v){ $("#adDespues").style.clipPath=`inset(0 0 0 ${v}%)`; $("#adMango").style.left=v+"%"; $("#adRange").value=v; }
-$("#adRange").addEventListener("input",e=>setAD(+e.target.value));
 
 /* ============ HOME: LISTA Y CHROME ============ */
 function refreshChrome(){
