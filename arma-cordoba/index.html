@@ -69,7 +69,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;color:#fff;font-family:var(--f-display);font-weight:800;font-size:13px;margin-right:6px;vertical-align:middle}
 .maplbl{position:absolute;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(11,36,64,.55);white-space:nowrap}
 .maplbl.agua{color:#1D6E99;font-style:italic;letter-spacing:.06em}
-#mapStage{touch-action:pan-y}
+#mapStage,#obraStage{touch-action:pan-y}
 .hint3d{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(11,36,64,.78);color:#fff;font-size:12px;padding:6px 12px;border-radius:999px;pointer-events:none;white-space:nowrap}
 
 .lista{display:grid;gap:10px;padding-block:18px 8px}
@@ -1077,7 +1077,7 @@ function mount(ctx){
   if(active && active.controls) active.controls.enabled=false;
   active=ctx;
   ctx.stage.prepend(renderer.domElement);
-  renderer.domElement.style.touchAction = ctx.dosDedos ? "pan-y" : "none";
+  renderer.domElement.style.touchAction = "pan-y";
   resize();
   if(ctx.controls) ctx.controls.enabled=true;
 }
@@ -1129,7 +1129,7 @@ function orbit(camera, dom, target, opts={}){
   c.target.copy(target); c.enableDamping=true; c.dampingFactor=0.08; c.enablePan=false;
   c.minPolarAngle=opts.minPolar??0.25; c.maxPolarAngle=opts.maxPolar??1.25;
   c.minDistance=opts.minD??4; c.maxDistance=opts.maxD??16; c.rotateSpeed=0.7;
-  c.touches= opts.dosDedos ? {ONE:null, TWO:THREE.TOUCH.DOLLY_ROTATE} : {ONE:THREE.TOUCH.ROTATE, TWO:THREE.TOUCH.DOLLY_ROTATE};
+  c.touches={ONE:null, TWO:THREE.TOUCH.DOLLY_ROTATE}; // un dedo = bajar la página; dos dedos = girar y acercar
   c.enabled=false;
   return c;
 }
@@ -1825,7 +1825,7 @@ function resetJuego(modo){
   const b=$("#jBandeja"); b.replaceChildren(...piezas.map(p=>{ const btn=el("button",{class:"pieza",type:"button"},[el("i",{style:"background:"+p.c}),document.createTextNode(p.n)]); btn.addEventListener("click",()=>elegir(p,btn)); return btn; }));
   $("#jPaso").textContent="0 de "+o.juego.piezas.length; setProg(0);
   consigna(modo==="ya"?"Ya armaste esta obra. Podés volver a armarla cuando quieras.":o.juego.consigna);
-  $("#obraHint").textContent="Arrastrá para girar la maqueta"; $("#obraHint").style.opacity=1;
+  $("#obraHint").textContent=(window.matchMedia&&matchMedia("(pointer:coarse)").matches)?"Usá dos dedos para girar la maqueta":"Arrastrá para girar la maqueta"; $("#obraHint").style.opacity=1;
 }
 function elegir(p,btn){
   const o=cur.o, sc=cur.ctx.sc, total=o.juego.piezas.length;
@@ -2766,6 +2766,7 @@ function rpFin(){ RP.on=false; rpDraw();
   RP_M.say((RP.vidas<=0?"Se quedaron sin agua varios pueblos. ":"¡Terminó el turno! ")+"Arreglaste "+pts+(pts===1?" pérdida":" pérdidas")+(pts>rec&&rec>0?": ¡nuevo récord!":".")+(pts>=15?" ¡Sos una gran jefa de cuadrilla!":" ¿Lo intentamos otra vez?"), pts>=15?"feliz":"tranquila");
   $("#rpStart").hidden=false; $("#rpStart").textContent="Jugar otra vez"; }
 $("#rpStart").addEventListener("click",rpStart);
+$("#obraStage").addEventListener("touchstart",e=>{ if(e.touches.length>=2) $("#obraHint").style.opacity=0; },{passive:true});
 $("#rpStage").addEventListener("pointerdown",e=>{ if(!RP.on) return; e.preventDefault(); const r=$("#rpStage").getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top; const P=rpIso().P; let best=-1, bd=1e9;
   RP.fugas.forEach((f,k)=>{ const [fx,fy]=P(f.wx,f.wy,0.08); const d=Math.min(Math.hypot(px-fx,py-fy), Math.hypot(px-fx,py-(fy-20))); if(d<bd){ bd=d; best=k; } });
   if(best>=0 && bd<42){ const f=RP.fugas.splice(best,1)[0]; RP.fix++; RP.pops.push({wx:f.wx,wy:f.wy,t:0}); rpHud(); } });
