@@ -2055,15 +2055,16 @@ async function renderAdmin(){
   }
   const snap=await db.collection("ingenieros").get(); const cfg=await db.doc("config/actual").get(); const temp=cfg.exists?(cfg.data().temporada||1):1;
   const info=p("Hay "+snap.size+" ingenieros registrados en la temporada "+temp+".");
-  const borrar=el("button",{class:"btn",type:"button",text:"Dejar el ranking en 0",style:"background:#E2464C"});
+  const borrar=el("button",{class:"btn",type:"button",text:"Dejar todo en 0",style:"background:#E2464C"});
   const fila=el("div",{class:"fila"},[borrar]);
   borrar.addEventListener("click",()=>{
     const si=el("button",{class:"btn",type:"button",text:"Sí, borrar todo",style:"background:#E2464C"}), no=el("button",{class:"btn blanco",type:"button",text:"Cancelar"});
-    fila.replaceChildren(p("Se borran todos los nombres y obras. ¿Confirmás?"),si,no);
+    fila.replaceChildren(p("Se borran todos los nombres, obras, puntos y estadísticas, y cada celular vuelve a pedir el nombre. ¿Confirmás?"),si,no);
     no.addEventListener("click",renderAdmin);
     si.addEventListener("click",async()=>{ si.disabled=true;
       try{ let docs=snap.docs; while(docs.length){ const lote=db.batch(); docs.slice(0,400).forEach(d=>lote.delete(d.ref)); await lote.commit(); docs=docs.slice(400); }
-        await db.doc("config/actual").set({temporada:temp+1}); toast("Listo: el ranking quedó en 0."); renderAdmin(); }
+        const ms=await db.collection("metricas").get().catch(()=>null); let md=ms?ms.docs:[]; while(md.length){ const lote=db.batch(); md.slice(0,400).forEach(d=>lote.delete(d.ref)); await lote.commit(); md=md.slice(400); }
+        await db.doc("config/actual").set({temporada:temp+1}); toast("Listo: todo quedó en 0."); renderAdmin(); }
       catch(e){ toast("No se pudo borrar: revisá los permisos."); si.disabled=false; } });
   });
   const met=await db.collection("metricas").get().catch(()=>null);
