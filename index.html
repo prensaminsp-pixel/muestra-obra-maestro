@@ -545,6 +545,9 @@ footer .franja span:last-child{width:38%}
     '15': {cat:'Vialidad', nombre:'Nueva Ruta Provincial S-372', loc:'Santa Rosa de Calamuchita – Soconcho · Departamento Calamuchita', fecha:'Obra en ejecución', autor:'Matias Garcia', img:'fotos/15-ruta-provincial-s-372-trabajadores.jpg',
       desc:'Es un corredor de 20,5 kilómetros a través de las Sierras de Calamuchita que une Santa Rosa de Calamuchita con Soconcho, entre la Ruta Provincial 5 y la Autovía Córdoba–Río Cuarto (RN 36), y permite sortear los diques de Embalse y Los Molinos. Su pavimentación descongestionará la Ruta 5 en temporada alta, mejorará la seguridad vial y acercará turismo, servicios y producción a Soconcho, El Parador de Montaña, Calmayo, San Agustín y otras comunidades serranas.'}
   };
+  // Segundas fotos de una obra ya cargada: copian la ficha de la original y cambian autor e imagen
+  function otraFoto(n, base, autor, img){ var c={}, b=CARGADAS[base]; for(var k in b) c[k]=b[k]; c.autor=autor; c.img=img; CARGADAS[n]=c; }
+  otraFoto('16', '03', 'Candelaria Vargas', 'fotos/16-circunvalacion-rio-cuarto-trabajador.jpg');
   OBRAS = OBRAS.map(function(o){ var c=CARGADAS[o.n]; if(!c) return o; c.n=o.n; return c; });
   // Fotos cargadas con número mayor a los marcadores iniciales (13, 14…) se suman al final
   Object.keys(CARGADAS).sort().forEach(function(k){ if(!OBRAS.some(function(o){ return o.n===k; })){ var c=CARGADAS[k]; c.n=k; OBRAS.push(c); } });
