@@ -80,6 +80,10 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .row{display:flex;flex-wrap:wrap;gap:12px}
 .hero-media{position:relative;min-height:420px;background:var(--fondo-suave)}
 .hero-media .ph{position:absolute;inset:0;border:none;background:var(--fondo-suave)}
+.hero-photo{position:absolute;inset:0;display:block;overflow:hidden;background:var(--fondo-foto)}
+.hero-photo img{display:block;width:100%;height:100%;max-width:100%;object-fit:cover;transition:opacity .5s ease}
+.hero-photo img.fading{opacity:0}
+@media (prefers-reduced-motion: reduce){.hero-photo img{transition:none}}
 .hero-ctrl{position:absolute;left:24px;right:max(24px,env(safe-area-inset-right,0px));bottom:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px}
 .hero-cap{background:#fff;color:var(--tinta);padding:10px 16px;border-radius:4px;font-size:14px;font-weight:500}
 .hero-nav{display:flex;align-items:center;gap:8px;background:#fff;padding:6px;border-radius:999px}
@@ -270,11 +274,7 @@ footer .franja span:last-child{width:38%}
     </div>
   </div>
   <div class="hero-media" aria-roledescription="carrusel" aria-label="Fotos emblemáticas">
-    <div class="ph" aria-live="polite">
-      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg>
-      <span class="ph-label" id="heroLabel">Foto emblemática 1 de 3</span>
-      <span id="heroHint">Próximamente</span>
-    </div>
+    <a class="hero-photo" id="heroLink" href="#obras" aria-live="polite"><img id="heroImg" src="" alt=""></a>
     <div class="hero-ctrl">
       <span class="hero-cap" id="heroCap">[Obra] · [Localidad, Departamento]</span>
       <div class="hero-nav">
@@ -555,9 +555,10 @@ footer .franja span:last-child{width:38%}
   function webv(path,size){ var f=path.split('/').pop().replace(/\.jpg$/i,''); return 'fotos/web/'+f+'-'+size+'.jpg'; }
   var CATS = ['Todas','Vialidad','Hídrico','Infraestructura Eléctrica','Planificación Energética','Saneamiento','Arquitectura'];
   var HERO = [
-    {label:'Foto emblemática 1 de 3', hint:'Próximamente: la gran obra de gas de Córdoba'},
-    {label:'Foto emblemática 2 de 3', hint:'Próximamente: obra de energía eléctrica'},
-    {label:'Foto emblemática 3 de 3', hint:'Próximamente: obra hídrica o de saneamiento'}
+    // Fotos de portada (número de la obra y punto de encuadre para el recorte horizontal)
+    {n:'10', pos:'50% 42%'},  // Dique Los Molinos
+    {n:'14', pos:'50% 62%'},  // Viaductos de las Altas Cumbres
+    {n:'05', pos:'50% 55%'}   // Gasoductos Troncales
   ];
   var PER = 4;
   var st = {hero:0, filter:'Todas', page:0, enc:0, open:-1, group:'obra'};
@@ -574,7 +575,16 @@ footer .franja span:last-child{width:38%}
 
   // Portada
   function renderHero(){
-    var h=HERO[st.hero]; $('heroLabel').textContent=h.label; $('heroHint').textContent=h.hint;
+    var h=HERO[st.hero], o=OBRAS.filter(function(x){ return x.n===h.n; })[0];
+    if(o && o.img){
+      var img=$('heroImg'), src=webv(o.img,1600);
+      $('heroLink').href='#foto-'+o.n; $('heroLink').setAttribute('aria-label','Ver '+o.nombre);
+      $('heroCap').textContent=o.nombre+' · '+o.loc.split(' · ')[0];
+      if(img.getAttribute('src')!==src){
+        img.classList.add('fading');
+        var pre=new Image(); pre.onload=function(){ img.src=src; img.alt=o.nombre; img.style.objectPosition=h.pos; img.classList.remove('fading'); }; pre.src=src;
+      }
+    }
     $('heroDots').innerHTML=HERO.map(function(x,i){ return '<button class="dot" data-i="'+i+'" aria-label="Ver foto '+(i+1)+'"'+(i===st.hero?' aria-current="true"':'')+'></button>'; }).join('');
   }
   $('heroDots').addEventListener('click',function(e){ var b=e.target.closest('.dot'); if(b){ st.hero=+b.dataset.i; renderHero(); } });
@@ -678,6 +688,7 @@ footer .franja span:last-child{width:38%}
     clearTimeout(tt); tt=setTimeout(function(){ toast.hidden=true; },2600);
   });
 
+  st.hero=Math.floor(Math.random()*HERO.length);  // arranca en una foto distinta en cada visita
   renderHero(); renderObras(); renderCubos(); renderEnc(); route();
 })();
 </script>
