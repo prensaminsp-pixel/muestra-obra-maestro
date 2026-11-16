@@ -151,14 +151,18 @@ header.top :focus-visible{outline-color:#fff}
 .cubo-more{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:600;font-size:14px;color:var(--azul)}
 
 /* Córdoba no para */
-.plan-intro{display:flex;flex-direction:column;gap:20px}
+.plan-intro{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center}
+.plan-intro > *{margin-inline:auto}
+.plan-intro .p{max-width:62ch}
+.plan-intro .puente{text-wrap:balance}
 .plan-intro .puente{margin:0;font-family:var(--display);font-weight:300;font-size:22px;line-height:1.4;color:var(--tinta-suave);max-width:820px}
 .plan-intro h2{margin:0;font-family:var(--display);font-weight:700;font-size:clamp(40px,5vw,56px);line-height:1.05;color:var(--azul)}
 .plan-band{margin-top:48px;background:var(--azul);color:#fff;padding-block:64px}
 .plan-band .wrap{display:flex;flex-direction:column;gap:48px}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}
 .stat{display:flex;flex-direction:column;gap:8px}
-.stat b{font-family:var(--display);font-weight:700;font-size:clamp(34px,4vw,44px);line-height:1;font-variant-numeric:tabular-nums}
+.stat b{font-family:var(--display);font-weight:700;font-size:clamp(30px,2.8vw,42px);line-height:1;font-variant-numeric:tabular-nums}
+@media (min-width:861px){.stat b{white-space:nowrap}}
 .stat i{display:block;height:3px;width:40px;background:#fff;border-radius:0 999px 999px 0}
 .stat span{font-family:var(--etiqueta);font-weight:500;letter-spacing:.05em;text-transform:uppercase;font-size:13px;color:var(--celeste-claro)}
 .avance{display:flex;flex-direction:column;gap:16px}
