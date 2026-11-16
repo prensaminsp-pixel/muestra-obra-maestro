@@ -70,6 +70,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .maplbl{position:absolute;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(11,36,64,.55);white-space:nowrap}
 .maplbl.agua{color:#1D6E99;font-style:italic;letter-spacing:.06em}
 #mapStage,#obraStage{touch-action:pan-y}
+.modal-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(11,37,69,.08);color:var(--tinta);font-size:26px;line-height:1;font-weight:700;cursor:pointer;display:grid;place-items:center;z-index:2}
+.modal-x:hover{background:rgba(11,37,69,.16)}
 .hint3d{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(11,36,64,.78);color:#fff;font-size:12px;padding:6px 12px;border-radius:999px;pointer-events:none;white-space:nowrap}
 
 .lista{display:grid;gap:10px;padding-block:18px 8px}
@@ -612,7 +614,8 @@ footer{padding-block:10px 30px;color:var(--tenue);font-size:12px}
 
 <!-- Festejo -->
 <div class="modal" id="mFin" hidden>
-  <div class="caja festejo">
+  <div class="caja festejo" style="position:relative">
+    <button class="modal-x" id="finX" type="button" aria-label="Cerrar">×</button>
     <div class="eyebrow" id="finEje"></div>
     <h2 id="finTitulo">¡Obra terminada!</h2>
     <div class="masc feliz sobre-claro" id="finMasc"></div>
@@ -2131,6 +2134,7 @@ function completar(){
 }
 $("#finShare").addEventListener("click",()=>{ $("#mFin").hidden=true; $("#shareReady").scrollIntoView({behavior:"smooth",block:"center"}); });
 $("#finRank").addEventListener("click",()=>{ $("#mFin").hidden=true; go("ranking"); });
+$("#finX").addEventListener("click",()=>{ $("#mFin").hidden=true; });
 $("#mFin").addEventListener("click",e=>{ if(e.target.id==="mFin") $("#mFin").hidden=true; });
 
 let shareBlob=null;
