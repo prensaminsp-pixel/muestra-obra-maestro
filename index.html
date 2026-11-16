@@ -553,7 +553,7 @@ footer .franja span:last-child{width:38%}
   Object.keys(CARGADAS).sort().forEach(function(k){ if(!OBRAS.some(function(o){ return o.n===k; })){ var c=CARGADAS[k]; c.n=k; OBRAS.push(c); } });
   // Copias livianas para mostrar (fotos/web/…-800.jpg y -1600.jpg); el original se usa solo para descargar
   function webv(path,size){ var f=path.split('/').pop().replace(/\.jpg$/i,''); return 'fotos/web/'+f+'-'+size+'.jpg'; }
-  var CATS = ['Todas','Vialidad','Hídrico','Infraestructura Eléctrica','Planificación Energética','Biocombustibles','Saneamiento','Arquitectura'];
+  var CATS = ['Todas','Vialidad','Hídrico','Infraestructura Eléctrica','Planificación Energética','Saneamiento','Arquitectura'];
   var HERO = [
     {label:'Foto emblemática 1 de 3', hint:'Próximamente: la gran obra de gas de Córdoba'},
     {label:'Foto emblemática 2 de 3', hint:'Próximamente: obra de energía eléctrica'},
