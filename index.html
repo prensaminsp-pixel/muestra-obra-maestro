@@ -165,7 +165,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backgroun
 .visit dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:14px 20px}
 .visit dt{font-family:var(--etiqueta);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;color:var(--tinta-suave);padding-top:2px}
 .visit dd{margin:0}
-.map{min-height:420px;border-radius:8px}
+.map{min-height:420px;border-radius:8px;border:0;width:100%;max-width:100%;display:block;background:var(--fondo-foto)}
 
 /* Footer */
 footer{background:var(--azul);color:#fff;padding-bottom:32px}
@@ -387,14 +387,11 @@ footer .franja span:last-child{width:38%}
         <dt>Entrada</dt><dd>[LIBRE Y GRATUITA — A CONFIRMAR]</dd>
       </dl>
       <div class="row" style="padding-top:8px">
-        <a class="btn btn-primary" href="#visita" data-soon>Cómo llegar</a>
+        <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ministerio+de+Infraestructura+y+Servicios+P%C3%BAblicos%2C+C%C3%B3rdoba%2C+Argentina" target="_blank" rel="noopener">Cómo llegar</a>
         <a class="btn btn-ghost" href="#visita" data-soon>Visitas de escuelas y grupos</a>
       </div>
     </div>
-    <div class="ph map">
-      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
-      <span class="ph-label">Mapa de ubicación</span>
-    </div>
+    <iframe class="map" title="Ubicación del Ministerio de Infraestructura y Servicios Públicos en Google Maps" src="https://www.google.com/maps?q=Ministerio+de+Infraestructura+y+Servicios+P%C3%BAblicos%2C+C%C3%B3rdoba%2C+Argentina&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
   </div>
 </section>
 </main>
