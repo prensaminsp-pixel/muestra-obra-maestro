@@ -18,7 +18,7 @@
   /* Los nombres se mantienen por compatibilidad; los valores son la paleta blanco y negro de la muestra */
   --azul:#111111; --azul-hover:#3a3a3a; --franja:#111111; --rojo:#555555; --rojo-franja:#9a9a9a;
   --celeste:#8c8c8c; --celeste-claro:#d4d4d4;
-  --fondo:#ffffff; --fondo-suave:#f4f4f4; --fondo-foto:#ececec; --negro:#111111;
+  --fondo:#ffffff; --fondo-suave:#f7f7f7; --fondo-foto:#ececec; --negro:#111111;
   --tinta:#111111; --tinta-suave:#555555; --borde:#e2e2e2; --borde-fuerte:#8c8c8c;
   --linea-azul:#3a3a3a; --texto-azul-claro:#e6e6e6;
   --display:"Poppins", "Segoe UI", system-ui, sans-serif;
@@ -75,7 +75,7 @@ header.top :focus-visible{outline-color:#fff}
 
 /* Hero */
 /* Portada según el mockup de la muestra: todo centrado sobre un degradé gris muy suave */
-.hero{background:linear-gradient(180deg,#efefef 0%,#ffffff 32%);padding-block:clamp(56px,8vw,104px) clamp(56px,7vw,88px);text-align:center}
+.hero{background:linear-gradient(180deg,#f0f0f0 0%,#f7f7f7 12%,#ffffff 40%);padding-block:clamp(56px,8vw,104px) clamp(56px,7vw,88px);text-align:center}
 .hero-inner{display:flex;flex-direction:column;align-items:center}
 .hero-logo{margin:0;line-height:0}
 .hero-logo img{display:block;width:clamp(260px,38vw,480px);max-width:100%;height:auto}
@@ -244,6 +244,19 @@ footer{background:var(--negro);color:#fff;padding-bottom:32px}
   .modal-body{padding:24px 20px}
   .visit-card{padding:28px 20px}
   .sec-plan{padding-bottom:0}
+}
+/* Celular, según el mockup: frase en 2 líneas, botones lado a lado, todo más compacto */
+@media (max-width:560px){
+  .hero{padding-block:40px 48px}
+  .hero-logo img{width:212px}
+  .hero-kicker{margin-top:14px;font-size:13px}
+  .hero-lead{margin-top:28px;font-size:clamp(16px,4.6vw,22px);max-width:none}
+  .hero-info{margin-top:26px;grid-template-columns:auto auto auto;justify-content:center}
+  .hero-info div{padding-inline:clamp(8px,3vw,16px);gap:8px;font-size:clamp(11px,3.1vw,14px)}
+  .hero-info div span{white-space:nowrap}
+  .hero-info svg{width:20px;height:20px}
+  .hero-ctas{margin-top:28px;flex-wrap:nowrap;gap:10px}
+  .hero-ctas .btn{flex:1 1 0;min-width:0;min-height:50px;padding:0 10px;font-size:clamp(14px,4vw,16px)}
 }
 </style>
 
@@ -579,7 +592,7 @@ footer{background:var(--negro);color:#fff;padding-bottom:32px}
     if(o && o.img){
       var img=$('heroImg'), src=webv(o.img,1600);
       $('heroLink').href='#foto-'+o.n; $('heroLink').setAttribute('aria-label','Ver '+o.nombre);
-      $('heroCap').textContent=o.nombre+' · '+o.loc.split(' · ')[0];
+      $('heroCap').textContent=o.nombre.split(' · ')[0];  // solo el nombre corto, para que el epígrafe no tape la foto en celular
       if(img.getAttribute('src')!==src){
         img.classList.add('fading');
         var pre=new Image(); pre.onload=function(){ img.src=src; img.alt=o.nombre; img.style.objectPosition=h.pos; img.classList.remove('fading'); }; pre.src=src;
