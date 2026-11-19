@@ -145,7 +145,9 @@ header.top :focus-visible{outline-color:#fff}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:40px}
 .cubo{cursor:pointer;text-align:left;background:#fff;border:1px solid var(--borde);border-radius:8px;padding:0;overflow:hidden;color:inherit;font:inherit;display:flex;flex-direction:column}
 .cubo:hover{border-color:var(--azul)}
-.cubo .ph{aspect-ratio:3/2;border:none;border-bottom:1px dashed var(--borde-fuerte)}
+/* Las fotos de los cubos van enteras y cuadradas, como los rompecabezas de la muestra */
+.cubo .ph{aspect-ratio:1/1;border:none;border-bottom:1px dashed var(--borde-fuerte)}
+.cubo-img{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-bottom:1px solid var(--borde)}
 .cubo-body{padding:20px;display:flex;justify-content:space-between;align-items:center;gap:16px}
 .cubo-body .card-title{font-size:18px}
 .cubo-more{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:600;font-size:14px;color:var(--azul)}
@@ -626,10 +628,20 @@ footer{background:var(--negro);color:#fff;padding-bottom:32px}
 
   // Cubos: 4 fotos completas, cada una con su dirección (#cubo-1 … #cubo-4)
   var CUBOS=['1','2','3','4'].map(function(n){ return {n:n, cat:'Cubo '+n, nombre:'[Nombre de la obra]', loc:'[Localidad] · [Departamento]', fecha:'[Día] de [mes] de [año]', autor:'[Nombre de quien tomó la foto]', desc:'[Breve descripción de la obra: qué es, para qué sirve y a quiénes beneficia. 3 o 4 líneas.]'}; });
+  // Fotos de los cubos ya cargadas (reemplazan al marcador del mismo número)
+  var CUBOS_CARGADOS = {
+    '1': {nombre:'Dique La Quebrada', loc:'Río Ceballos · Departamento Colón', fecha:'Obra concluida en 1976', autor:'Joaquin Torres Corcoba', img:'fotos/cubo-1-dique-la-quebrada.jpg',
+      desc:'Ubicado en Río Ceballos, a unos 37 kilómetros de la ciudad de Córdoba, abastece de agua potable al corredor de Sierras Chicas: Río Ceballos, Salsipuedes, Unquillo, Mendiolaza, Villa Allende y Saldán. También regula las crecidas y protege la Reserva Hídrica Natural Parque La Quebrada, unas 3.000 hectáreas que rodean al embalse de 35 hectáreas. La APRHI realiza maniobras periódicas para regular su nivel y controlar sus órganos de evacuación.'}
+  };
+  // Cubos que muestran una obra ya cargada en Las Obras: copian su ficha y cambian autor e imagen
+  function cuboDeObra(n, obra, autor, img){ var c={}, b=CARGADAS[obra]; for(var k in b) c[k]=b[k]; c.autor=autor; c.img=img; CUBOS_CARGADOS[n]=c; }
+  cuboDeObra('2', '10', 'Matias Garcia', 'fotos/cubo-2-dique-los-molinos.jpg');
+  CUBOS = CUBOS.map(function(o){ var c=CUBOS_CARGADOS[o.n]; if(!c) return o; c.n=o.n; c.cat=o.cat; return c; });
   var ICON_ARROW='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   function renderCubos(){
     $('cubosGrid').innerHTML=CUBOS.map(function(o){
-      return '<button class="cubo" data-n="'+o.n+'" aria-label="Ver la foto completa del cubo '+o.n+'"><div class="ph">'+ICON_IMG+'<span class="ph-label">Cubo '+o.n+' · Foto completa</span></div><div class="cubo-body"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="card-cat">Cubo '+o.n+'</span><span class="card-title">'+esc(o.nombre)+'</span><span class="card-loc">'+esc(o.loc)+'</span></div><span class="cubo-more">Ver información'+ICON_ARROW+'</span></div></button>';
+      var media = o.img ? '<img class="cubo-img" src="'+esc(webv(o.img,800))+'" alt="'+esc(o.nombre)+'" loading="lazy" decoding="async">' : '<div class="ph">'+ICON_IMG+'<span class="ph-label">Cubo '+o.n+' · Foto completa</span></div>';
+      return '<button class="cubo" data-n="'+o.n+'" aria-label="Ver la foto completa del cubo '+o.n+(o.img?': '+esc(o.nombre):'')+'">'+media+'<div class="cubo-body"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="card-cat">Cubo '+o.n+'</span><span class="card-title">'+esc(o.nombre)+'</span><span class="card-loc">'+esc(o.loc)+'</span></div><span class="cubo-more">Ver información'+ICON_ARROW+'</span></div></button>';
     }).join('');
   }
   $('cubosGrid').addEventListener('click',function(e){ var b=e.target.closest('.cubo'); if(b){ location.hash='cubo-'+b.dataset.n; } });
