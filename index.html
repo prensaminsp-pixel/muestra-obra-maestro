@@ -636,6 +636,7 @@ footer{background:var(--negro);color:#fff;padding-bottom:32px}
   // Cubos que muestran una obra ya cargada en Las Obras: copian su ficha y cambian autor e imagen
   function cuboDeObra(n, obra, autor, img){ var c={}, b=CARGADAS[obra]; for(var k in b) c[k]=b[k]; c.autor=autor; c.img=img; CUBOS_CARGADOS[n]=c; }
   cuboDeObra('2', '10', 'Matias Garcia', 'fotos/cubo-2-dique-los-molinos.jpg');
+  cuboDeObra('3', '04', 'Joaquin Torres Corcoba', 'fotos/cubo-3-ruta-provincial-s-372.jpg');
   CUBOS = CUBOS.map(function(o){ var c=CUBOS_CARGADOS[o.n]; if(!c) return o; c.n=o.n; c.cat=o.cat; return c; });
   var ICON_ARROW='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   function renderCubos(){
